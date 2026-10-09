@@ -449,7 +449,7 @@ def build_doc(i, d):
 
 
 def build_index():
-    setup_card = ('<a class="card" href="Setup_Guide.html"><span class="no">Setup guide</span><h3>Get ready and run Rahul's claim</h3>'
+    setup_card = ('<a class="card" href="Setup_Guide.html"><span class="no">Setup guide</span><h3>Get ready and run Rahul&#8217;s claim</h3>'
                   '<p>Run Setup, configure your Gmail and Data Fabric connections, and run a finished claim end to end.</p>'
                   '<div class="meta"><span>Everyone</span><span>25 min</span></div></a>')
     cards = setup_card + "".join(
