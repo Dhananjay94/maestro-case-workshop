@@ -160,7 +160,7 @@
               return h("tr", {}, h("td", {}, h("code", { text: r[0] })), h("td", {}, h("code", { text: r[1] })), h("td", { class: "narrow" }, copyBtn(r[1])));
             }))))); break;
         case "info":
-          out.push(h("div", { class: "tablewrap" }, h("table", { class: "tbl info" },
+          out.push(h("div", { class: "tablewrap" }, h("table", { class: "tbl info" + (b.head.length === 2 ? " two" : "") },
             h("thead", {}, h("tr", {}, b.head.map(function (x) { return h("th", { text: x }); }))),
             h("tbody", {}, b.rows.map(function (r) { return h("tr", {}, r.map(function (c) { return h("td", {}, rich(c)); })); }))))); break;
         case "code": out.push(codeLine(b.text)); break;
@@ -187,7 +187,7 @@
     primaries().forEach(function (s, i) {
       var built = !!S.built[s.id];
       var node = h("li", { class: "node" + (built ? " built" : "") + (cur === s.id ? " current" : "") },
-        tokenAt === s.id ? h("span", { class: "token", title: "Rahul's claim is waiting here", "aria-hidden": "true" }, "R") : null,
+        tokenAt === s.id ? h("span", { class: "token", title: "Your claim is waiting here", "aria-hidden": "true" }, "C") : null,
         h("a", { href: "#/" + s.id, class: "node-box" },
           h("span", { class: "node-no" }, built ? "✓" : String(i + 1)),
           h("span", { class: "node-name" }, s.name),
@@ -195,7 +195,7 @@
       row.appendChild(node);
     });
     var wrap = h("div", { class: "mapwrap" + (opts.compact ? " compact" : "") }, row);
-    if (tokenAt === "done") wrap.appendChild(h("div", { class: "finish" }, "R", " ✓ Rahul's claim has made it through the happy path"));
+    if (tokenAt === "done") wrap.appendChild(h("div", { class: "finish" }, "✓ Your claim has made it through the happy path"));
     if (!opts.compact) {
       wrap.appendChild(h("div", { class: "side" },
         h("span", { class: "side-k" }, "Later chapters add the detours"),
@@ -230,7 +230,7 @@
         h("div", { class: "panel-h" }, h("h2", { text: "The case you will build" }),
           h("span", { class: "muted" }, n + " of 5 main stages built")),
         caseMap(),
-        p("Click a stage to open it. Rahul's claim token sits on the next stage to build.", "muted small")),
+        p("Click a stage to open it. The claim token sits on the next stage to build.", "muted small")),
       h("section", {}, h("h2", { class: "sec", text: "The chapters" }),
         h("div", { class: "chapters" }, D.CHAPTERS.map(function (c) {
           var inner = [
@@ -304,7 +304,7 @@
 
   function pageSetup() {
     return [
-      pageHead("Setup", "Get ready", "About 25 minutes. You prepare your own UiPath account with one import and one run, configure your Gmail and Data Fabric connections, and watch a finished case run. You need a UiPath Community account and the file `MotorClaimsWorkshop_Setup.uis`. Nothing to install."),
+      pageHead("Setup", "Get ready", "You prepare your own UiPath account with one import and one run, configure your Gmail and Data Fabric connections, and watch a finished case run. You need a UiPath Community account and the file `MotorClaimsWorkshop_Setup.uis`. Nothing to install."),
       h("h2", { class: "sec", text: "1. Import and run Setup" }),
       blocks([
         { t: "h", text: "Import the Setup solution" },
@@ -318,7 +318,7 @@
         { t: "ol", items: [
           "Open **SetupWorkshop** and press **Debug**. A small form opens.",
           "Set **Action** to `InstallWorkshop`. **Leave every other field empty.**",
-          "Run it and **wait for the result**. It takes about a minute."
+          "Run it and **wait for the result**."
         ] },
         { t: "check", text: "The result ends with **Done** and gives your **Intake App** address, for example `https://<your-organization>.uipath.host/claims-<your-organization>`. Copy it somewhere." },
         { t: "stuck", items: [
@@ -363,7 +363,7 @@
         { t: "stuck", items: [
           "**Debug cannot find the claim.** Run Setup with `RegisterClaim` for Rahul again.",
           "**A policy problem.** Run Setup with **Action** = `LoadData`, then Debug again.",
-          "**No task in Action Center.** Wait a minute and refresh. The agents take time to read the documents.",
+          "**No task in Action Center.** Wait a little and refresh. The agents take time to read the documents.",
           "**Anything else.** Run Setup with **Action** = `Status` and send the facilitator what you see."
         ] }
       ]),
@@ -373,18 +373,11 @@
 
   function pageChapter1() {
     return [
-      pageHead("Chapter 1", "The happy path", "You build five stages in a line, run Rahul's claim through them, and deploy it. Nothing goes wrong yet. That is on purpose."),
+      pageHead("Chapter 1", "The happy path", "You build five stages in a line, run a claim through them, and deploy it. Nothing goes wrong yet. That is on purpose."),
       caseMap(),
-      h("h2", { class: "sec", text: "Before you start" }),
-      blocks([
-        { t: "ol", items: [
-          "In **Studio Web**, open **MotorInsuranceClaimManagement**, then the project **MyClaimsCase**. You see one circle: the trigger, named MotorInsuranceClaim. That is your blank case.",
-          "If the designer shows a note about connections, bind **Data Fabric** to your connection.",
-          "Click an empty part of the canvas to open **Case plan properties**. Set **Case ID** to **External key** with the value below."
-        ] },
-        { t: "code", text: "vars.response?.ClaimId" },
-        { t: "why", text: "The case is identified by the claim number. Anyone searching for a claim finds its case, and a duplicate claim number cannot start two cases." }
-      ]),
+      h("h2", { class: "sec", text: "Step 0: the trigger" }),
+      p("Before any stage, decide what starts the case. Open **MyClaimsCase** and work through these two steps.", "muted"),
+      stepList("c1", D.TRIGGER_STEPS),
       h("h2", { class: "sec", text: "Five words you need" }),
       blocks([{ t: "cards", items: [
         { title: "Stage", text: "A phase of the process. The case moves from stage to stage. Every stage has a name, tasks and rules." },
@@ -397,10 +390,10 @@
       h("h2", { class: "sec", text: "How each stage page works" }),
       blocks([{ t: "ol", items: [
         "**Read the story.** What is happening in the business at this point?",
-        "**Think.** What does this stage need: which activities, when does it start, when is it done? Press **Hint** if you want a nudge. Press **Reveal** when you are ready.",
-        "**Tell yourself how close you were.** Nobody sees it but you.",
-        "**Build it.** Every name and value has a Copy button.",
-        "**Check it**, and move on."
+        "**Add the stage**, then go through its jobs one by one. For each job you are asked which activity should do it. Think, ask for a **Hint** if you want one, then **Reveal**.",
+        "**Make it faster.** Can some tasks run side by side?",
+        "**Decide the rules.** When does the stage start? When is it done? When should a claim leave early?",
+        "After each reveal, tell yourself how close you were. Nobody sees it but you. Then **build it**: every name and value has a Copy button."
       ] }]),
       p("Keep the activity list open while you think. Press **Activities** at the top of any page.", "muted"),
       h("div", { class: "next" }, h("a", { class: "btn primary", href: "#/intake" }, "Start with Intake"))
@@ -444,42 +437,53 @@
     ];
   }
 
-  /* ---------- stage page ---------- */
+  /* ---------- steps: think, hint, reveal, then build ---------- */
+  function stepList(pageKey, steps, onChange) {
+    return h("ol", { class: "steps" }, steps.map(function (step, i) {
+      var key = pageKey + ":" + i;
+      var box = h("input", { type: "checkbox", id: "st-" + key, "aria-label": "Mark this step done" });
+      box.checked = !!S.done[key];
+      var li = h("li", { class: "step" + (S.done[key] ? " done" : "") });
+      box.addEventListener("change", function () {
+        S.done[key] = box.checked; save(); li.classList.toggle("done", box.checked); if (onChange) onChange();
+      });
+      li.appendChild(h("div", { class: "step-h" }, box,
+        h("label", { for: "st-" + key }, h("span", { class: "step-no" }, String(i + 1)), h("span", { class: "step-title" }, step.title)),
+        step.kind ? h("span", { class: "think-kind" }, step.kind) : null));
+      li.appendChild(h("div", { class: "step-b" }, step.q ? thinkCard(pageKey, i, step) : blocks(step.build)));
+      return li;
+    }));
+  }
+
+  function doneCount(pageKey, n) {
+    var c = 0; for (var i = 0; i < n; i++) if (S.done[pageKey + ":" + i]) c++; return c;
+  }
+
   function pageStage(id) {
-    var sp = D.STAGE_PAGES[id], s = stage(id);
+    var sp = D.STAGE_PAGES[id];
     var idx = primaries().map(function (x) { return x.id; }).indexOf(id);
-    var calls = 0;
+    var total = sp.steps.length;
+    var prog = h("div", { class: "prog" });
+    function paintProg() {
+      var n = doneCount(id, total);
+      prog.textContent = "";
+      prog.appendChild(h("div", { class: "prog-bar" }, h("i", { style: "width:" + Math.round(100 * n / total) + "%" })));
+      prog.appendChild(h("span", { class: "muted small" }, n + " of " + total + " steps done"));
+    }
+    paintProg();
+
     var root = [];
     root.push(caseMap({ compact: true, current: id }));
     root.push(pageHead("Chapter 1 · Stage " + (idx + 1) + " of 5", sp.title, sp.tagline));
-
-    /* story */
     root.push(h("section", { class: "story" },
       h("div", { class: "sec-k" }, "The business story"),
       sp.story.map(function (t) { return p(t); })));
-
-    /* think */
     root.push(h("section", {},
-      h("div", { class: "sec-k" }, "Think first"),
-      h("p", { class: "muted" }, "What does this stage need? Think about it, say it out loud, then reveal. Keep the activity list open if it helps."),
-      sp.think.map(function (card) { return thinkCard(id, card); })));
+      h("div", { class: "sec-k" }, "Build this stage, one step at a time"),
+      p("Work in **MyClaimsCase**. Where a step asks a question, think first, say it out loud, and press Reveal when you are ready. Keep the activity list open if it helps.", "muted"),
+      prog,
+      stepList(id, sp.steps, paintProg)));
 
-    /* build */
-    root.push(h("section", {},
-      h("div", { class: "sec-k" }, "Build it"),
-      h("p", { class: "muted" }, "Do these in order in **MyClaimsCase**. Every value has a Copy button.".replace(/\*\*/g, "")),
-      h("ol", { class: "steps" }, sp.build.map(function (step, i) {
-        var key = id + ":" + i;
-        var box = h("input", { type: "checkbox", id: "st-" + key, "aria-label": "Mark step done" });
-        box.checked = !!S.done[key];
-        box.addEventListener("change", function () { S.done[key] = box.checked; save(); li.classList.toggle("done", box.checked); });
-        var li = h("li", { class: "step" + (S.done[key] ? " done" : "") },
-          h("div", { class: "step-h" }, box, h("label", { for: "st-" + key }, h("span", { class: "step-no" }, String(i + 1)), step.title)),
-          h("div", { class: "step-b" }, blocks(step.blocks)));
-        return li;
-      }))));
-
-    /* check */
     var builtBox = h("input", { type: "checkbox", id: "built-" + id });
     builtBox.checked = !!S.built[id];
     builtBox.addEventListener("change", function () { S.built[id] = builtBox.checked; save(); });
@@ -487,11 +491,8 @@
       h("div", { class: "sec-k" }, "Check it"),
       blocks([{ t: "check", items: sp.check }]),
       h("label", { class: "builtbox", for: "built-" + id }, builtBox, h("span", {}, "I built and checked this stage"))));
-
-    /* example case */
     root.push(h("p", { class: "muted small" }, rich("Stuck? Open the example case `1_HappyPath` and compare. It already has a few conditions that this chapter leaves for later, so small differences are expected.")));
 
-    /* prev / next */
     var prev = idx > 0 ? primaries()[idx - 1] : null;
     var next = idx < 4 ? primaries()[idx + 1] : null;
     root.push(h("div", { class: "pager" },
@@ -500,38 +501,41 @@
     return root;
   }
 
-  function thinkCard(stageId, card) {
-    var key = stageId + ":" + card.id;
-    var wrap = h("div", { class: "think", id: "think-" + card.id });
+  function thinkCard(pageKey, i, step) {
+    var key = pageKey + ":" + i;
+    var wrap = h("div", { class: "think", id: "step-" + i });
     function paint() {
       wrap.textContent = "";
       var r = REVEAL[key] || {};
-      wrap.appendChild(h("div", { class: "think-top" }, h("span", { class: "think-kind" }, card.kind), r.answer ? h("span", { class: "chip soft" }, "Revealed") : null));
-      wrap.appendChild(h("p", { class: "think-q" }, rich(card.q)));
+      wrap.appendChild(h("p", { class: "think-q" }, rich(step.q)));
       if (!r.answer) {
         var row = h("div", { class: "think-actions" });
         if (!r.hint) row.appendChild(h("button", { class: "btn small", type: "button", onclick: function () { REVEAL[key] = Object.assign({}, r, { hint: true }); paint(); } }, "Hint"));
         row.appendChild(h("button", { class: "btn small primary", type: "button", onclick: function () { REVEAL[key] = Object.assign({}, r, { answer: true }); paint(); } }, "Reveal"));
         wrap.appendChild(row);
-        if (r.hint) wrap.appendChild(h("div", { class: "hint" }, h("span", { class: "k" }, "Hint "), rich(card.hint)));
+        if (r.hint) wrap.appendChild(h("div", { class: "hint" }, h("span", { class: "k" }, "Hint "), rich(step.hint)));
         return;
       }
-      var a = card.answer;
+      var a = step.answer;
       var ans = h("div", { class: "answer" });
       ans.appendChild(p(a.lead, "answer-lead"));
       if (a.tasks) ans.appendChild(h("div", { class: "tasklist" }, a.tasks.map(function (t) { return actChip(t.act, t); })));
-      if (a.rules) a.rules.forEach(function (rule, i) { ans.appendChild(ruleCard(rule, key + ":r" + i)); });
+      if (a.scenarios) ans.appendChild(h("ul", { class: "scen" }, a.scenarios.map(function (s) {
+        return h("li", {}, h("strong", { text: s.what }), " → ", s.goes, h("span", { class: "chip soft" }, "Chapter " + s.chapter));
+      })));
+      if (a.rules) a.rules.forEach(function (rule, k) { ans.appendChild(ruleCard(rule, key + ":r" + k)); });
       if (a.note) ans.appendChild(h("div", { class: "answer-note" }, rich(a.note)));
       wrap.appendChild(ans);
-      /* self-check */
-      var ck = key, cur = S.call[ck];
-      var opts = [["nailed", "Nailed it"], ["close", "Close"], ["missed", "New to me"]];
+
       wrap.appendChild(h("div", { class: "selfcheck" }, h("span", { class: "k" }, "How close were you? "),
-        opts.map(function (o) {
-          return h("button", { class: "pill" + (cur === o[0] ? " on on-" + o[0] : ""), type: "button",
-            onclick: function () { S.call[ck] = o[0]; save(); paint(); } }, o[1]);
+        [["nailed", "Nailed it"], ["close", "Close"], ["missed", "New to me"]].map(function (o) {
+          return h("button", { class: "pill" + (S.call[key] === o[0] ? " on on-" + o[0] : ""), type: "button",
+            onclick: function () { S.call[key] = o[0]; save(); paint(); } }, o[1]);
         }),
         h("button", { class: "linkbtn", type: "button", onclick: function () { delete REVEAL[key]; paint(); } }, "Hide the answer")));
+
+      if (step.build) wrap.appendChild(h("div", { class: "buildit" },
+        h("div", { class: "build-t" }, "Now build it"), blocks(step.build)));
     }
     paint();
     return wrap;
@@ -665,6 +669,13 @@
     });
   }
 
+  var foot = document.querySelector(".foot");
+  if (foot) foot.appendChild(h("button", { class: "linkbtn", type: "button", onclick: function () {
+    if (window.confirm("Clear your ticks and progress on this computer?")) {
+      try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ }
+      location.reload();
+    }
+  } }, "Reset my progress"));
   buildChrome();
   buildDrawer();
   window.addEventListener("hashchange", route);

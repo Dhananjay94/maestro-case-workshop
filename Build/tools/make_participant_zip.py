@@ -11,26 +11,24 @@ START = """MOTOR CLAIMS WORKSHOP: START HERE
 
 You need only a UiPath Community account. Nothing to install.
 
-1. Open Studio Web and press Import (next to Create New).
-   Choose the file  MotorClaimsWorkshop_Setup.uis  from this folder.
-2. Open the solution MotorClaimsWorkshop_Setup, then the project SetupWorkshop.
-   Press Debug. Set  Action = InstallWorkshop  and leave every other field empty.
-   Wait for the result. The last line says Done and gives your Intake App address.
-3. Follow the Setup guide: Setup_Guide.html (open it in a browser) or Setup_Guide.md. It covers running Setup, configuring the Gmail and
-   Data Fabric connections, and running Rahul's claim. The full build guide is in Guide/index.html.
+1. Double-click  Motor_Claims_Workshop_Guide.html  to open the guide in your browser.
+   It works offline and needs nothing else.
+2. Follow the Setup page. It starts with importing the file  MotorClaimsWorkshop_Setup.uis
+   (in this folder) into Studio Web, running Setup, and configuring the Gmail and Data Fabric
+   connections.
+3. Then follow Chapter 1 and build your case one stage at a time.
 
-If the screen looks stuck: run SetupWorkshop again with  Action = Status.
 Sample customer documents: Sample_Documents/   Claim values for the Intake App: claims_intake_values.csv
+Participant_Build_Guide.md has the full text of the later chapters (the new guide covers them soon).
 """
 
 FILES = [
     (os.path.join(KIT, "Starter_Solution", "MotorClaimsWorkshop_Setup.uis"), "MotorClaimsWorkshop_Setup.uis"),
-    (os.path.join(KIT, "Setup_Guide.md"), "Setup_Guide.md"),
-    (os.path.join(KIT, "Guide_Site", "Setup_Guide.html"), "Setup_Guide.html"),
+    (os.path.join(KIT, "Motor_Claims_Workshop_Guide.html"), "Motor_Claims_Workshop_Guide.html"),
     (os.path.join(KIT, "Participant_Build_Guide.md"), "Participant_Build_Guide.md"),
     (os.path.join(KIT, "01_Data", "claims_intake_values.csv"), "claims_intake_values.csv"),
 ]
-TREES = [(os.path.join(KIT, "Guide_Site"), "Guide"), (os.path.join(KIT, "02_Documents"), "Sample_Documents")]
+TREES = [(os.path.join(KIT, "02_Documents"), "Sample_Documents")]
 
 if os.path.exists(OUT):
     os.remove(OUT)

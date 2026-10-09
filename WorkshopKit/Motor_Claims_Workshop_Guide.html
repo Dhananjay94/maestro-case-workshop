@@ -1,0 +1,1534 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motor Claims workshop</title>
+<meta name="description" content="Build a motor insurance claims case in UiPath Maestro, one stage at a time.">
+<style>
+:root{
+  --bg:#faf8f4; --surface:#ffffff; --surface-2:#f3efe8; --ink:#1c2230; --ink-2:#4a5368; --muted:#6b7488;
+  --line:#e4ded3; --line-2:#cfc7b8; --accent:#3b5bdb; --accent-ink:#ffffff; --accent-soft:#e7ecff;
+  --good:#2b8a3e; --good-bg:#e6f5ea; --warn:#b45309; --warn-bg:#fff4e0; --bad:#c92a2a; --bad-bg:#fdeaea;
+  --why:#6741d9; --why-bg:#efeafd; --heads:#0b7285; --heads-bg:#e3f6fa;
+  --t-agent:#7048e8; --t-function:#1971c2; --t-api:#0c8599; --t-human:#d9480f; --t-connector:#c2255c;
+  --shadow:0 1px 2px rgba(28,34,48,.06),0 6px 20px rgba(28,34,48,.06);
+  --radius:14px; --maxw:880px; --fs:17px;
+}
+:root[data-theme="dark"]{
+  --bg:#12151d; --surface:#1a1f2b; --surface-2:#222836; --ink:#eef0f6; --ink-2:#c3c9d8; --muted:#97a0b5;
+  --line:#2b3243; --line-2:#3a4358; --accent:#7c93ff; --accent-ink:#0e1220; --accent-soft:#232c52;
+  --good:#69db7c; --good-bg:#17301f; --warn:#ffc078; --warn-bg:#3a2a12; --bad:#ff8787; --bad-bg:#3b1c1c;
+  --why:#b197fc; --why-bg:#2a2347; --heads:#66d9e8; --heads-bg:#12303a;
+  --t-agent:#b197fc; --t-function:#74c0fc; --t-api:#63e6be; --t-human:#ffa94d; --t-connector:#f783ac;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12151d; --surface:#1a1f2b; --surface-2:#222836; --ink:#eef0f6; --ink-2:#c3c9d8; --muted:#97a0b5;
+    --line:#2b3243; --line-2:#3a4358; --accent:#7c93ff; --accent-ink:#0e1220; --accent-soft:#232c52;
+    --good:#69db7c; --good-bg:#17301f; --warn:#ffc078; --warn-bg:#3a2a12; --bad:#ff8787; --bad-bg:#3b1c1c;
+    --why:#b197fc; --why-bg:#2a2347; --heads:#66d9e8; --heads-bg:#12303a;
+    --t-agent:#b197fc; --t-function:#74c0fc; --t-api:#63e6be; --t-human:#ffa94d; --t-connector:#f783ac;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35);
+  }
+}
+:root.present{--fs:21px;--maxw:1000px}
+
+*{box-sizing:border-box}
+html{font-size:var(--fs);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.55;overflow-wrap:anywhere}
+h1,h2,h3,h4{line-height:1.2;margin:0}
+a{color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--surface-2);padding:.1em .38em;border-radius:6px;overflow-wrap:anywhere}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--surface);padding:8px 12px;border-radius:8px;z-index:100}
+.skip:focus{left:12px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;color:var(--ink);text-decoration:none;font-size:.95rem}
+.brand i{width:20px;height:20px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--t-connector));display:inline-block}
+#nav{display:flex;gap:2px;flex-wrap:wrap}
+#nav a{padding:6px 11px;border-radius:9px;text-decoration:none;color:var(--ink-2);font-size:.88rem;font-weight:600}
+#nav a:hover{background:var(--surface-2)}
+#nav a.on{background:var(--accent-soft);color:var(--accent)}
+.spacer{flex:1}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+
+/* buttons */
+.btn{font:inherit;font-size:.9rem;font-weight:600;padding:9px 16px;border-radius:11px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:transform .08s,box-shadow .15s}
+.btn:hover{box-shadow:var(--shadow)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:6px 12px;font-size:.82rem;border-radius:9px}
+.linkbtn{font:inherit;font-size:.82rem;background:none;border:0;color:var(--accent);cursor:pointer;padding:4px 6px;text-decoration:underline}
+.copy{font:inherit;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:7px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);cursor:pointer;flex:none}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+.copy.ok{background:var(--good-bg);color:var(--good);border-color:var(--good)}
+
+/* page frame */
+#app{outline:none}
+.page{max-width:var(--maxw);margin:0 auto;padding:28px 16px 80px}
+.foot{max-width:var(--maxw);margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:.8rem}
+.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.pagehead{margin:8px 0 20px}
+.pagehead h1,.hero h1{font-size:2.1rem;letter-spacing:-.01em}
+.lead{font-size:1.08rem;color:var(--ink-2);max-width:62ch;margin:10px 0 0}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.sec{font-size:1.35rem;margin:36px 0 12px}
+.sec-k{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:34px 0 10px}
+p{margin:0 0 12px}
+ul,ol{padding-left:1.3em;margin:0 0 12px}
+li{margin:0 0 6px}
+.next{margin-top:36px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* hero + panels */
+.hero{padding:14px 0 6px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:26px 0;box-shadow:var(--shadow)}
+.panel-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.panel-h h2{font-size:1.2rem}
+
+/* map */
+.mapwrap{margin:14px 0 8px;padding-top:30px;position:relative}
+.map{list-style:none;margin:0;padding:0;display:flex;gap:0;align-items:stretch}
+.node{flex:1;position:relative;padding:0 6px 0 0;min-width:0}
+.node:not(:last-child)::after{content:"";position:absolute;right:-3px;top:50%;width:14px;height:2px;background:var(--line-2);z-index:0}
+.node-box{display:flex;flex-direction:column;gap:3px;height:100%;padding:12px 10px;border-radius:12px;border:2px solid var(--line-2);background:var(--surface);text-decoration:none;color:var(--ink);position:relative;z-index:1;transition:transform .12s,border-color .12s,box-shadow .15s}
+.node-box:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--shadow)}
+.node-no{width:24px;height:24px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-size:.78rem;font-weight:800;color:var(--ink-2)}
+.node-name{font-weight:800;font-size:.95rem}
+.node-sub{font-size:.76rem;color:var(--muted);line-height:1.3}
+.node.built .node-box{border-color:var(--good);background:var(--good-bg)}
+.node.built .node-no{background:var(--good);color:var(--accent-ink)}
+.node.current .node-box{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.token{position:absolute;top:-30px;left:14px;width:28px;height:28px;border-radius:50%;background:var(--t-connector);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.82rem;z-index:3;animation:bob 1.8s ease-in-out infinite;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.finish{margin-top:12px;color:var(--good);font-weight:700}
+.side{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.side-k{font-size:.78rem;color:var(--muted);font-weight:700;margin-right:4px}
+.ghost{border:2px dashed var(--line-2);border-radius:10px;padding:6px 12px;font-size:.84rem;color:var(--muted);font-weight:600;display:inline-flex;flex-direction:column}
+.ghost small{font-size:.68rem;font-weight:500}
+.mapwrap.compact{padding-top:26px;margin:0 0 18px}
+.compact .node-box{padding:8px 8px;flex-direction:row;align-items:center;gap:7px}
+.compact .node-no{width:20px;height:20px;font-size:.68rem;flex:none}
+.compact .node-name{font-size:.8rem}
+
+/* chapters */
+.chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.chapter{padding:16px;border-radius:var(--radius);border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink)}
+.chapter.open{border-color:var(--accent);box-shadow:var(--shadow)}
+.chapter.open:hover{transform:translateY(-2px)}
+.chapter.locked{opacity:.65;border-style:dashed}
+.ch-no{font-size:.74rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chapter h3{font-size:1.1rem}
+.ch-go{margin-top:auto;color:var(--accent);font-weight:700;font-size:.9rem}
+.ch-lock{margin-top:auto;font-size:.8rem;color:var(--muted)}
+.mind{border-color:var(--why)}
+
+/* story + sections */
+.story{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--t-connector);border-radius:var(--radius);padding:6px 20px 8px;margin-top:8px}
+.story .sec-k{margin-top:14px}
+.story p{font-size:1.04rem}
+
+/* think cards */
+.think{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:0 0 14px;box-shadow:var(--shadow)}
+.think-top{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.think-kind{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--why);background:var(--why-bg);padding:3px 10px;border-radius:99px}
+.think-q{font-size:1.08rem;font-weight:600;margin:6px 0 12px}
+.think-actions{display:flex;gap:8px}
+.hint{margin-top:12px;padding:10px 14px;border-radius:10px;background:var(--warn-bg);color:var(--ink)}
+.hint .k{font-weight:800;color:var(--warn);text-transform:uppercase;font-size:.74rem;letter-spacing:.06em}
+.answer{border-top:1px dashed var(--line-2);padding-top:14px;animation:rise .25s ease}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.answer-lead{font-size:1.02rem}
+.answer-note{margin-top:10px;padding:9px 13px;border-radius:10px;background:var(--heads-bg);font-size:.92rem}
+.selfcheck{margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)}
+.k{font-weight:700;color:var(--muted)}
+.pill{font:inherit;font-size:.82rem;font-weight:600;padding:5px 13px;border-radius:99px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);cursor:pointer}
+.pill:hover{border-color:var(--accent)}
+.pill.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.pill.on-nailed{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.pill.on-close{background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
+.pill.on-missed{background:var(--why-bg);border-color:var(--why);color:var(--why)}
+.chip{display:inline-block;font-size:.74rem;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--surface-2);color:var(--ink-2);text-decoration:none;margin:0 4px 4px 0}
+a.chip:hover{background:var(--accent-soft);color:var(--accent)}
+.chip.soft{background:var(--good-bg);color:var(--good)}
+
+/* tasks + rules inside answers */
+.tasklist{display:grid;gap:10px;margin:12px 0}
+.taskrow{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.taskrow-head{display:flex;gap:12px;align-items:flex-start}
+.taskrow-head>div{flex:1;min-width:0}
+.taskrow-sub{display:flex;gap:8px;align-items:center;font-size:.8rem;color:var(--muted);margin-top:4px}
+.taskrow-line{font-size:.9rem;color:var(--ink-2);margin:8px 0 6px}
+.taskrule{font-size:.86rem;padding-top:8px;border-top:1px dashed var(--line)}
+.act-code{font-size:.95rem;font-weight:700}
+.act-icon{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:800;font-size:.8rem;color:#fff;flex:none}
+.act-icon.t-agent{background:var(--t-agent)}.act-icon.t-function{background:var(--t-function)}.act-icon.t-api{background:var(--t-api)}.act-icon.t-human{background:var(--t-human)}.act-icon.t-connector{background:var(--t-connector)}
+.badge{font-size:.72rem;font-weight:800;padding:2px 9px;border-radius:99px;color:#fff}
+.badge.t-agent{background:var(--t-agent)}.badge.t-function{background:var(--t-function)}.badge.t-api{background:var(--t-api)}.badge.t-human{background:var(--t-human)}.badge.t-connector{background:var(--t-connector)}
+:root[data-theme="dark"] .badge,:root[data-theme="dark"] .act-icon{color:#10131b}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .badge,:root:not([data-theme="light"]) .act-icon{color:#10131b}}
+.rule{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0;background:var(--bg)}
+.rule-label{font-size:.74rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rule-plain{font-weight:600;margin:4px 0 10px}
+.kvline{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.kvline .k{min-width:84px}
+.expr{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap}
+.why-line{font-size:.9rem;color:var(--ink-2);margin:8px 0 0}
+.codeline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.codeline code{padding:5px 10px}
+
+/* build steps */
+.step .think{border:0;box-shadow:none;padding:0;margin:0 0 10px;background:transparent}
+.step-h .think-kind{margin-left:auto;flex:none}
+.step-title{flex:1}
+.buildit{margin-top:16px;padding-top:14px;border-top:2px solid var(--accent-soft)}
+.build-t{font-size:.76rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.prog{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+.prog-bar{flex:1;height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;max-width:320px}
+.prog-bar i{display:block;height:100%;background:var(--good);border-radius:99px;transition:width .3s}
+.scen{list-style:none;padding:0;margin:8px 0 12px}
+.scen li{padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:var(--bg);margin:0 0 6px}
+.steps{list-style:none;padding:0;margin:0;counter-reset:s}
+.step{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);margin:0 0 12px;overflow:hidden}
+.step.done{opacity:.7}
+.step-h{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface-2)}
+.step-h input{width:20px;height:20px;accent-color:var(--good);flex:none}
+.step-h label{font-weight:700;display:flex;gap:10px;align-items:center;cursor:pointer;flex:1}
+.step-no{width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.78rem;flex:none}
+.step-b{padding:14px 16px 6px}
+.kv{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:0 0 12px}
+.kvrow{display:grid;grid-template-columns:minmax(110px,190px) 1fr auto;gap:12px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
+.kvrow:last-child{border-bottom:0}
+.kvk{font-size:.82rem;font-weight:700;color:var(--muted)}
+.kvv code{font-size:.9em;background:transparent;padding:0}
+.tablewrap{overflow-x:auto;margin:0 0 14px;border:1px solid var(--line);border-radius:12px}
+.tbl{border-collapse:collapse;width:100%;font-size:.9rem}
+.tbl th,.tbl td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl th{background:var(--surface-2);font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.tbl .narrow{width:1%;white-space:nowrap}
+.tbl.info{table-layout:auto}
+.tbl.info td,.tbl.info th{vertical-align:top;overflow-wrap:break-word}
+.tbl.info td:first-child{min-width:9em}
+.tbl.info.two td:first-child{width:38%}
+
+/* callouts */
+.callout{border-radius:12px;padding:10px 16px 6px;margin:0 0 14px;border-left:5px solid var(--line-2);background:var(--surface-2)}
+.callout-t{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.callout.why{background:var(--why-bg);border-color:var(--why)}.callout.why .callout-t{color:var(--why)}
+.callout.check{background:var(--good-bg);border-color:var(--good)}.callout.check .callout-t{color:var(--good)}
+.callout.stuck{background:var(--warn-bg);border-color:var(--warn)}.callout.stuck .callout-t{color:var(--warn)}
+.callout.note,.callout.heads{background:var(--heads-bg);border-color:var(--heads)}.callout.note .callout-t,.callout.heads .callout-t{color:var(--heads)}
+.cards3{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:0 0 14px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.mini h4{margin-bottom:4px}
+.mini p{font-size:.9rem;margin:0}
+.builtbox{display:flex;gap:10px;align-items:center;font-weight:700;padding:12px 16px;border:2px dashed var(--good);border-radius:12px;background:var(--good-bg);cursor:pointer;margin-top:6px}
+.builtbox input{width:20px;height:20px;accent-color:var(--good)}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:30px;flex-wrap:wrap}
+
+/* activities drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,12,20,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100vw);background:var(--bg);border-left:1px solid var(--line-2);box-shadow:-12px 0 40px rgba(0,0,0,.25);transform:translateX(102%);transition:transform .25s ease;z-index:50;display:flex;flex-direction:column}
+.drawer-open .scrim{opacity:1;pointer-events:auto}
+.drawer-open .drawer{transform:none}
+.drawer-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:16px;border-bottom:1px solid var(--line)}
+.drawer-h h2{font-size:1.2rem}
+.drawer-body{padding:14px 16px 40px;overflow-y:auto;flex:1}
+.search,.select{width:100%;font:inherit;font-size:.9rem;padding:9px 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);margin-bottom:10px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.actlist{display:grid;gap:10px}
+.act{border:1px solid var(--line);border-left:5px solid var(--line-2);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.act.t-agent{border-left-color:var(--t-agent)}.act.t-function{border-left-color:var(--t-function)}.act.t-api{border-left-color:var(--t-api)}.act.t-human{border-left-color:var(--t-human)}.act.t-connector{border-left-color:var(--t-connector)}
+.act.later{opacity:.78}
+.act.flash{animation:flash 1.6s ease}
+@keyframes flash{0%,60%{box-shadow:0 0 0 4px var(--accent-soft)}100%{box-shadow:none}}
+.act-top{display:flex;gap:10px;align-items:center}
+.act-name{flex:1;min-width:0;font-weight:800}
+.act-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.studio{font-size:.74rem;color:var(--muted)}
+.act-line{font-size:.9rem;color:var(--ink-2);margin:0 0 8px}
+.gives,.used{font-size:.82rem;margin-bottom:4px}
+.var{margin:0 4px 4px 0;display:inline-block}
+
+@media (max-width:760px){
+  .pagehead h1,.hero h1{font-size:1.65rem}
+  .map{flex-direction:column;gap:8px}
+  .node{padding:0}
+  .node:not(:last-child)::after{display:none}
+  .mapwrap{padding-top:12px}
+  .token{top:-6px;left:auto;right:10px}
+  .kvrow{grid-template-columns:1fr auto}
+  .kvk{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#app">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#/"><i aria-hidden="true"></i>Motor Claims workshop</a>
+    <nav id="nav" aria-label="Main"></nav>
+    <span class="spacer"></span>
+    <div id="tools" class="tools"></div>
+  </div>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer class="foot">Tip: use the left and right arrow keys to move between pages, <b>A</b> for the activity list, <b>P</b> for present mode.</footer>
+<noscript><p style="padding:24px">This guide needs JavaScript to run. Please enable it.</p></noscript>
+<script>
+/* All site content. Facts come from WorkshopKit/CASE_FLOW_PLAN.md and Participant_Build_Guide.md.
+   Text supports: **bold**, `code`, [label](#/route).
+   A stage page is a story plus ordered STEPS. A step with a question (q) is "think, hint, reveal, then build". */
+window.DATA = (function () {
+
+  var TYPES = {
+    agent:    { label: "Agent",        studio: "Agent",              icon: "A" },
+    function: { label: "Function",     studio: "Function (process)", icon: "F" },
+    api:      { label: "API workflow", studio: "API workflow",       icon: "W" },
+    human:    { label: "Human task",   studio: "Action",             icon: "H" },
+    connector:{ label: "Connector",    studio: "Connector",          icon: "C" }
+  };
+
+  var ACTIVITIES = [
+    { name: "ClaimDocumentIntelligence", type: "agent", stages: ["intake"], chapter: 1,
+      line: "Reads the claim PDFs and says whether the set is complete, contradicts itself, or is missing something.",
+      gives: ["documentIngestionStatus", "extractedRepairEstimate", "documentInconsistencies", "missingDocuments"] },
+    { name: "ValidatePolicy", type: "function", stages: ["intake"], chapter: 1,
+      line: "Checks the policy exists, is active, matches the vehicle and covers the incident date. Also finds the customer's email.",
+      gives: ["policyValid", "policyValidationReason", "customerEmail"] },
+    { name: "FraudRiskAssessment", type: "agent", stages: ["assessment"], chapter: 1,
+      line: "Scores how suspicious the claim looks (0 to 100) and explains why.",
+      gives: ["fraudScore", "riskLevel", "fraudFlag", "fraudReasons"] },
+    { name: "AssessDamage", type: "api", stages: ["assessment"], chapter: 1,
+      line: "Turns the repair estimate from the documents into the damage estimate.",
+      gives: ["damageEstimate"] },
+    { name: "AdjusterReview", type: "human", stages: ["review"], chapter: 1,
+      line: "The adjuster's screen. Shows everything found so far; they press Approve, Reject or RequestInformation.",
+      gives: ["decision", "comments"] },
+    { name: "CalculateSettlement", type: "function", stages: ["settlement"], chapter: 1,
+      line: "Works out the payable amount and whether a senior approver is needed.",
+      gives: ["settlementAmount", "seniorApprovalRequired"] },
+    { name: "SeniorApproval", type: "human", stages: ["settlement"], chapter: 1,
+      line: "A senior approver signs off a large settlement before anything is paid.",
+      gives: ["decision2", "comments2"] },
+    { name: "ProcessSettlement", type: "function", stages: ["settlement"], chapter: 1,
+      line: "Records the payment, once per claim, and returns the payment reference.",
+      gives: ["settlementStatus", "paymentReference", "settlementDate"] },
+    { name: "GenerateClaimPacket", type: "api", stages: ["closure"], chapter: 1,
+      line: "Creates the claim packet reference for the file.",
+      gives: ["claimPacketReference"] },
+    { name: "CreateCustomerNotification", type: "api", stages: ["closure"], chapter: 1,
+      line: "Writes the outcome message for the customer. Sending it by email comes in a later chapter.",
+      gives: ["notificationStatus", "claimOutcome", "notificationText"] },
+    { name: "FraudInvestigation", type: "human", stages: ["fraud"], chapter: 4,
+      line: "An investigator looks at a high-risk claim and presses Cleared or Confirmed.",
+      gives: ["fraudResult", "comments3"] },
+    { name: "UpdateClaim", type: "function", stages: ["every stage"], chapter: 5,
+      line: "Saves the stage and status on the claim row so anyone can see where a claim is.",
+      gives: ["Updated"] },
+    { name: "UiPath Data Fabric", type: "connector", stages: ["pending"], chapter: 2,
+      line: "Starts the case when a claim row is created, and later waits for the customer's missing document.",
+      gives: [] },
+    { name: "Gmail", type: "connector", stages: ["pending"], chapter: 2,
+      line: "Sends real emails to the customer.",
+      gives: [] }
+  ];
+
+  var STAGES = [
+    { id: "intake", name: "Intake", short: "Read the paperwork, check the cover", kind: "primary" },
+    { id: "assessment", name: "Assessment", short: "Judge the risk, size the damage", kind: "primary" },
+    { id: "review", name: "Review", short: "A person decides", kind: "primary" },
+    { id: "settlement", name: "Settlement", short: "Work out the money and pay", kind: "primary" },
+    { id: "closure", name: "Closure", short: "Wrap up and tell the customer", kind: "primary" },
+    { id: "pending", name: "Pending Customer", short: "Waiting for the customer", kind: "secondary", chapter: 2 },
+    { id: "denied", name: "Denied", short: "Three ways to a no", kind: "secondary", chapter: 3 },
+    { id: "fraud", name: "Fraud Investigation", short: "Cleared or confirmed", kind: "secondary", chapter: 4 }
+  ];
+
+  var CHAPTERS = [
+    { id: "c1", no: 1, title: "The happy path", sub: "Five stages in a line, then deploy", open: true },
+    { id: "c2", no: 2, title: "Missing documents", sub: "The Pending Customer stage", open: false },
+    { id: "c3", no: 3, title: "Denied", sub: "Three ways to a no", open: false },
+    { id: "c4", no: 4, title: "Fraud investigation", sub: "Cleared or confirmed", open: false },
+    { id: "c5", no: 5, title: "The complete case", sub: "Record updates, emails, time limits", open: false }
+  ];
+
+  var SEQ = "Runs sequentially";
+
+  /* ---------- Reusable step builders ---------- */
+  function addStage(name, description) {
+    return { title: "Add the stage", build: [
+      { t: "kv", rows: [["Name", name], ["Description", description]] }
+    ] };
+  }
+  function entryStep(q, hint, lead, rule, build) {
+    return { title: "When does it start?", kind: "Way in", q: q, hint: hint,
+      answer: { lead: lead, rules: [rule] }, build: build };
+  }
+  function doneStep(q, hint, lead, rule, build, note) {
+    return { title: "When is it done?", kind: "Done when", q: q, hint: hint,
+      answer: { lead: lead, rules: [rule], note: note }, build: build };
+  }
+  function leaveStep(q, hint, lead, scenarios) {
+    return { title: "When should a claim leave early?", kind: "Leave early", q: q, hint: hint,
+      answer: { lead: lead, scenarios: scenarios },
+      build: [{ t: "heads", text: "**Nothing to build here yet.** You come back to this stage in the chapters named above and add these exits then." }] };
+  }
+  var MARK = "Tick **Marks stage complete** on this rule, so the case moves on to the next stage.";
+
+  var STAGE_PAGES = {
+
+    /* ============================ INTAKE ============================ */
+    intake: {
+      title: "Intake",
+      tagline: "Read the paperwork. Check the cover.",
+      story: [
+        "A customer has had an accident. They open the Intake App, enter their policy number and the claim amount, and upload their documents: the claim form, police report, photos, repair estimate, licence, registration and policy copy.",
+        "In the old world a clerk opens every PDF, then opens a spreadsheet to see whether the policy is even live. That takes days, and nobody can say where the claim is.",
+        "In your case, the moment a claim lands the case starts. The first stage has to find out two things before anyone else spends a minute on it: **what do the documents say**, and **is the customer actually covered**."
+      ],
+      steps: [
+        addStage("Intake", "Reads the claim documents with an AI agent and checks the policy is valid."),
+        { title: "Job 1: make sense of the documents", kind: "Which activity?",
+          q: "The first job: read the documents the customer uploaded and say whether they are complete, whether they contradict each other, and pull out the facts. Which activity does that?",
+          hint: "Someone has to read PDFs and understand them. Think of the activity types in the panel.",
+          answer: { lead: "An **agent**. Reading and judging documents is what AI is for.",
+            tasks: [{ act: "ClaimDocumentIntelligence", required: true }] },
+          build: [
+            { t: "text", text: "Add a task to Intake." },
+            { t: "kv", rows: [["Type", "Agent"], ["Resource", "ClaimDocumentIntelligence"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["ClaimId", "vars.response?.ClaimId"],
+              ["DocumentReferences", "vars.response?.DocumentReferences"]
+            ] },
+            { t: "note", text: "Keep the default output variable names. They are the `camelCase` versions of the output names, for example `documentIngestionStatus`." },
+            { t: "why", text: "`vars.response` is the claim as it was when the case started. `?.` gives nothing instead of an error if a value is missing." }
+          ] },
+        { title: "Job 2: check the cover", kind: "Which activity?",
+          q: "The second job: is the customer actually covered? The policy must exist, be active, match the vehicle, and the accident must fall inside the cover period. Which activity?",
+          hint: "This is a fixed set of rules. The answer should be the same every time. No AI needed.",
+          answer: { lead: "A **function**: plain code that always gives the same answer for the same input.",
+            tasks: [{ act: "ValidatePolicy", required: true }] },
+          build: [
+            { t: "text", text: "Add a second task to Intake." },
+            { t: "kv", rows: [["Type", "Function (process)"], ["Resource", "ValidatePolicy"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["PolicyNumber", "vars.response?.PolicyNumber"],
+              ["VehicleRegistration", "vars.response?.VehicleRegistration"],
+              ["IncidentDate", "vars.response?.IncidentDate"]
+            ] },
+            { t: "note", text: "Leave the optional input **DataFolder** empty. The workers find the data themselves." }
+          ] },
+        { title: "Can we make it faster?", kind: "Faster?",
+          q: "Right now the second task waits for the first. Does the policy check need the document result, or the other way round? Can we make this faster?",
+          hint: "What if both started at the same moment?",
+          answer: { lead: "Yes. **Neither needs the other's answer**, so both can start together, **in parallel**.",
+            tasks: [
+              { act: "ClaimDocumentIntelligence", required: true, rule: { name: "Start document analysis", type: SEQ } },
+              { act: "ValidatePolicy", required: true, rule: { name: "Start policy validation", type: SEQ } }
+            ] },
+          build: [
+            { t: "ol", items: [
+              "Place the two tasks side by side, in parallel, instead of one after the other. (The designer lets you add a task beside another.)",
+              "Give each task its start rule:"
+            ] },
+            { t: "kv", rows: [["Rule on ClaimDocumentIntelligence", "Start document analysis"], ["Rule on ValidatePolicy", "Start policy validation"], ["Type (both)", "Runs sequentially"]] },
+            { t: "why", text: "Running them together saves time, and a claim waits for nobody." }
+          ] },
+        entryStep(
+          "This is the first stage of the case. What should make it start?",
+          "Nothing comes before it.",
+          "It starts when the case itself starts.",
+          { label: "Entry rule", name: "Case started", type: "Case entered", plain: "Start this stage the moment the case starts.", expr: null,
+            why: "Intake is the first stage. There is no earlier stage to wait for." },
+          [{ t: "kv", rows: [["Name", "Case started"], ["Type", "Case entered"]] }]),
+        doneStep(
+          "When can you say Intake is completely fine, and the claim can move on?",
+          "Think about the tasks. What must be true for the stage to be done?",
+          "When both required tasks have finished. Nothing more, for now.",
+          { label: "Completion rule", name: "Documents analysed and policy checked", type: "Required tasks completed",
+            plain: "Intake is done when both required tasks have finished.", expr: null,
+            why: "Keep it simple for now. Later this rule learns to say what a good result looks like, and that is when missing documents and invalid policies get their own paths." },
+          [{ t: "kv", rows: [["Name", "Documents analysed and policy checked"], ["Completes the stage when", "Required tasks completed"]] },
+           { t: "note", text: "No expression for now." }],
+          MARK),
+        leaveStep(
+          "Think about what could go wrong at Intake. When should a claim leave this stage for somewhere else?",
+          "Two things can go wrong, one with the paperwork and one with the cover.",
+          "Two things can pull a claim out of Intake:",
+          [
+            { what: "Documents are missing", goes: "Pending Customer", chapter: 2 },
+            { what: "The policy is not valid", goes: "Denied", chapter: 3 }
+          ])
+      ],
+      check: [
+        "Intake shows two tasks, side by side, both marked as required (a `*`).",
+        "Intake has one entry rule (Case started) and one completion rule."
+      ]
+    },
+
+    /* ============================ ASSESSMENT ============================ */
+    assessment: {
+      title: "Assessment",
+      tagline: "Judge the risk. Size the damage.",
+      story: [
+        "The papers have been read and the policy is confirmed. Before a person looks at the claim, the insurer wants two more answers.",
+        "**Does anything look suspicious?** The amount, the history, the way the documents fit together. An AI agent can weigh that up and say why. **How big is the loss?** The repair estimate is already in the documents, so this is a straightforward calculation.",
+        "Both answers will be put in front of the adjuster in the next stage, so that the human decides with full information."
+      ],
+      steps: [
+        addStage("Assessment", "Scores the fraud risk with an AI agent and works out the damage estimate from the repair estimate. Both run together."),
+        { title: "Job 1: how suspicious does it look?", kind: "Which activity?",
+          q: "The first job: judge whether the claim looks suspicious, with reasons, from the amount, the history and any conflicts in the documents. Which activity?",
+          hint: "It is a judgement call that comes with an explanation. Same type as the document reader.",
+          answer: { lead: "An **agent**. It scores the risk from 0 to 100 and says why.",
+            tasks: [{ act: "FraudRiskAssessment", required: true }] },
+          build: [
+            { t: "text", text: "Add a task to Assessment." },
+            { t: "kv", rows: [["Type", "Agent"], ["Resource", "FraudRiskAssessment"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["ClaimId", "vars.response?.ClaimId"],
+              ["PolicyNumber", "vars.response?.PolicyNumber"],
+              ["ClaimAmount", "vars.response?.ClaimAmount"],
+              ["IncidentDate", "vars.response?.IncidentDate"],
+              ["IncidentDescription", "vars.response?.IncidentDescription"],
+              ["ExtractedRepairEstimate", "vars.extractedRepairEstimate"],
+              ["DocumentInconsistencies", "vars.documentInconsistencies"]
+            ] },
+            { t: "why", text: "The last two inputs come from Intake. That is why Assessment has to come after Intake." }
+          ] },
+        { title: "Job 2: how big is the loss?", kind: "Which activity?",
+          q: "The second job: put a number on the damage, using the repair estimate that was pulled out of the documents. Which activity?",
+          hint: "A small calculation. It does not need an agent or a person.",
+          answer: { lead: "An **API workflow**, a tiny calculation that turns the repair estimate into the damage estimate.",
+            tasks: [{ act: "AssessDamage", required: true }] },
+          build: [
+            { t: "text", text: "Add a second task to Assessment." },
+            { t: "kv", rows: [["Type", "API workflow"], ["Resource", "AssessDamage"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [["ExtractedRepairEstimate", "vars.extractedRepairEstimate"]] }
+          ] },
+        { title: "Can we make it faster?", kind: "Faster?",
+          q: "Does the damage estimate need the fraud score, or the other way round? Can these two run at the same time?",
+          hint: "Look at the inputs of each task. Does either use the other's output?",
+          answer: { lead: "Yes. Both only need what Intake produced, so they run **in parallel**.",
+            tasks: [
+              { act: "FraudRiskAssessment", required: true, rule: { name: "Start fraud risk assessment", type: SEQ } },
+              { act: "AssessDamage", required: true, rule: { name: "Start damage assessment", type: SEQ } }
+            ] },
+          build: [
+            { t: "text", text: "Place the two tasks side by side, then give each its start rule:" },
+            { t: "kv", rows: [["Rule on FraudRiskAssessment", "Start fraud risk assessment"], ["Rule on AssessDamage", "Start damage assessment"], ["Type (both)", "Runs sequentially"]] }
+          ] },
+        entryStep(
+          "What must have finished before Assessment can start? Why can it not simply run beside Intake?",
+          "Look at the inputs of the two tasks you just added.",
+          "Intake must be completed first. Both tasks use what Intake produced: the repair estimate and any conflicts between documents.",
+          { label: "Entry rule", name: "Intake completed", type: "Selected stage completed", plain: "Start Assessment when Intake has completed.", expr: null, stage: "Intake",
+            why: "Assessment needs `extractedRepairEstimate` and `documentInconsistencies` from Intake." },
+          [{ t: "kv", rows: [["Name", "Intake completed"], ["Type", "Selected stage completed"], ["Stage", "Intake"]] }]),
+        doneStep(
+          "When can you say Assessment is completely fine?",
+          "The same idea as Intake.",
+          "When both required tasks have finished.",
+          { label: "Completion rule", name: "Fraud score and damage estimate ready", type: "Required tasks completed",
+            plain: "Assessment is done when both required tasks have finished.", expr: null },
+          [{ t: "kv", rows: [["Name", "Fraud score and damage estimate ready"], ["Completes the stage when", "Required tasks completed"]] },
+           { t: "note", text: "No expression for now." }],
+          MARK),
+        leaveStep(
+          "What could the assessment find that should stop the claim here, before a person sees it?",
+          "Think about what the fraud score might say.",
+          "One thing can pull a claim out of Assessment:",
+          [{ what: "The fraud risk is High (a score of 70 or more)", goes: "Fraud Investigation", chapter: 4 }])
+      ],
+      check: [
+        "Assessment shows two required tasks, side by side.",
+        "Its entry rule points at Intake."
+      ]
+    },
+
+    /* ============================ REVIEW ============================ */
+    review: {
+      title: "Review",
+      tagline: "A person owns the decision.",
+      story: [
+        "The claim now has a policy result, a damage estimate and a fraud score. Money is about to be decided, so a person must own the decision: the claims adjuster.",
+        "The adjuster does not open PDFs or spreadsheets. They get one screen in Action Center with everything the machines found, and three buttons: **Approve**, **Reject** and **RequestInformation**.",
+        "For this chapter the adjuster presses Approve. You will play the adjuster yourself."
+      ],
+      steps: [
+        addStage("Review", "A claims adjuster reviews the documents, policy result and fraud assessment, then approves, rejects or asks the customer for more information."),
+        { title: "The job: someone decides", kind: "Which activity?",
+          q: "The insurer wants a person to own this decision. How does the case put the claim in front of them, and what do they get back?",
+          hint: "Not an agent, not code. A person, working in Action Center.",
+          answer: { lead: "A **human task**. The case creates a task in Action Center and waits until the person submits it.",
+            tasks: [{ act: "AdjusterReview", required: true, rule: { name: "Start adjuster review", type: SEQ } }] },
+          build: [
+            { t: "text", text: "Add a task to Review." },
+            { t: "kv", rows: [["Type", "Action (human task)"], ["App", "AdjusterReview"], ["Folder", "Shared/ClaimsSolution"], ["Required", "Yes"], ["Task title", "Review the claim and decide"], ["Assign to", "A specific user: yourself"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["ClaimId", "vars.response?.ClaimId"],
+              ["CustomerName", "vars.response?.CustomerName"],
+              ["ClaimAmount", "vars.response?.ClaimAmount"],
+              ["DamageEstimate", "vars.damageEstimate"],
+              ["PolicyValid", "vars.policyValid"],
+              ["PolicyValidationReason", "vars.policyValidationReason"],
+              ["DocumentIngestionStatus", "vars.documentIngestionStatus"],
+              ["DocumentInconsistencies", "vars.documentInconsistencies"],
+              ["RiskLevel", "vars.riskLevel"],
+              ["FraudScore", "vars.fraudScore"],
+              ["FraudReasons", "vars.fraudReasons"]
+            ] },
+            { t: "kv", rows: [["Task rule name", "Start adjuster review"], ["Task rule type", "Runs sequentially"]] },
+            { t: "note", text: "Outputs: `decision` (the button pressed) and `comments`." },
+            { t: "why", text: "The adjuster is shown everything the machines found, so they decide with full information." }
+          ] },
+        entryStep(
+          "When should the adjuster get the claim?",
+          "After the machines have done their part.",
+          "When Assessment is completed.",
+          { label: "Entry rule", name: "Assessment completed", type: "Selected stage completed", plain: "Start Review when Assessment has completed.", expr: null, stage: "Assessment",
+            why: "The adjuster needs the fraud score and damage estimate on their screen." },
+          [{ t: "kv", rows: [["Name", "Assessment completed"], ["Type", "Selected stage completed"], ["Stage", "Assessment"]] }]),
+        doneStep(
+          "When can you say Review is done?",
+          "Which task has to be finished?",
+          "When the adjuster has submitted their decision.",
+          { label: "Completion rule", name: "Adjuster decision recorded", type: "Required tasks completed",
+            plain: "Review is done when the adjuster has submitted the task.", expr: null,
+            why: "For now any button finishes Review. Later only Approve will complete it, and the other two buttons get their own paths." },
+          [{ t: "kv", rows: [["Name", "Adjuster decision recorded"], ["Completes the stage when", "Required tasks completed"]] },
+           { t: "note", text: "No expression for now." }],
+          MARK),
+        leaveStep(
+          "The adjuster has three buttons. For which buttons should the claim not carry on to Settlement?",
+          "Only one of the three means \"go ahead and pay\".",
+          "Two of the three buttons pull a claim out of Review:",
+          [
+            { what: "Reject", goes: "Denied", chapter: 3 },
+            { what: "RequestInformation", goes: "Pending Customer", chapter: 2 }
+          ])
+      ],
+      check: [
+        "Review has one human task, titled **Review the claim and decide**, assigned to you.",
+        "All eleven inputs are filled."
+      ]
+    },
+
+    /* ============================ SETTLEMENT ============================ */
+    settlement: {
+      title: "Settlement",
+      tagline: "Work out the money. Pay it once.",
+      story: [
+        "The adjuster approved. Now the money. The payable amount is the smallest of three numbers (the claim amount, the damage estimate and the policy's cover limit), minus the deductible, never below zero.",
+        "Big payouts get a second pair of eyes. Above **175,000**, a senior approver must sign off before anything is paid. Most claims are below that, so for them the approval is skipped.",
+        "Then the payment is recorded. Once. A second attempt must never pay twice."
+      ],
+      steps: [
+        addStage("Settlement", "Calculates the payable amount (loss minus deductible, capped at cover). Above the approval threshold a senior approver must approve before payment is recorded."),
+        { title: "Job 1: how much do we pay?", kind: "Which activity?",
+          q: "The first job: work out the payable amount, and whether it is large enough to need a senior approver. Which activity?",
+          hint: "Money is arithmetic, not judgement. The same input must give the same answer.",
+          answer: { lead: "A **function**. Plain code, always the same answer.",
+            tasks: [{ act: "CalculateSettlement", required: true, rule: { name: "Start settlement calculation", type: SEQ } }] },
+          build: [
+            { t: "text", text: "Add a task to Settlement." },
+            { t: "kv", rows: [["Type", "Function (process)"], ["Resource", "CalculateSettlement"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["PolicyNumber", "vars.response?.PolicyNumber"],
+              ["ClaimAmount", "vars.response?.ClaimAmount"],
+              ["DamageEstimate", "vars.damageEstimate"]
+            ] },
+            { t: "kv", rows: [["Task rule name", "Start settlement calculation"], ["Task rule type", "Runs sequentially"]] }
+          ] },
+        { title: "Job 2: a second opinion for big amounts", kind: "Which activity?",
+          q: "Large payouts need a senior person to approve them first. Which activity, and should every claim wait for it?",
+          hint: "Another person, in Action Center. Would it be right to make every small claim wait?",
+          answer: { lead: "A **human task**, and it is **not required**: for most claims it never runs. If it were required and skipped, the stage would wait forever.",
+            tasks: [{ act: "SeniorApproval", required: false }] },
+          build: [
+            { t: "text", text: "Add a task to Settlement, after the calculation." },
+            { t: "kv", rows: [["Type", "Action (human task)"], ["App", "SeniorApproval"], ["Required", "No"], ["Task title", "Approve a settlement above the threshold"], ["Assign to", "A specific user: yourself"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["ClaimId", "vars.response?.ClaimId"],
+              ["SettlementAmount", "vars.settlementAmount"],
+              ["DamageEstimate", "vars.damageEstimate"]
+            ] }
+          ] },
+        { title: "Job 3: record the payment", kind: "Which activity?",
+          q: "The last job: record the payment, once per claim, and get a payment reference back. Which activity?",
+          hint: "Code that must never pay twice.",
+          answer: { lead: "A **function**. It records the payment once, and a second attempt returns the same payment.",
+            tasks: [{ act: "ProcessSettlement", required: true }] },
+          build: [
+            { t: "text", text: "Add a third task to Settlement." },
+            { t: "kv", rows: [["Type", "Function (process)"], ["Resource", "ProcessSettlement"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["ClaimId", "vars.response?.ClaimId"],
+              ["CustomerName", "vars.response?.CustomerName"],
+              ["PolicyNumber", "vars.response?.PolicyNumber"],
+              ["SettlementAmount", "vars.settlementAmount"],
+              ["SeniorApprovalRequired", "vars.seniorApprovalRequired"],
+              ["SeniorApprovalDecision", "vars.decision2"]
+            ] }
+          ] },
+        { title: "Which tasks should wait, and for what?", kind: "Task rules",
+          q: "Two of these tasks should not simply start with the stage. What should the senior approval wait for? And what must be true before the payment is recorded?",
+          hint: "One waits for a need. The other waits for permission.",
+          answer: { lead: "**SeniorApproval** runs only when the calculation says approval is needed. **ProcessSettlement** pays only if no approval was needed, or it was granted. Nothing is paid before approval.",
+            rules: [
+              { label: "Task rule on SeniorApproval", name: "Only if senior approval is required", type: SEQ,
+                plain: "Run the senior approval only when the settlement is large enough to need it.",
+                expr: "vars.seniorApprovalRequired === true", why: "This decides whether an approval is needed." },
+              { label: "Task rule on ProcessSettlement", name: "Pay only if no approval needed or approved", type: SEQ,
+                plain: "Pay when no approval was needed, or when the senior approver said yes.",
+                expr: "vars.seniorApprovalRequired === false || vars.decision2 === 'Approved'",
+                why: "This makes sure nothing is paid before approval. The function itself also refuses to pay without approval, so there are two safety nets." }
+            ] },
+          build: [
+            { t: "kv", rows: [["Rule on SeniorApproval", "Only if senior approval is required"], ["Type", "Runs sequentially"], ["Expression", "vars.seniorApprovalRequired === true"]] },
+            { t: "kv", rows: [["Rule on ProcessSettlement", "Pay only if no approval needed or approved"], ["Type", "Runs sequentially"], ["Expression", "vars.seniorApprovalRequired === false || vars.decision2 === 'Approved'"]] }
+          ] },
+        entryStep(
+          "When should Settlement start?",
+          "After the person has had their say.",
+          "When Review is completed.",
+          { label: "Entry rule", name: "Adjuster approved the claim", type: "Selected stage completed", plain: "Start Settlement when Review has completed.", expr: null, stage: "Review",
+            why: "Later, only an Approve will let a claim in here." },
+          [{ t: "kv", rows: [["Name", "Adjuster approved the claim"], ["Type", "Selected stage completed"], ["Stage", "Review"]] },
+           { t: "note", text: "No expression for now." }]),
+        doneStep(
+          "When can you say Settlement is completely fine?",
+          "What proves the money has been dealt with?",
+          "When the payment has been recorded.",
+          { label: "Completion rule", name: "Settlement paid", type: "Required tasks completed",
+            plain: "Settlement is done when the required tasks are finished and the payment status says Paid.",
+            expr: "vars.settlementStatus === \"Paid\"", why: "The payment status comes back from ProcessSettlement." },
+          [{ t: "kv", rows: [["Name", "Settlement paid"], ["Completes the stage when", "Required tasks completed"], ["Expression", "vars.settlementStatus === \"Paid\""]] }],
+          MARK),
+        leaveStep(
+          "What could happen at Settlement that should stop the payment and end the claim?",
+          "Think about the senior approver's buttons.",
+          "One thing can pull a claim out of Settlement:",
+          [{ what: "The senior approver rejects", goes: "Denied", chapter: 3 }])
+      ],
+      check: [
+        "Settlement has three tasks. Only SeniorApproval is not required.",
+        "The two task rules carry their expressions."
+      ]
+    },
+
+    /* ============================ CLOSURE ============================ */
+    closure: {
+      title: "Closure",
+      tagline: "Wrap up. Tell the customer.",
+      story: [
+        "The customer has been paid. Two loose ends remain. The file needs a **claim packet**: one reference that ties the evidence and the result together. And the customer needs to be **told the outcome** in words that make sense to them.",
+        "Both are small and independent. When they are done the case has nothing left to do, so it closes."
+      ],
+      steps: [
+        addStage("Closure", "Creates the claim packet and prepares the customer notification, then the case closes."),
+        { title: "Job 1: close the file", kind: "Which activity?",
+          q: "The first job: produce one reference that ties the claim's evidence and result together, for the file. Which activity?",
+          hint: "A small, fixed piece of work. No judgement.",
+          answer: { lead: "An **API workflow**, a tiny automation that creates the claim packet reference.",
+            tasks: [{ act: "GenerateClaimPacket", required: true }] },
+          build: [
+            { t: "text", text: "Add a task to Closure." },
+            { t: "kv", rows: [["Type", "API workflow"], ["Resource", "GenerateClaimPacket"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [["ClaimId", "vars.response?.ClaimId"]] }
+          ] },
+        { title: "Job 2: tell the customer", kind: "Which activity?",
+          q: "The second job: write the outcome message for the customer, based on how the claim ended. Which activity?",
+          hint: "Another small automation. It writes the text. Sending it by email comes later.",
+          answer: { lead: "An **API workflow** that writes the outcome message.",
+            tasks: [{ act: "CreateCustomerNotification", required: true }] },
+          build: [
+            { t: "text", text: "Add a second task to Closure." },
+            { t: "kv", rows: [["Type", "API workflow"], ["Resource", "CreateCustomerNotification"], ["Required", "Yes"]] },
+            { t: "table", head: ["Input", "Value"], rows: [
+              ["ClaimId", "vars.response?.ClaimId"],
+              ["CustomerName", "vars.response?.CustomerName"],
+              ["SettlementStatus", "vars.settlementStatus"],
+              ["SettlementAmount", "vars.settlementAmount"]
+            ] },
+            { t: "note", text: "Leave **FraudInvestigationResult** empty for now. Chapter 4 fills it in." }
+          ] },
+        { title: "Can we make it faster?", kind: "Faster?",
+          q: "Does the notification need the claim packet, or the other way round? Can they run at the same time?",
+          hint: "Look at their inputs.",
+          answer: { lead: "Yes. They are independent, so they run **in parallel**.",
+            tasks: [
+              { act: "GenerateClaimPacket", required: true, rule: { name: "Start claim packet", type: SEQ } },
+              { act: "CreateCustomerNotification", required: true, rule: { name: "Start customer notification", type: SEQ } }
+            ] },
+          build: [
+            { t: "text", text: "Place the two tasks side by side, then give each its start rule:" },
+            { t: "kv", rows: [["Rule on GenerateClaimPacket", "Start claim packet"], ["Rule on CreateCustomerNotification", "Start customer notification"], ["Type (both)", "Runs sequentially"]] }
+          ] },
+        entryStep(
+          "When should Closure start?",
+          "After the money has moved.",
+          "When Settlement is completed.",
+          { label: "Entry rule", name: "Settlement completed", type: "Selected stage completed", plain: "Start Closure when Settlement has completed.", expr: null, stage: "Settlement",
+            why: "There is nothing to close until the payment is recorded." },
+          [{ t: "kv", rows: [["Name", "Settlement completed"], ["Type", "Selected stage completed"], ["Stage", "Settlement"]] }]),
+        doneStep(
+          "When can you say Closure is done?",
+          "The usual way.",
+          "When both required tasks have finished.",
+          { label: "Completion rule", name: "Packet and notification done", type: "Required tasks completed",
+            plain: "Closure is done when both required tasks have finished.", expr: null },
+          [{ t: "kv", rows: [["Name", "Packet and notification done"], ["Completes the stage when", "Required tasks completed"]] }],
+          MARK),
+        { title: "When does the whole case finish?", kind: "The whole case",
+          q: "Stages know when they are done. How does the whole case know it is finished?",
+          hint: "It is a setting of the case, not of a stage.",
+          answer: { lead: "A case completion rule. The case finishes when every required stage is done.",
+            rules: [{ label: "Case completion rule", name: "All required stages completed", type: "All required stages completed",
+              plain: "Finish the case when every required (main road) stage is done.", expr: null,
+              why: "Without it the case keeps waiting after Closure." }] },
+          build: [
+            { t: "text", text: "Open **Case plan properties > Completion rules** (click an empty part of the canvas) and add one rule." },
+            { t: "kv", rows: [["Name", "All required stages completed"], ["Completes the case when", "All required stages are completed"]] },
+            { t: "note", text: "The exact option label can differ a little between releases. Look for the nearest match." }
+          ] }
+      ],
+      check: [
+        "Closure shows two required tasks, side by side.",
+        "Case plan properties has the rule **All required stages completed**.",
+        "You now have five stages in a line. Next: run it."
+      ]
+    }
+  };
+
+  /* ---------- Chapter 1: the trigger (before any stage) ---------- */
+  var TRIGGER_STEPS = [
+    { title: "What starts a case?", kind: "The trigger",
+      q: "Nothing happens in a case until something starts it. In the business, what event starts the handling of a claim?",
+      hint: "The customer does something in the Intake App, and a record appears.",
+      answer: { lead: "A new **claim record**. When the customer registers a claim, a row is created in the `MotorInsuranceClaim` table in Data Fabric. That row is the trigger: it starts the case." },
+      build: [
+        { t: "ol", items: [
+          "In **Studio Web**, open **MotorInsuranceClaimManagement**, then the project **MyClaimsCase**.",
+          "You see one circle. That is the trigger, named MotorInsuranceClaim. It is already there, and it is the only thing in your blank case.",
+          "If the designer shows a note about connections, bind **Data Fabric** to your connection."
+        ] },
+        { t: "why", text: "A case always starts from an event. Yours is \"a claim row was created\". Everything you build hangs off this one circle." }
+      ] },
+    { title: "How do you find a case later?", kind: "The case ID",
+      q: "A thousand cases will be running. What should identify each one, so that anyone can find the case for a claim?",
+      hint: "Something unique that the customer and the staff already use.",
+      answer: { lead: "The **claim number**. One claim, one case, and a duplicate claim number cannot start two cases." },
+      build: [
+        { t: "ol", items: [
+          "Click an empty part of the canvas to open **Case plan properties**.",
+          "Set **Case ID** to **External key** with this value:"
+        ] },
+        { t: "code", text: "vars.response?.ClaimId" }
+      ] }
+  ];
+
+  return {
+    TYPES: TYPES, ACTIVITIES: ACTIVITIES, STAGES: STAGES, CHAPTERS: CHAPTERS, STAGE_PAGES: STAGE_PAGES, TRIGGER_STEPS: TRIGGER_STEPS,
+    ORDER: ["home", "scenario", "setup", "c1", "intake", "assessment", "review", "settlement", "closure", "deploy"]
+  };
+})();
+
+</script>
+<script>
+/* Motor Claims workshop site: a small single-page app. Hash routes, no server, works from a file or GitHub Pages. */
+(function () {
+  "use strict";
+  var D = window.DATA;
+  var app = document.getElementById("app");
+
+  /* ---------- tiny DOM helpers ---------- */
+  function h(tag, props) {
+    var el = document.createElement(tag);
+    props = props || {};
+    Object.keys(props).forEach(function (k) {
+      var v = props[k];
+      if (v == null || v === false) return;
+      if (k === "class") el.className = v;
+      else if (k === "text") el.textContent = v;
+      else if (k.slice(0, 2) === "on") el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? "" : v);
+    });
+    for (var i = 2; i < arguments.length; i++) add(el, arguments[i]);
+    return el;
+  }
+  function add(el, c) {
+    if (c == null || c === false) return;
+    if (Array.isArray(c)) { c.forEach(function (x) { add(el, x); }); return; }
+    el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  }
+  /* **bold**, `code`, [label](#/route) */
+  function rich(text) {
+    var frag = document.createDocumentFragment();
+    var re = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
+    String(text).split(re).forEach(function (part) {
+      if (!part) return;
+      if (part.slice(0, 2) === "**") frag.appendChild(h("strong", { text: part.slice(2, -2) }));
+      else if (part[0] === "`") frag.appendChild(h("code", { text: part.slice(1, -1) }));
+      else if (part[0] === "[") {
+        var m = /\[([^\]]+)\]\(([^)]+)\)/.exec(part);
+        frag.appendChild(h("a", { href: m[2], text: m[1] }));
+      } else frag.appendChild(document.createTextNode(part));
+    });
+    return frag;
+  }
+  function p(text, cls) { return h("p", { class: cls }, rich(text)); }
+
+  /* ---------- saved state (progress, self-check). Never required. ---------- */
+  var KEY = "mcw-site-v1";
+  var S = { built: {}, call: {}, done: {} };
+  try { var raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch (e) { /* storage blocked: fine */ }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
+  var REVEAL = {}; // what is open right now (kept while you move around, reset on reload)
+
+  /* ---------- copy ---------- */
+  function copyText(text, done) {
+    function fallback() {
+      var ta = h("textarea", { style: "position:fixed;opacity:0" });
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e) { /* ignore */ }
+      document.body.removeChild(ta); done();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  }
+  function copyBtn(value, label) {
+    var b = h("button", { class: "copy", type: "button", "aria-label": "Copy " + value, title: "Copy" }, label || "Copy");
+    b.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      copyText(value, function () {
+        b.textContent = "Copied"; b.classList.add("ok");
+        setTimeout(function () { b.textContent = label || "Copy"; b.classList.remove("ok"); }, 1200);
+      });
+    });
+    return b;
+  }
+  function codeLine(value) { return h("div", { class: "codeline" }, h("code", { text: value }), copyBtn(value)); }
+
+  /* ---------- lookups ---------- */
+  function act(name) { return D.ACTIVITIES.filter(function (a) { return a.name === name; })[0]; }
+  function stage(id) { return D.STAGES.filter(function (s) { return s.id === id; })[0]; }
+  function primaries() { return D.STAGES.filter(function (s) { return s.kind === "primary"; }); }
+  function builtCount() { return primaries().filter(function (s) { return S.built[s.id]; }).length; }
+  function nextUnbuilt() { var l = primaries().filter(function (s) { return !S.built[s.id]; }); return l.length ? l[0].id : "done"; }
+
+  /* ---------- building blocks ---------- */
+  function typeBadge(t) { return h("span", { class: "badge t-" + t }, D.TYPES[t].label); }
+
+  function actCard(a, opts) {
+    opts = opts || {};
+    var later = a.chapter > 1;
+    return h("article", { class: "act t-" + a.type + (later ? " later" : ""), id: "act-" + a.name },
+      h("div", { class: "act-top" },
+        h("span", { class: "act-icon t-" + a.type, "aria-hidden": "true" }, D.TYPES[a.type].icon),
+        h("div", { class: "act-name" }, h("code", { text: a.name })),
+        copyBtn(a.name)),
+      h("div", { class: "act-meta" }, typeBadge(a.type),
+        h("span", { class: "studio" }, "Task type in Studio Web: " + D.TYPES[a.type].studio),
+        later ? h("span", { class: "chip soft" }, "Chapter " + a.chapter) : null),
+      p(a.line, "act-line"),
+      a.gives.length ? h("div", { class: "gives" }, h("span", { class: "k" }, "You get: "),
+        a.gives.map(function (g) { return h("code", { class: "var", text: g }); })) : null,
+      h("div", { class: "used" }, h("span", { class: "k" }, "Used in: "),
+        a.stages.map(function (sid) {
+          var s = stage(sid);
+          return s && !opts.noLinks && a.chapter === 1 ? h("a", { class: "chip", href: "#/" + sid }, s.name) : h("span", { class: "chip" }, s ? s.name : sid);
+        })));
+  }
+
+  function actChip(name, extra) {
+    var a = act(name);
+    return h("div", { class: "taskrow" },
+      h("div", { class: "taskrow-head" },
+        h("span", { class: "act-icon t-" + a.type, "aria-hidden": "true" }, D.TYPES[a.type].icon),
+        h("div", {}, h("div", {}, h("code", { class: "act-code", text: a.name }), copyBtn(a.name)),
+          h("div", { class: "taskrow-sub" }, typeBadge(a.type), h("span", {}, extra.required ? "Required" : "Not required"))),
+        h("button", { class: "linkbtn", type: "button", onclick: function () { openDrawer(a.name); } }, "Details")),
+      p(a.line, "taskrow-line"),
+      extra.rule ? h("div", { class: "taskrule" }, h("span", { class: "k" }, "Task rule: "),
+        h("code", { text: extra.rule.name }), h("span", { class: "muted" }, " · " + extra.rule.type),
+        extra.rule.expr ? h("div", {}, codeLine(extra.rule.expr)) : null) : null);
+  }
+
+  function ruleCard(rule, key) {
+    var open = !!REVEAL[key];
+    var body = h("div", { class: "rule-expr" });
+    function paint() {
+      body.textContent = "";
+      if (!REVEAL[key]) {
+        body.appendChild(h("button", { class: "btn small", type: "button", onclick: function () { REVEAL[key] = true; paint(); } }, "Show the rule"));
+        return;
+      }
+      body.appendChild(h("div", { class: "kvline" }, h("span", { class: "k" }, "Name"), h("code", { text: rule.name }), copyBtn(rule.name)));
+      body.appendChild(h("div", { class: "kvline" }, h("span", { class: "k" }, "Type"), h("span", {}, rule.type + (rule.stage ? " · stage " + rule.stage : ""))));
+      body.appendChild(h("div", { class: "kvline" }, h("span", { class: "k" }, "Expression"),
+        rule.expr ? h("span", { class: "expr" }, h("code", { text: rule.expr }), copyBtn(rule.expr)) : h("span", { class: "muted" }, "None. Leave it empty.")));
+      if (rule.why) body.appendChild(p(rule.why, "why-line"));
+    }
+    paint();
+    return h("div", { class: "rule" },
+      h("div", { class: "rule-label" }, rule.label),
+      p(rule.plain, "rule-plain"),
+      body);
+  }
+
+  /* ---------- content blocks (shared by stage build steps and plain pages) ---------- */
+  function blocks(list) {
+    var out = [];
+    list.forEach(function (b) {
+      switch (b.t) {
+        case "h": out.push(h("h3", { text: b.text })); break;
+        case "text": out.push(p(b.text)); break;
+        case "list": out.push(h("ul", {}, b.items.map(function (i) { return h("li", {}, rich(i)); }))); break;
+        case "ol": out.push(h("ol", {}, b.items.map(function (i) { return h("li", {}, rich(i)); }))); break;
+        case "kv":
+          out.push(h("div", { class: "kv" }, b.rows.map(function (r) {
+            return h("div", { class: "kvrow" }, h("div", { class: "kvk" }, r[0]),
+              h("div", { class: "kvv" }, h("code", { text: r[1] })), copyBtn(r[1]));
+          }))); break;
+        case "table":
+          out.push(h("div", { class: "tablewrap" }, h("table", { class: "tbl" },
+            h("thead", {}, h("tr", {}, b.head.map(function (x) { return h("th", { text: x }); }), h("th", { class: "narrow" }, ""))),
+            h("tbody", {}, b.rows.map(function (r) {
+              return h("tr", {}, h("td", {}, h("code", { text: r[0] })), h("td", {}, h("code", { text: r[1] })), h("td", { class: "narrow" }, copyBtn(r[1])));
+            }))))); break;
+        case "info":
+          out.push(h("div", { class: "tablewrap" }, h("table", { class: "tbl info" + (b.head.length === 2 ? " two" : "") },
+            h("thead", {}, h("tr", {}, b.head.map(function (x) { return h("th", { text: x }); }))),
+            h("tbody", {}, b.rows.map(function (r) { return h("tr", {}, r.map(function (c) { return h("td", {}, rich(c)); })); }))))); break;
+        case "code": out.push(codeLine(b.text)); break;
+        case "why": case "note": case "check": case "stuck": case "heads":
+          var title = { why: "Why", note: "Note", check: "Check", stuck: "Stuck?", heads: "Heads-up" }[b.t];
+          out.push(h("aside", { class: "callout " + b.t },
+            h("div", { class: "callout-t" }, title),
+            b.items ? h("ul", {}, b.items.map(function (i) { return h("li", {}, rich(i)); })) : p(b.text)));
+          break;
+        case "cards":
+          out.push(h("div", { class: "cards3" }, b.items.map(function (c) {
+            return h("div", { class: "mini" }, h("h4", { text: c.title }), p(c.text));
+          }))); break;
+      }
+    });
+    return out;
+  }
+
+  /* ---------- the map ---------- */
+  function caseMap(opts) {
+    opts = opts || {};
+    var cur = opts.current, tokenAt = nextUnbuilt();
+    var row = h("ol", { class: "map", "aria-label": "The five main stages" });
+    primaries().forEach(function (s, i) {
+      var built = !!S.built[s.id];
+      var node = h("li", { class: "node" + (built ? " built" : "") + (cur === s.id ? " current" : "") },
+        tokenAt === s.id ? h("span", { class: "token", title: "Your claim is waiting here", "aria-hidden": "true" }, "C") : null,
+        h("a", { href: "#/" + s.id, class: "node-box" },
+          h("span", { class: "node-no" }, built ? "✓" : String(i + 1)),
+          h("span", { class: "node-name" }, s.name),
+          opts.compact ? null : h("span", { class: "node-sub" }, s.short)));
+      row.appendChild(node);
+    });
+    var wrap = h("div", { class: "mapwrap" + (opts.compact ? " compact" : "") }, row);
+    if (tokenAt === "done") wrap.appendChild(h("div", { class: "finish" }, "✓ Your claim has made it through the happy path"));
+    if (!opts.compact) {
+      wrap.appendChild(h("div", { class: "side" },
+        h("span", { class: "side-k" }, "Later chapters add the detours"),
+        D.STAGES.filter(function (s) { return s.kind === "secondary"; }).map(function (s) {
+          return h("span", { class: "ghost" }, s.name, h("small", {}, "Chapter " + s.chapter));
+        })));
+    }
+    return wrap;
+  }
+
+  /* ---------- pages ---------- */
+  function pageHead(eyebrow, title, lead) {
+    return h("header", { class: "pagehead" },
+      eyebrow ? h("div", { class: "eyebrow" }, eyebrow) : null,
+      h("h1", { text: title }),
+      lead ? p(lead, "lead") : null);
+  }
+
+  function pageHome() {
+    var n = builtCount();
+    var calls = callTally();
+    return [
+      h("section", { class: "hero" },
+        h("div", { class: "eyebrow" }, "Maestro Case workshop"),
+        h("h1", { text: "Build a motor insurance claims case" }),
+        p("A customer registers a claim. AI agents read the documents, code checks the rules, and people decide only when they must. **You build the conductor.** Every worker is already made for you.", "lead"),
+        h("div", { class: "hero-actions" },
+          h("a", { class: "btn primary", href: "#/setup" }, "Start with Setup"),
+          h("a", { class: "btn", href: "#/scenario" }, "Read the scenario"),
+          h("button", { class: "btn", type: "button", onclick: function () { openDrawer(); } }, "Browse the activities"))),
+      h("section", { class: "panel" },
+        h("div", { class: "panel-h" }, h("h2", { text: "The case you will build" }),
+          h("span", { class: "muted" }, n + " of 5 main stages built")),
+        caseMap(),
+        p("Click a stage to open it. The claim token sits on the next stage to build.", "muted small")),
+      h("section", {}, h("h2", { class: "sec", text: "The chapters" }),
+        h("div", { class: "chapters" }, D.CHAPTERS.map(function (c) {
+          var inner = [
+            h("div", { class: "ch-no" }, "Chapter " + c.no),
+            h("h3", { text: c.title }),
+            p(c.sub, "muted"),
+            c.open ? h("div", { class: "ch-go" }, "Open chapter") : h("div", { class: "ch-lock" }, "Opens later in the workshop")
+          ];
+          return c.open ? h("a", { class: "chapter open", href: "#/" + c.id }, inner) : h("div", { class: "chapter locked" }, inner);
+        }))),
+      calls.total ? h("section", { class: "panel mind" },
+        h("h2", { text: "Your calls so far" }),
+        p("You called **" + calls.nailed + "** exactly, **" + calls.close + "** were close and **" + calls.missed + "** were new to you. Nobody is keeping score but you.", "")) : null
+    ];
+  }
+
+  function callTally() {
+    var t = { nailed: 0, close: 0, missed: 0, total: 0 };
+    Object.keys(S.call).forEach(function (k) { if (t[S.call[k]] != null) { t[S.call[k]]++; t.total++; } });
+    return t;
+  }
+
+  function pageScenario() {
+    return [
+      pageHead("The scenario", "The business story", "The company, the people, and the journey of a claim. Open this any time you need to remember what the case is for."),
+      h("h2", { class: "sec", text: "The company" }),
+      p("A motor insurer settles accident claims. Today a clerk reads every document by hand, checks the policy in a spreadsheet, emails people, and chases approvals. **Claims take days and nobody can say where a claim is.**"),
+      h("h2", { class: "sec", text: "The goal" }),
+      blocks([{ t: "list", items: [
+        "Read the documents and check the policy by itself.",
+        "Ask a person only when a human decision is really needed.",
+        "Never pay more than the policy allows, and never pay without the right approval.",
+        "Tell the customer what is happening.",
+        "Always show the current status of every claim."
+      ] }]),
+      h("h2", { class: "sec", text: "The people" }),
+      blocks([{ t: "info", head: ["Who", "What they do in the process"], rows: [
+        ["**Customer**", "Registers the claim and uploads documents in the Intake App. Receives emails. Adds a missing document later."],
+        ["**Claims adjuster**", "Reviews each claim and decides: approve, reject, or ask the customer for more information."],
+        ["**Senior approver**", "Approves large settlements before they are paid."],
+        ["**Fraud investigator**", "Looks at claims the system flags as high risk."],
+        ["**Operations**", "Watches the claim record and the time limits."]
+      ] }]),
+      h("h2", { class: "sec", text: "The customers you will test with" }),
+      blocks([{ t: "info", head: ["Customer", "Story", "What should happen"], rows: [
+        ["**Rahul Sharma**", "Rear-ended at a traffic light. All 7 documents, clean history, claim 185,000.", "Straight through. Paid 162,400. No senior approval."],
+        ["**Priya Nair**", "Side collision. She forgot the repair estimate.", "The case pauses, emails her, waits for the estimate, then continues."],
+        ["**Arjun Mehta**", "Head-on collision, 240,000. The documents contradict each other and he has 3 earlier claims.", "Flagged as high fraud risk. An investigator decides. If cleared, the payout is 230,000 and needs a senior approver."],
+        ["**Meera**", "Her policy has expired.", "Denied at the start."]
+      ] }]),
+      h("h2", { class: "sec", text: "The journey of a claim" }),
+      p("Five stages on the **main road**. A claim normally passes through all of them. Three **side stages** only start when something unusual happens."),
+      caseMap({ compact: false }),
+      blocks([{ t: "info", head: ["Detour", "When it happens", "Where it goes"], rows: [
+        ["Pending Customer", "A document is missing, or the adjuster asks for more information.", "Waits for the customer, then back to where it left."],
+        ["Fraud Investigation", "The fraud score is High (70 or more).", "Cleared goes back to Assessment. Confirmed goes to Denied."],
+        ["Denied", "The policy is invalid, the adjuster rejects, a senior approver rejects, or fraud is confirmed.", "Tells the customer and ends the case."]
+      ] }]),
+      h("h2", { class: "sec", text: "The rules of the business" }),
+      blocks([{ t: "info", head: ["Rule", "In plain words"], rows: [
+        ["Documents", "AI reads them. The result is **Complete**, **Inconsistent** (all there but they contradict each other) or **Incomplete** (something is missing)."],
+        ["Policy", "Valid only if it exists, is Active, matches the vehicle, and the incident date is inside the cover period."],
+        ["Fraud", "A High risk (70 or more) goes to an investigator before anything else happens. Fraud is never named to the customer."],
+        ["The adjuster", "A person decides: Approve, Reject (comment required), or Request information."],
+        ["Money", "The smallest of claim amount, damage estimate and cover limit, minus the 10,000 deductible, never below zero."],
+        ["Senior approval", "Above 175,000 a senior approver must approve before anything is paid."],
+        ["Payment", "Recorded once per claim as `PAY-<claim number>`. A second attempt returns the same payment."]
+      ] }])
+    ];
+  }
+
+  function pageSetup() {
+    return [
+      pageHead("Setup", "Get ready", "You prepare your own UiPath account with one import and one run, configure your Gmail and Data Fabric connections, and watch a finished case run. You need a UiPath Community account and the file `MotorClaimsWorkshop_Setup.uis`. Nothing to install."),
+      h("h2", { class: "sec", text: "1. Import and run Setup" }),
+      blocks([
+        { t: "h", text: "Import the Setup solution" },
+        { t: "ol", items: [
+          "Open **Studio Web** and go to the home page.",
+          "Use **Import** (next to **Create New**; the label can differ).",
+          "Choose the file `MotorClaimsWorkshop_Setup.uis`.",
+          "Open the solution **MotorClaimsWorkshop_Setup**. It has one project, **SetupWorkshop**."
+        ] },
+        { t: "h", text: "Run Setup" },
+        { t: "ol", items: [
+          "Open **SetupWorkshop** and press **Debug**. A small form opens.",
+          "Set **Action** to `InstallWorkshop`. **Leave every other field empty.**",
+          "Run it and **wait for the result**."
+        ] },
+        { t: "check", text: "The result ends with **Done** and gives your **Intake App** address, for example `https://<your-organization>.uipath.host/claims-<your-organization>`. Copy it somewhere." },
+        { t: "stuck", items: [
+          "**The screen looks stuck.** Studio Web sometimes shows only the first lines until the run ends. Open a second Debug of **SetupWorkshop** with **Action** = `Status`. It ends with **FINISHED** or **NOT FINISHED**.",
+          "**It says a name cannot be used.** A leftover from an earlier try is in your account. Run Setup again with **DeploymentName** set to another name, for example `ClaimsSolutionB`."
+        ] },
+        { t: "h", text: "What Setup just created for you" },
+        { t: "info", head: ["What", "Where"], rows: [
+          ["A sign-in client for the approval screens and the Intake App", "Your organization"],
+          ["The **environment**: the claim tables, the document bucket, the two business-number assets, every worker, the approval screens and the Intake App", "Orchestrator folder `Shared/ClaimsSolution`"],
+          ["Demo **policies** and **claim history**, with the customer email set to **your own address**", "The `PolicyMaster` and `ClaimHistory` tables"],
+          ["The workshop solution **MotorInsuranceClaimManagement**, linked to that environment", "Your Studio Web"]
+        ] },
+        { t: "text", text: "No claims exist yet. You create one when you want to test." }
+      ]),
+      h("h2", { class: "sec", text: "2. Configure your connections" }),
+      blocks([
+        { t: "text", text: "The case sends real emails through **Gmail** and starts from a row in **Data Fabric**. Both need a connection that belongs to you." },
+        { t: "ol", items: [
+          "In **Studio Web**, open the solution **MotorInsuranceClaimManagement**, then its **Connections** item. It lists **Data Fabric connection** and **Gmail connection**.",
+          "Click **Data Fabric connection** and connect. It uses your UiPath sign-in, so there is nothing to type.",
+          "Click **Gmail connection** and connect. A Google window opens. Choose an account **whose inbox you can open**."
+        ] },
+        { t: "check", text: "Both connections show as connected, with no warning." },
+        { t: "why", text: "The customer emails are sent from your Gmail connection to **your own email address**, so you see exactly what a customer would receive." },
+        { t: "stuck", text: "If a connection says **expired**, open it and use **Login** (or **Reconnect**) once more." }
+      ]),
+      h("h2", { class: "sec", text: "3. See a finished case run" }),
+      p("Rahul is the clean case: a valid policy, all seven documents, no fraud signs. You run the **finished** case once, so you see what you are going to build."),
+      blocks([
+        { t: "ol", items: [
+          "Go back to **MotorClaimsWorkshop_Setup > SetupWorkshop** and press **Debug**. Set **Action** to `RegisterClaim` and **Customer** to `Rahul`. Run it.",
+          "In the solution **MotorInsuranceClaimManagement**, open **5_Complete** and press **Debug**. Choose **CLM-1001** and pick your **Data Fabric** and **Gmail** connections.",
+          "The case stops at **Review**. Open **Action Center > Tasks**, open **Review the claim and decide**, choose **Approve** and submit."
+        ] },
+        { t: "check", items: [
+          "Setup said **CLM-1001 (Rahul Sharma): 7 documents uploaded, claim registered**.",
+          "In Studio Web the case shows every stage completed.",
+          "In **Data Fabric > MotorInsuranceClaim** the row **CLM-1001** is **Closed**, with a settlement amount and payment reference.",
+          "A customer email arrived in your inbox."
+        ] },
+        { t: "stuck", items: [
+          "**Debug cannot find the claim.** Run Setup with `RegisterClaim` for Rahul again.",
+          "**A policy problem.** Run Setup with **Action** = `LoadData`, then Debug again.",
+          "**No task in Action Center.** Wait a little and refresh. The agents take time to read the documents.",
+          "**Anything else.** Run Setup with **Action** = `Status` and send the facilitator what you see."
+        ] }
+      ]),
+      h("div", { class: "next" }, h("a", { class: "btn primary", href: "#/c1" }, "Next: Chapter 1, the happy path"))
+    ];
+  }
+
+  function pageChapter1() {
+    return [
+      pageHead("Chapter 1", "The happy path", "You build five stages in a line, run a claim through them, and deploy it. Nothing goes wrong yet. That is on purpose."),
+      caseMap(),
+      h("h2", { class: "sec", text: "Step 0: the trigger" }),
+      p("Before any stage, decide what starts the case. Open **MyClaimsCase** and work through these two steps.", "muted"),
+      stepList("c1", D.TRIGGER_STEPS),
+      h("h2", { class: "sec", text: "Five words you need" }),
+      blocks([{ t: "cards", items: [
+        { title: "Stage", text: "A phase of the process. The case moves from stage to stage. Every stage has a name, tasks and rules." },
+        { title: "Task", text: "One piece of work inside a stage: run an agent, call a function, ask a person. It has inputs (what you give it) and outputs (what it gives back)." },
+        { title: "Variable", text: "A task's outputs are kept as case variables, like `vars.policyValid`. Later tasks and rules read them. Your claim as it was at the start is `vars.response`." },
+        { title: "Rule", text: "Rules decide when things happen. An **entry rule** starts a stage. A **completion rule** says when it is done. A **task rule** says when a task runs." },
+        { title: "Required", text: "A task marked required (`*`) must finish before its stage can complete. A task that only sometimes runs must not be required." }
+      ] }]),
+      p("`vars.response?.ClaimId` uses `?.` so that a missing value gives nothing instead of an error. Use it for `vars.response`.", "muted small"),
+      h("h2", { class: "sec", text: "How each stage page works" }),
+      blocks([{ t: "ol", items: [
+        "**Read the story.** What is happening in the business at this point?",
+        "**Add the stage**, then go through its jobs one by one. For each job you are asked which activity should do it. Think, ask for a **Hint** if you want one, then **Reveal**.",
+        "**Make it faster.** Can some tasks run side by side?",
+        "**Decide the rules.** When does the stage start? When is it done? When should a claim leave early?",
+        "After each reveal, tell yourself how close you were. Nobody sees it but you. Then **build it**: every name and value has a Copy button."
+      ] }]),
+      p("Keep the activity list open while you think. Press **Activities** at the top of any page.", "muted"),
+      h("div", { class: "next" }, h("a", { class: "btn primary", href: "#/intake" }, "Start with Intake"))
+    ];
+  }
+
+  function pageDeploy() {
+    return [
+      pageHead("Chapter 1, finale", "Run it, then deploy it", "Your five stages are in a line. First prove it works in Debug. Then deploy it with the standard Publish and Upgrade buttons, and watch it in Maestro."),
+      caseMap({ compact: true }),
+      h("h2", { class: "sec", text: "1. Run it in Debug" }),
+      blocks([
+        { t: "ol", items: [
+          "Run Setup with **Action** = `RegisterClaim` and **Customer** = `Rahul`, if you have not already. It creates claim **CLM-1001**.",
+          "In **MyClaimsCase**, press **Debug**, choose **CLM-1001** and pick your connections.",
+          "When **Review the claim and decide** appears in **Action Center > Tasks**, open it and press **Approve**.",
+          "Watch the case move: Intake, Assessment, Review, Settlement, Closure."
+        ] },
+        { t: "check", items: [
+          "The instance reaches **Completed**.",
+          "The trail is Intake, Assessment, Review, Settlement, Closure.",
+          "Rahul's settlement is **162,400** with payment reference `PAY-CLM-<number>`."
+        ] },
+        { t: "stuck", text: "Open the example case `1_HappyPath` and compare. It also includes a few conditions you add in later chapters, so small differences are expected." }
+      ]),
+      h("h2", { class: "sec", text: "2. Deploy it" }),
+      blocks([
+        { t: "ol", items: [
+          "**Remove the example cases.** In Studio Web open the three-dot menu of each of `1_HappyPath`, `2_PendingCustomer`, `3_Denied`, `4_FraudInvestigation` and `5_Complete` and remove it from the solution. Keep **MyClaimsCase**, the workers, the approval screens and the Intake App.",
+          "Press **Publish** on **MotorInsuranceClaimManagement**. Pack to **Shared** and keep the version Studio Web proposes. If it says that version exists, raise the last number.",
+          "Open **Orchestrator > Solutions > Deployments** at the **tenant** level (the Solutions tab is hidden when a folder is selected). Open your environment `ClaimsSolution`, choose the three-dot menu and **Upgrade** to the new version.",
+          "In the wizard, bind your **Gmail** and **Data Fabric** connections. If one is expired, use **Login to connection**.",
+          "When it finishes, choose **Activate**.",
+          "Open your **Intake App** address, sign in, register a claim with its documents, and open **Maestro > Case management**. Your case runs."
+        ] },
+        { t: "why", text: "Upgrade adds your case to the same folder as the Intake App, tables and workers. Nothing is duplicated. Activation is needed because the case starts from a claim row, and that start event runs through your Data Fabric connection." },
+        { t: "note", text: "Whatever cases are still in the solution when you Publish get deployed, and each starts on every new claim. That is why step 1 removes the examples. If you want an example back later, import `MotorClaims_Workshop.uis` from the kit." },
+        { t: "check", text: "Your case appears under **Maestro > Case management**, and a claim registered in the Intake App starts an instance." }
+      ]),
+      h("div", { class: "next" }, h("span", { class: "muted" }, "Chapter 2 opens later in the workshop: what happens when documents are missing."))
+    ];
+  }
+
+  /* ---------- steps: think, hint, reveal, then build ---------- */
+  function stepList(pageKey, steps, onChange) {
+    return h("ol", { class: "steps" }, steps.map(function (step, i) {
+      var key = pageKey + ":" + i;
+      var box = h("input", { type: "checkbox", id: "st-" + key, "aria-label": "Mark this step done" });
+      box.checked = !!S.done[key];
+      var li = h("li", { class: "step" + (S.done[key] ? " done" : "") });
+      box.addEventListener("change", function () {
+        S.done[key] = box.checked; save(); li.classList.toggle("done", box.checked); if (onChange) onChange();
+      });
+      li.appendChild(h("div", { class: "step-h" }, box,
+        h("label", { for: "st-" + key }, h("span", { class: "step-no" }, String(i + 1)), h("span", { class: "step-title" }, step.title)),
+        step.kind ? h("span", { class: "think-kind" }, step.kind) : null));
+      li.appendChild(h("div", { class: "step-b" }, step.q ? thinkCard(pageKey, i, step) : blocks(step.build)));
+      return li;
+    }));
+  }
+
+  function doneCount(pageKey, n) {
+    var c = 0; for (var i = 0; i < n; i++) if (S.done[pageKey + ":" + i]) c++; return c;
+  }
+
+  function pageStage(id) {
+    var sp = D.STAGE_PAGES[id];
+    var idx = primaries().map(function (x) { return x.id; }).indexOf(id);
+    var total = sp.steps.length;
+    var prog = h("div", { class: "prog" });
+    function paintProg() {
+      var n = doneCount(id, total);
+      prog.textContent = "";
+      prog.appendChild(h("div", { class: "prog-bar" }, h("i", { style: "width:" + Math.round(100 * n / total) + "%" })));
+      prog.appendChild(h("span", { class: "muted small" }, n + " of " + total + " steps done"));
+    }
+    paintProg();
+
+    var root = [];
+    root.push(caseMap({ compact: true, current: id }));
+    root.push(pageHead("Chapter 1 · Stage " + (idx + 1) + " of 5", sp.title, sp.tagline));
+    root.push(h("section", { class: "story" },
+      h("div", { class: "sec-k" }, "The business story"),
+      sp.story.map(function (t) { return p(t); })));
+    root.push(h("section", {},
+      h("div", { class: "sec-k" }, "Build this stage, one step at a time"),
+      p("Work in **MyClaimsCase**. Where a step asks a question, think first, say it out loud, and press Reveal when you are ready. Keep the activity list open if it helps.", "muted"),
+      prog,
+      stepList(id, sp.steps, paintProg)));
+
+    var builtBox = h("input", { type: "checkbox", id: "built-" + id });
+    builtBox.checked = !!S.built[id];
+    builtBox.addEventListener("change", function () { S.built[id] = builtBox.checked; save(); });
+    root.push(h("section", {},
+      h("div", { class: "sec-k" }, "Check it"),
+      blocks([{ t: "check", items: sp.check }]),
+      h("label", { class: "builtbox", for: "built-" + id }, builtBox, h("span", {}, "I built and checked this stage"))));
+    root.push(h("p", { class: "muted small" }, rich("Stuck? Open the example case `1_HappyPath` and compare. It already has a few conditions that this chapter leaves for later, so small differences are expected.")));
+
+    var prev = idx > 0 ? primaries()[idx - 1] : null;
+    var next = idx < 4 ? primaries()[idx + 1] : null;
+    root.push(h("div", { class: "pager" },
+      prev ? h("a", { class: "btn", href: "#/" + prev.id }, "← " + prev.name) : h("a", { class: "btn", href: "#/c1" }, "← Chapter 1"),
+      next ? h("a", { class: "btn primary", href: "#/" + next.id }, next.name + " →") : h("a", { class: "btn primary", href: "#/deploy" }, "Run it and deploy →")));
+    return root;
+  }
+
+  function thinkCard(pageKey, i, step) {
+    var key = pageKey + ":" + i;
+    var wrap = h("div", { class: "think", id: "step-" + i });
+    function paint() {
+      wrap.textContent = "";
+      var r = REVEAL[key] || {};
+      wrap.appendChild(h("p", { class: "think-q" }, rich(step.q)));
+      if (!r.answer) {
+        var row = h("div", { class: "think-actions" });
+        if (!r.hint) row.appendChild(h("button", { class: "btn small", type: "button", onclick: function () { REVEAL[key] = Object.assign({}, r, { hint: true }); paint(); } }, "Hint"));
+        row.appendChild(h("button", { class: "btn small primary", type: "button", onclick: function () { REVEAL[key] = Object.assign({}, r, { answer: true }); paint(); } }, "Reveal"));
+        wrap.appendChild(row);
+        if (r.hint) wrap.appendChild(h("div", { class: "hint" }, h("span", { class: "k" }, "Hint "), rich(step.hint)));
+        return;
+      }
+      var a = step.answer;
+      var ans = h("div", { class: "answer" });
+      ans.appendChild(p(a.lead, "answer-lead"));
+      if (a.tasks) ans.appendChild(h("div", { class: "tasklist" }, a.tasks.map(function (t) { return actChip(t.act, t); })));
+      if (a.scenarios) ans.appendChild(h("ul", { class: "scen" }, a.scenarios.map(function (s) {
+        return h("li", {}, h("strong", { text: s.what }), " → ", s.goes, h("span", { class: "chip soft" }, "Chapter " + s.chapter));
+      })));
+      if (a.rules) a.rules.forEach(function (rule, k) { ans.appendChild(ruleCard(rule, key + ":r" + k)); });
+      if (a.note) ans.appendChild(h("div", { class: "answer-note" }, rich(a.note)));
+      wrap.appendChild(ans);
+
+      wrap.appendChild(h("div", { class: "selfcheck" }, h("span", { class: "k" }, "How close were you? "),
+        [["nailed", "Nailed it"], ["close", "Close"], ["missed", "New to me"]].map(function (o) {
+          return h("button", { class: "pill" + (S.call[key] === o[0] ? " on on-" + o[0] : ""), type: "button",
+            onclick: function () { S.call[key] = o[0]; save(); paint(); } }, o[1]);
+        }),
+        h("button", { class: "linkbtn", type: "button", onclick: function () { delete REVEAL[key]; paint(); } }, "Hide the answer")));
+
+      if (step.build) wrap.appendChild(h("div", { class: "buildit" },
+        h("div", { class: "build-t" }, "Now build it"), blocks(step.build)));
+    }
+    paint();
+    return wrap;
+  }
+
+  /* ---------- activities drawer ---------- */
+  var drawerState = { type: "all", q: "", stage: "all" };
+  var drawer, drawerBody, scrim;
+  function buildDrawer() {
+    scrim = h("div", { class: "scrim", onclick: closeDrawer });
+    drawerBody = h("div", { class: "drawer-body" });
+    var closeBtn = h("button", { class: "btn small", type: "button", onclick: closeDrawer, "aria-label": "Close the activity list" }, "Close");
+    drawer = h("aside", { class: "drawer", role: "dialog", "aria-label": "Activities", "aria-hidden": "true" },
+      h("div", { class: "drawer-h" }, h("div", {}, h("h2", { text: "Activities" }),
+        h("p", { class: "muted small" }, "Named exactly as in the Studio Web task picker.")), closeBtn),
+      drawerBody);
+    document.body.appendChild(scrim);
+    document.body.appendChild(drawer);
+  }
+  function paintDrawer(focusName) {
+    drawerBody.textContent = "";
+    var search = h("input", { type: "search", class: "search", placeholder: "Search, for example fraud", value: drawerState.q, "aria-label": "Search activities" });
+    search.addEventListener("input", function () { drawerState.q = search.value; paintList(); });
+    var chips = h("div", { class: "filters" });
+    [["all", "All"], ["agent", "Agents"], ["function", "Functions"], ["api", "API workflows"], ["human", "Human tasks"], ["connector", "Connectors"]].forEach(function (f) {
+      chips.appendChild(h("button", { class: "pill" + (drawerState.type === f[0] ? " on" : ""), type: "button",
+        onclick: function () { drawerState.type = f[0]; paintDrawer(); } }, f[1]));
+    });
+    var stageSel = h("select", { class: "select", "aria-label": "Filter by stage" });
+    [["all", "All stages"]].concat(primaries().map(function (s) { return [s.id, s.name]; })).forEach(function (o) {
+      var op = h("option", { value: o[0], text: o[1] }); if (drawerState.stage === o[0]) op.selected = true; stageSel.appendChild(op);
+    });
+    stageSel.addEventListener("change", function () { drawerState.stage = stageSel.value; paintList(); });
+    var list = h("div", { class: "actlist" });
+    drawerBody.appendChild(search); drawerBody.appendChild(chips); drawerBody.appendChild(stageSel); drawerBody.appendChild(list);
+    function paintList() {
+      list.textContent = "";
+      var q = drawerState.q.trim().toLowerCase();
+      var shown = D.ACTIVITIES.filter(function (a) {
+        if (drawerState.type !== "all" && a.type !== drawerState.type) return false;
+        if (drawerState.stage !== "all" && a.stages.indexOf(drawerState.stage) < 0) return false;
+        if (q && (a.name + " " + a.line + " " + a.gives.join(" ")).toLowerCase().indexOf(q) < 0) return false;
+        return true;
+      });
+      if (!shown.length) list.appendChild(h("p", { class: "muted" }, "Nothing matches."));
+      shown.forEach(function (a) { list.appendChild(actCard(a, { noLinks: false })); });
+      if (focusName) {
+        var el = document.getElementById("act-" + focusName);
+        if (el) { el.scrollIntoView({ block: "center" }); el.classList.add("flash"); }
+        focusName = null;
+      }
+    }
+    paintList();
+  }
+  function openDrawer(name) {
+    if (name) { drawerState = { type: "all", q: "", stage: "all" }; }
+    else {
+      var m = /^#\/(intake|assessment|review|settlement|closure)$/.exec(location.hash);
+      if (m && drawerState.stage === "all") drawerState.stage = m[1];
+    }
+    paintDrawer(name);
+    document.body.classList.add("drawer-open");
+    drawer.setAttribute("aria-hidden", "false");
+  }
+  function closeDrawer() { document.body.classList.remove("drawer-open"); drawer.setAttribute("aria-hidden", "true"); }
+
+  /* ---------- router ---------- */
+  var STAGE_IDS = ["intake", "assessment", "review", "settlement", "closure"];
+  function route() {
+    var id = (location.hash.replace(/^#\/?/, "") || "home");
+    var view;
+    if (id === "home") view = pageHome();
+    else if (id === "scenario") view = pageScenario();
+    else if (id === "setup") view = pageSetup();
+    else if (id === "c1") view = pageChapter1();
+    else if (id === "deploy") view = pageDeploy();
+    else if (STAGE_IDS.indexOf(id) >= 0) view = pageStage(id);
+    else { id = "home"; view = pageHome(); }
+    app.textContent = "";
+    add(app, h("div", { class: "page", "data-page": id }, view));
+    window.scrollTo(0, 0);
+    document.title = (id === "home" ? "" : (D.STAGE_PAGES[id] ? D.STAGE_PAGES[id].title : id.charAt(0).toUpperCase() + id.slice(1)) + " | ") + "Motor Claims workshop";
+    document.querySelectorAll("[data-nav]").forEach(function (a) {
+      a.classList.toggle("on", a.getAttribute("data-nav") === id || (a.getAttribute("data-nav") === "c1" && (STAGE_IDS.indexOf(id) >= 0 || id === "deploy")));
+    });
+    app.focus({ preventScroll: true });
+  }
+
+  /* ---------- chrome: top bar, theme, present mode, keys ---------- */
+  function go(delta) {
+    var cur = location.hash.replace(/^#\/?/, "") || "home";
+    var i = D.ORDER.indexOf(cur); if (i < 0) i = 0;
+    var j = Math.max(0, Math.min(D.ORDER.length - 1, i + delta));
+    location.hash = "#/" + D.ORDER[j];
+  }
+  function setPresent(on) {
+    document.documentElement.classList.toggle("present", on);
+    try { localStorage.setItem(KEY + "-present", on ? "1" : "0"); } catch (e) { /* ignore */ }
+    var b = document.getElementById("btn-present"); if (b) { b.textContent = on ? "Exit present" : "Present"; b.setAttribute("aria-pressed", on ? "true" : "false"); }
+  }
+  function setTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem(KEY + "-theme", t); } catch (e) { /* ignore */ }
+  }
+  function buildChrome() {
+    var nav = document.getElementById("nav");
+    [["home", "#/", "Home"], ["scenario", "#/scenario", "Scenario"], ["setup", "#/setup", "Setup"], ["c1", "#/c1", "Build"]].forEach(function (n) {
+      nav.appendChild(h("a", { href: n[1], "data-nav": n[0] }, n[2]));
+    });
+    var tools = document.getElementById("tools");
+    tools.appendChild(h("button", { class: "btn small", type: "button", onclick: function () { openDrawer(); } }, "Activities"));
+    tools.appendChild(h("button", { class: "btn small", type: "button", id: "btn-present", "aria-pressed": "false", onclick: function () { setPresent(!document.documentElement.classList.contains("present")); } }, "Present"));
+    tools.appendChild(h("button", { class: "btn small", type: "button", id: "btn-theme", onclick: function () {
+      var cur = document.documentElement.getAttribute("data-theme");
+      var dark = cur ? cur === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setTheme(dark ? "light" : "dark");
+    } }, "Light / dark"));
+    var th; try { th = localStorage.getItem(KEY + "-theme"); } catch (e) { th = null; }
+    if (th) document.documentElement.setAttribute("data-theme", th);
+    var pr; try { pr = localStorage.getItem(KEY + "-present"); } catch (e) { pr = null; }
+    if (pr === "1") setPresent(true);
+    document.addEventListener("keydown", function (e) {
+      var tag = (e.target.tagName || "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      if (e.key === "Escape") closeDrawer();
+      else if (e.key === "ArrowRight") go(1);
+      else if (e.key === "ArrowLeft") go(-1);
+      else if (e.key === "a" || e.key === "A") openDrawer();
+      else if (e.key === "p" || e.key === "P") setPresent(!document.documentElement.classList.contains("present"));
+    });
+  }
+
+  var foot = document.querySelector(".foot");
+  if (foot) foot.appendChild(h("button", { class: "linkbtn", type: "button", onclick: function () {
+    if (window.confirm("Clear your ticks and progress on this computer?")) {
+      try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ }
+      location.reload();
+    }
+  } }, "Reset my progress"));
+  buildChrome();
+  buildDrawer();
+  window.addEventListener("hashchange", route);
+  route();
+})();
+
+</script>
+</body>
+</html>
