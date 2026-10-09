@@ -1,0 +1,39 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "CreateCustomerNotification",
+    "kind": "process",
+    "type": "api",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "7e6f531b-a254-4185-9d86-adbcbb22a4c6",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "CreateCustomerNotification"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Api",
+      "name": "CreateCustomerNotification",
+      "package": {
+        "key": "c37ccb47-132d-4a2a-bdde-6479b320dc94"
+      },
+      "packageName": "MotorInsuranceClaimManagement.api.CreateCustomerNotification",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "226d24e9-0931-435a-836d-b5191779d11e",
+    "files": []
+  }
+}

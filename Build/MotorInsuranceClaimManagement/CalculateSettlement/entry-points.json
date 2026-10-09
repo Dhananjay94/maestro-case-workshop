@@ -1,0 +1,175 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "calculate_settlement",
+            "uniqueId": "a1f1f0af-2bc8-4f5a-8bb8-65675647d77b",
+            "type": "function",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "DataFolder": {
+                        "default": "",
+                        "title": "Datafolder",
+                        "type": "string"
+                    },
+                    "PolicyNumber": {
+                        "default": "",
+                        "title": "Policynumber",
+                        "type": "string"
+                    },
+                    "ClaimAmount": {
+                        "default": 0,
+                        "title": "Claimamount",
+                        "type": "number"
+                    },
+                    "DamageEstimate": {
+                        "default": 0,
+                        "title": "Damageestimate",
+                        "type": "number"
+                    }
+                },
+                "required": [],
+                "title": "Input"
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "SettlementAmount": {
+                        "default": 0,
+                        "title": "Settlementamount",
+                        "type": "number"
+                    },
+                    "SeniorApprovalRequired": {
+                        "default": false,
+                        "title": "Seniorapprovalrequired",
+                        "type": "boolean"
+                    },
+                    "error_type": {
+                        "default": "",
+                        "title": "Error Type",
+                        "type": "string"
+                    },
+                    "error_message": {
+                        "default": "",
+                        "title": "Error Message",
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "title": "Output"
+            },
+            "graph": {
+                "nodes": [
+                    {
+                        "id": "main.py:167",
+                        "name": "calculate_settlement",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:111",
+                        "name": "find_one",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:67",
+                        "name": "data_folder_key",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:35",
+                        "name": "job_folder_key",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:97",
+                        "name": "_find_in_subfolders",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:30",
+                        "name": "sdk",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:146",
+                        "name": "number_asset",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    }
+                ],
+                "edges": [
+                    {
+                        "source": "main.py:67",
+                        "target": "main.py:35"
+                    },
+                    {
+                        "source": "main.py:67",
+                        "target": "main.py:97"
+                    },
+                    {
+                        "source": "main.py:67",
+                        "target": "main.py:30"
+                    },
+                    {
+                        "source": "main.py:67",
+                        "target": "main.py:30"
+                    },
+                    {
+                        "source": "main.py:111",
+                        "target": "main.py:67"
+                    },
+                    {
+                        "source": "main.py:111",
+                        "target": "main.py:30"
+                    },
+                    {
+                        "source": "main.py:111",
+                        "target": "main.py:30"
+                    },
+                    {
+                        "source": "main.py:167",
+                        "target": "main.py:111"
+                    },
+                    {
+                        "source": "main.py:146",
+                        "target": "main.py:67"
+                    },
+                    {
+                        "source": "main.py:146",
+                        "target": "main.py:30"
+                    },
+                    {
+                        "source": "main.py:167",
+                        "target": "main.py:146"
+                    },
+                    {
+                        "source": "main.py:167",
+                        "target": "main.py:146"
+                    }
+                ]
+            }
+        }
+    ]
+}

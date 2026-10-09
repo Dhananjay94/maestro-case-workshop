@@ -1,0 +1,6 @@
+{
+  "ProjectType": "Function",
+  "Name": "FetchClaimDocumentText",
+  "Description": "Downloads a claim's documents from the storage bucket and returns their text for the document-intelligence agent.",
+  "MainFile": null
+}

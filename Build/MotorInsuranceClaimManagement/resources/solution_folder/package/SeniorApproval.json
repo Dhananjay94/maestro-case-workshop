@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SeniorApproval",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "d75a0051-9e88-4fc5-9717-f34266b5f8e0",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SeniorApproval"
+    },
+    "locks": [],
+    "key": "f892d8a9-fc70-4424-a132-eda754dc113f",
+    "files": []
+  }
+}

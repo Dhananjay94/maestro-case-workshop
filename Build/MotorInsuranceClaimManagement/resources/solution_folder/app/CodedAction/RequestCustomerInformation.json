@@ -1,0 +1,35 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "RequestCustomerInformation",
+    "kind": "app",
+    "type": "codedAction",
+    "apiVersion": "apps.uipath.com/v1",
+    "projectKey": "09554883-fe04-4a0d-abf9-9244e28ac3d4",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "name": "RequestCustomerInformation",
+        "kind": "package"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "RequestCustomerInformation",
+      "version": "1.0.0",
+      "package": {
+        "key": "d352ded6-473b-498a-8ec0-3f8c2e4434b5"
+      },
+      "externalClientId": "39d65bc4-48c5-4ea4-9c19-d96788c98486",
+      "actionSchema": "{\"key\": \"5df410af-ca97-45aa-9b8c-cd67807c6f1e\", \"version\": 0, \"description\": \"Action Schema\", \"id\": \"ID5df410afca9745aa9b8ccd67807c6f1e\", \"name\": \"ActionSchema\", \"inputs\": [{\"name\": \"ClaimId\", \"key\": \"f9db4261-e2bc-4680-97e4-0b2f64e66fcc\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.String\", \"properties\": []}, {\"name\": \"MissingDocuments\", \"key\": \"4af98acf-8749-4bac-a49e-328f60374653\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.String\", \"properties\": []}, {\"name\": \"DocumentInconsistencies\", \"key\": \"d69b5bb0-15d8-4c89-b2b6-1be2c761c742\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.String\", \"properties\": []}], \"outputs\": [{\"name\": \"RequestStatus\", \"key\": \"1abf1413-fad6-47a9-b70c-59f91ef89f5b\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.String\", \"properties\": []}], \"inOuts\": [], \"outcomes\": [{\"name\": \"RequestSent\", \"key\": \"1c22e0cd-15f5-440c-94c5-d6d811b46099\", \"required\": false, \"type\": \"System.String\", \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"properties\": [], \"version\": 0}]}"
+    },
+    "locks": [],
+    "key": "29a962a2-de32-4b9c-8677-727d05c4f10b",
+    "files": []
+  }
+}

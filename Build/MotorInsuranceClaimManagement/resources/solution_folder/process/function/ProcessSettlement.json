@@ -1,0 +1,39 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "ProcessSettlement",
+    "kind": "process",
+    "type": "function",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "230aba84-6376-4fb4-940d-fac50f56901f",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "ProcessSettlement"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Function",
+      "name": "ProcessSettlement",
+      "package": {
+        "key": "80173a4d-d779-4a21-ac41-d42dc21ebcbf"
+      },
+      "packageName": "MotorInsuranceClaimManagement.function.ProcessSettlement",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "bdd83497-41b1-4611-89f4-2e3e0ff0d08d",
+    "files": []
+  }
+}

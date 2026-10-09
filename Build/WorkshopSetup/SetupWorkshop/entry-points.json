@@ -1,0 +1,70 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "setup_workshop",
+            "uniqueId": "c21d7e90-4a3b-4f68-8e15-6b0a9d3c7f42",
+            "type": "function",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "Action": {
+                        "default": "InstallWorkshop",
+                        "title": "Action",
+                        "type": "string"
+                    },
+                    "CustomerEmail": {
+                        "default": "",
+                        "title": "Customeremail",
+                        "type": "string"
+                    },
+                    "Customer": {
+                        "default": "Rahul",
+                        "title": "Customer",
+                        "type": "string"
+                    },
+                    "ClientId": {
+                        "default": "",
+                        "title": "Clientid",
+                        "type": "string"
+                    },
+                    "DataFolder": {
+                        "default": "",
+                        "title": "Datafolder",
+                        "type": "string"
+                    },
+                    "DeploymentName": {
+                        "default": "",
+                        "title": "Deploymentname",
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "title": "Input"
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "Report": {
+                        "default": "",
+                        "title": "Report",
+                        "type": "string"
+                    },
+                    "error_type": {
+                        "default": "",
+                        "title": "Error Type",
+                        "type": "string"
+                    },
+                    "error_message": {
+                        "default": "",
+                        "title": "Error Message",
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "title": "Output"
+            }
+        }
+    ]
+}

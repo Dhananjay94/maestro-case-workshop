@@ -1,0 +1,72 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "7bc20642-85be-4a59-8888-5c503773ec0e",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "ClaimId": {
+            "type": "string",
+            "description": "Claim ID."
+          },
+          "PolicyNumber": {
+            "type": "string",
+            "description": "Policy number, used to look up claim history."
+          },
+          "ClaimAmount": {
+            "type": "number",
+            "description": "Amount claimed in INR."
+          },
+          "IncidentDate": {
+            "type": "string",
+            "description": "Incident date from the claim."
+          },
+          "IncidentDescription": {
+            "type": "string",
+            "description": "Customer description of the incident."
+          },
+          "ExtractedRepairEstimate": {
+            "type": "number",
+            "description": "Repair estimate total found in the documents."
+          },
+          "DocumentInconsistencies": {
+            "type": "string",
+            "description": "Material conflicts between documents; empty if none."
+          }
+        },
+        "required": [
+          "ClaimId",
+          "PolicyNumber",
+          "ClaimAmount",
+          "IncidentDate",
+          "ExtractedRepairEstimate"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "FraudScore": {
+            "type": "number",
+            "description": "Fraud risk score 0-100."
+          },
+          "RiskLevel": {
+            "type": "string",
+            "description": "Exactly one of: Low, Medium, High."
+          },
+          "FraudFlag": {
+            "type": "boolean",
+            "description": "True when RiskLevel is High."
+          },
+          "FraudReasons": {
+            "type": "string",
+            "description": "2-5 short reasons based on the facts."
+          }
+        }
+      }
+    }
+  ]
+}

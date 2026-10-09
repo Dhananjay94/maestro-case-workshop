@@ -1,0 +1,39 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "GetClaimHistory",
+    "kind": "process",
+    "type": "function",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "90412761-9215-4480-b489-7cf8f458a1c1",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "GetClaimHistory"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Function",
+      "name": "GetClaimHistory",
+      "package": {
+        "key": "b82c432a-a3fb-4f9e-b338-2ccd03ede7e7"
+      },
+      "packageName": "MotorInsuranceClaimManagement.function.GetClaimHistory",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "017cc729-f03c-4a0d-bc25-6c08b735c1ff",
+    "files": []
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "FraudRiskAssessment",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "0cb7514c-52ee-411b-a9f4-e75924d15907",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "FraudRiskAssessment"
+      }
+    ],
+    "runtimeDependencies": [
+      {
+        "bindingType": "process",
+        "bindingKey": "GetClaimHistory",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "GetClaimHistory",
+            "isExpression": false
+          }
+        },
+        "bindingMetadata": {
+          "bindingsVersion": "2.2",
+          "solutionsSupport": "true"
+        },
+        "resourceKind": "Process"
+      }
+    ],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "FraudRiskAssessment",
+      "package": {
+        "key": "a545db00-c63f-4bfd-8a0f-08a09127b3b5"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "bf472644-0ae3-459b-8cdb-f7984b813119",
+    "files": []
+  }
+}

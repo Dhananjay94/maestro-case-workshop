@@ -1,0 +1,39 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "GenerateClaimPacket",
+    "kind": "process",
+    "type": "api",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "4062390a-2604-4041-8178-67f429eac119",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "GenerateClaimPacket"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Api",
+      "name": "GenerateClaimPacket",
+      "package": {
+        "key": "0bdf01bd-5b31-46e3-8a0a-52e556903100"
+      },
+      "packageName": "MotorInsuranceClaimManagement.api.GenerateClaimPacket",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "3a8a880b-eda7-4194-92ef-f6e6864a9c3b",
+    "files": []
+  }
+}

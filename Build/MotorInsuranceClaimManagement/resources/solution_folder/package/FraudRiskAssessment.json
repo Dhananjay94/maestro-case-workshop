@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "FraudRiskAssessment",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "0cb7514c-52ee-411b-a9f4-e75924d15907",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "FraudRiskAssessment"
+    },
+    "locks": [],
+    "key": "a545db00-c63f-4bfd-8a0f-08a09127b3b5",
+    "files": []
+  }
+}

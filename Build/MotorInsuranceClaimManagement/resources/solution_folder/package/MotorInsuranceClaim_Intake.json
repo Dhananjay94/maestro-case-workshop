@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "MotorInsuranceClaim_Intake",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "749ef5e2-c708-4cfb-afa6-908c48f7d290",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "MotorInsuranceClaim_Intake"
+    },
+    "locks": [],
+    "key": "11316dac-41be-432e-9f8c-4c2873402127",
+    "files": []
+  }
+}

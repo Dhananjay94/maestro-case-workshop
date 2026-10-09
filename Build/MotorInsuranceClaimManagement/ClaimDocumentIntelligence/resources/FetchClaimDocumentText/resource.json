@@ -1,0 +1,61 @@
+{
+  "$resourceType": "tool",
+  "name": "FetchClaimDocumentText",
+  "description": "Downloads the claim's documents from the storage bucket and returns their text. Call it once with the claim's DocumentReferences (comma-separated file names). Returns combined_text (every document under a '=== FILE: name ===' header), document_count, and failed_files.",
+  "location": "solution",
+  "type": "process",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "claim_id": {
+        "type": "string",
+        "description": "The claim's ID. The tool reads the claim's current document list itself."
+      },
+      "document_references": {
+        "type": "string",
+        "description": "Optional. Leave empty when claim_id is given."
+      }
+    },
+    "required": [
+      "claim_id"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "combined_text": {
+        "type": "string",
+        "description": "Text of every document, each under a '=== FILE: name ===' header."
+      },
+      "document_count": {
+        "type": "integer",
+        "description": "Number of documents read."
+      },
+      "failed_files": {
+        "type": "string",
+        "description": "Files that could not be read, with the reason."
+      },
+      "error_type": {
+        "type": "string",
+        "description": "Empty on success."
+      },
+      "error_message": {
+        "type": "string",
+        "description": "Empty on success."
+      }
+    }
+  },
+  "settings": {},
+  "guardrail": {
+    "policies": []
+  },
+  "properties": {
+    "processName": "FetchClaimDocumentText",
+    "folderPath": "solution_folder",
+    "exampleCalls": []
+  },
+  "id": "ff9a20e0-5f5c-4266-b786-1ed833f92de7",
+  "referenceKey": "c7b81ae7-1808-47fc-ad42-ea258f0995ac",
+  "isEnabled": true,
+  "argumentProperties": {}
+}

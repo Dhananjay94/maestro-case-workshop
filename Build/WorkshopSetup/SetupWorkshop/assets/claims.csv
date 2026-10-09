@@ -1,0 +1,4 @@
+ClaimId,CustomerName,PolicyNumber,VehicleRegistration,VehicleModel,IncidentDate,ClaimAmount,IncidentDescription,DocFolder
+CLM-1001,Rahul Sharma,POL-982341,KA01AB1234,2024 Hyundai Creta 1.5 Turbo,2026-09-28,185000,"Rear-ended at a traffic signal on Outer Ring Road, Bengaluru. Rear bumper, tailgate and tail lamps damaged.",Rahul_Sharma
+CLM-1002,Priya Nair,POL-764512,KA05MN6789,2022 Maruti Suzuki Brezza VXi,2026-09-29,98000,"Left side of the car struck by an autorickshaw at the Indiranagar 100 Feet Road junction. Front left door, fender and mirror damaged.",Priya_Nair
+CLM-1003,Arjun Mehta,POL-551209,KA03PQ4455,2025 Kia Seltos HTX,2026-09-27,240000,"Head-on collision with a road divider at high speed on Hosur Road. Front bumper, bonnet, radiator, headlamps and airbags damaged.",Arjun_Mehta

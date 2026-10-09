@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "FetchClaimDocumentText",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "d35c75f3-44c8-4b50-8746-3b60b3b819ae",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "FetchClaimDocumentText"
+    },
+    "locks": [],
+    "key": "a308de44-a22d-4098-83d7-65b29ad77636",
+    "files": []
+  }
+}

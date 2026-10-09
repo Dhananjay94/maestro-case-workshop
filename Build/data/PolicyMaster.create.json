@@ -1,0 +1,66 @@
+{
+  "displayName": "PolicyMaster",
+  "description": "Stores policy information used to validate the policy associated with a motor insurance claim, including coverage period, insured vehicle, and policy status.",
+  "fields": [
+    {
+      "name": "PolicyNumber",
+      "type": "STRING",
+      "description": "Unique insurance policy number.",
+      "isRequired": true,
+      "isUnique": true,
+      "lengthLimit": 200
+    },
+    {
+      "name": "CustomerName",
+      "type": "STRING",
+      "description": "Policyholder name.",
+      "isRequired": true,
+      "lengthLimit": 200
+    },
+    {
+      "name": "VehicleRegistration",
+      "type": "STRING",
+      "description": "Registered vehicle number.",
+      "isRequired": true,
+      "lengthLimit": 200
+    },
+    {
+      "name": "VehicleModel",
+      "type": "STRING",
+      "description": "Insured vehicle make and model.",
+      "lengthLimit": 200
+    },
+    {
+      "name": "StartDate",
+      "type": "DATE",
+      "description": "Policy effective date.",
+      "isRequired": true
+    },
+    {
+      "name": "EndDate",
+      "type": "DATE",
+      "description": "Policy expiry date.",
+      "isRequired": true
+    },
+    {
+      "name": "PolicyStatus",
+      "type": "STRING",
+      "description": "Policy status such as Active or Expired.",
+      "isRequired": true,
+      "lengthLimit": 50
+    },
+    {
+      "name": "CoverageLimit",
+      "type": "DECIMAL",
+      "description": "Maximum coverage amount.",
+      "isRequired": true,
+      "decimalPrecision": 2
+    },
+    {
+      "name": "CustomerEmail",
+      "type": "STRING",
+      "description": "Policyholder email address used for customer notifications.",
+      "lengthLimit": 200
+    }
+  ]
+}

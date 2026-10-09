@@ -1,0 +1,35 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SeniorApproval",
+    "kind": "app",
+    "type": "codedAction",
+    "apiVersion": "apps.uipath.com/v1",
+    "projectKey": "d75a0051-9e88-4fc5-9717-f34266b5f8e0",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "name": "SeniorApproval",
+        "kind": "package"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SeniorApproval",
+      "version": "1.0.0",
+      "package": {
+        "key": "f892d8a9-fc70-4424-a132-eda754dc113f"
+      },
+      "externalClientId": "39d65bc4-48c5-4ea4-9c19-d96788c98486",
+      "actionSchema": "{\"key\": \"6543cec0-5bea-4c6d-af6f-99d2f1444577\", \"version\": 0, \"description\": \"Action Schema\", \"id\": \"ID6543cec05bea4c6daf6f99d2f1444577\", \"name\": \"ActionSchema\", \"inputs\": [{\"name\": \"ClaimId\", \"key\": \"44b4ad6c-261e-429b-b1f8-7f087d5ddcb9\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.String\", \"properties\": []}, {\"name\": \"SettlementAmount\", \"key\": \"3455f9f1-c9c1-4e4e-81d2-0073af7c96d1\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.Decimal\", \"properties\": []}, {\"name\": \"DamageEstimate\", \"key\": \"381da835-97f4-47fd-8ce2-6c35e8a5c48f\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.Decimal\", \"properties\": []}], \"outputs\": [{\"name\": \"Decision\", \"key\": \"ed12dc58-d32a-4e14-adec-15ee975275bb\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.String\", \"properties\": []}, {\"name\": \"Comments\", \"key\": \"f9865560-6cd3-4fbc-a852-a4754adfa89d\", \"required\": false, \"version\": 0, \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"type\": \"System.String\", \"properties\": []}], \"inOuts\": [], \"outcomes\": [{\"name\": \"Approved\", \"key\": \"da2a5372-c7a1-4f42-9eae-dafa19b536ed\", \"required\": false, \"type\": \"System.String\", \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"properties\": [], \"version\": 0}, {\"name\": \"Rejected\", \"key\": \"3503c607-7c58-4e68-b473-205eb2f577fd\", \"required\": false, \"type\": \"System.String\", \"typeNamespace\": \"system\", \"isList\": false, \"collectionDataType\": null, \"properties\": [], \"version\": 0}]}"
+    },
+    "locks": [],
+    "key": "27d4af40-a762-4992-a28c-e9f15f60a573",
+    "files": []
+  }
+}

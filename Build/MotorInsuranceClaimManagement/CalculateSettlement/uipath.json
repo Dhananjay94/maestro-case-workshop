@@ -1,0 +1,9 @@
+{
+  "id": "2a912c25-df90-4f59-b777-2cd613f267bc",
+  "functions": {
+    "calculate_settlement": "main.py:calculate_settlement"
+  },
+  "packOptions": {
+    "directoriesExcluded": [".venv", "__pycache__"]
+  }
+}

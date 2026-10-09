@@ -1,0 +1,73 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "696c0fed-f868-465b-bd85-e31e9badaa1a",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "ClaimId": {
+            "type": "string",
+            "description": "Claim ID (business key), for reference."
+          },
+          "DocumentReferences": {
+            "type": "string",
+            "description": "Comma-separated bucket file names of the claim's documents (MotorInsuranceClaim.DocumentReferences)."
+          }
+        },
+        "required": [
+          "ClaimId",
+          "DocumentReferences"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "ExtractedCustomerName": {
+            "type": "string",
+            "description": "Customer name found on the documents."
+          },
+          "ExtractedPolicyNumber": {
+            "type": "string",
+            "description": "Policy number found on the documents."
+          },
+          "ExtractedVehicleRegistration": {
+            "type": "string",
+            "description": "Vehicle registration found on the documents."
+          },
+          "ExtractedIncidentDate": {
+            "type": "string",
+            "description": "Incident date on the Claim Intimation form, YYYY-MM-DD."
+          },
+          "ExtractedDocumentTypes": {
+            "type": "string",
+            "description": "Comma-separated list of the document types identified."
+          },
+          "ExtractedRepairEstimate": {
+            "type": "number",
+            "description": "Total of the repair estimate in INR, 0 if none."
+          },
+          "DocumentsComplete": {
+            "type": "boolean",
+            "description": "True when all 7 required documents are present and readable."
+          },
+          "MissingDocuments": {
+            "type": "string",
+            "description": "Required documents that are missing or unreadable; empty if none."
+          },
+          "DocumentInconsistencies": {
+            "type": "string",
+            "description": "Material conflicts between documents; empty if none."
+          },
+          "DocumentIngestionStatus": {
+            "type": "string",
+            "description": "Exactly one of: Complete, Incomplete, Inconsistent."
+          }
+        }
+      }
+    }
+  ]
+}

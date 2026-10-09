@@ -1,0 +1,87 @@
+{
+  "DocVersion": "1.0.0",
+  "StudioMinVersion": "2025.10.0",
+  "SolutionId": "dcc50289-14e7-48f1-dc98-08df2084618d",
+  "Projects": [
+    {
+      "Type": "Api",
+      "ProjectRelativePath": "AssessDamage/project.uiproj",
+      "Id": "9539df1d-a5de-40f2-a30d-24a8bd00988b"
+    },
+    {
+      "Type": "Api",
+      "ProjectRelativePath": "GenerateClaimPacket/project.uiproj",
+      "Id": "4062390a-2604-4041-8178-67f429eac119"
+    },
+    {
+      "Type": "Api",
+      "ProjectRelativePath": "CreateCustomerNotification/project.uiproj",
+      "Id": "7e6f531b-a254-4185-9d86-adbcbb22a4c6"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "ClaimDocumentIntelligence/project.uiproj",
+      "Id": "577111f5-d814-4677-b843-3d2d11c6e473"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "FraudRiskAssessment/project.uiproj",
+      "Id": "0cb7514c-52ee-411b-a9f4-e75924d15907"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "FetchClaimDocumentText/project.uiproj",
+      "Id": "d35c75f3-44c8-4b50-8746-3b60b3b819ae"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "GetClaimHistory/project.uiproj",
+      "Id": "90412761-9215-4480-b489-7cf8f458a1c1"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "ValidatePolicy/project.uiproj",
+      "Id": "3f2faf10-2870-4353-9db7-dcd0cb385803"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "CalculateSettlement/project.uiproj",
+      "Id": "c279be81-e364-452f-83dc-544f29cd52dc"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "ProcessSettlement/project.uiproj",
+      "Id": "230aba84-6376-4fb4-940d-fac50f56901f"
+    },
+    {
+      "Type": "AppV2",
+      "ProjectRelativePath": "MotorInsuranceClaim_Intake/project.uiproj",
+      "Id": "749ef5e2-c708-4cfb-afa6-908c48f7d290"
+    },
+    {
+      "Type": "AppV2",
+      "ProjectRelativePath": "AdjusterReview/project.uiproj",
+      "Id": "e0c71ce4-6335-4d19-852b-faab9134a4b3"
+    },
+    {
+      "Type": "AppV2",
+      "ProjectRelativePath": "FraudInvestigation/project.uiproj",
+      "Id": "709cfe3c-c4cf-4efe-ab92-b90a5fd95ec6"
+    },
+    {
+      "Type": "AppV2",
+      "ProjectRelativePath": "SeniorApproval/project.uiproj",
+      "Id": "d75a0051-9e88-4fc5-9717-f34266b5f8e0"
+    },
+    {
+      "Type": "AppV2",
+      "ProjectRelativePath": "RequestCustomerInformation/project.uiproj",
+      "Id": "09554883-fe04-4a0d-abf9-9244e28ac3d4"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "UpdateClaim/project.uiproj",
+      "Id": "966c1934-9df2-4226-9a0f-abfd4c72e528"
+    }
+  ]
+}

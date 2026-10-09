@@ -1,0 +1,53 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 461 >>
+stream
+BT
+/F2 16 Tf
+50 790 Td
+(Motor Policy Schedule) Tj
+/F1 11 Tf
+0 -30 Td
+14 TL
+(Insurer: Northstar General Insurance \(workshop sample\)) Tj T*
+() Tj T*
+(Policy Number: POL-982341) Tj T*
+(Insured: Rahul Sharma) Tj T*
+(Vehicle Registration: KA01AB1234) Tj T*
+(Vehicle Model: 2024 Hyundai Creta 1.5 Turbo) Tj T*
+(Coverage Type: Comprehensive) Tj T*
+(Coverage Period: 2026-01-01 to 2026-12-31) Tj T*
+(Sum Insured: INR 1,000,000) Tj T*
+(Deductible: INR 10,000) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000763 00000 n 
+0000000833 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+908
+%%EOF

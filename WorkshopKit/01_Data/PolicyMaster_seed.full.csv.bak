@@ -1,0 +1,5 @@
+PolicyNumber,PolicyStatus,CustomerName,VehicleRegistration,VehicleModel,CoverageStart,CoverageEnd,CoverageType,CoverageLimit,Deductible
+POL-982341,Active,Rahul Sharma,KA01AB1234,2024 Hyundai Creta 1.5 Turbo,2026-01-01T00:00:00,2026-12-31T00:00:00,Comprehensive,1000000,10000
+POL-764512,Active,Priya Nair,KA05MN6789,2022 Maruti Suzuki Brezza VXi,2026-02-01T00:00:00,2027-01-31T00:00:00,Comprehensive,600000,10000
+POL-551209,Active,Arjun Mehta,KA03PQ4455,2025 Kia Seltos HTX,2026-03-01T00:00:00,2027-02-28T00:00:00,Comprehensive,1200000,10000
+POL-000001,Expired,Meera Iyer,KA02XY9999,2020 Honda City,2025-01-01T00:00:00,2025-12-31T00:00:00,Third-party,300000,5000

@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AssessDamage",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "9539df1d-a5de-40f2-a30d-24a8bd00988b",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "AssessDamage"
+    },
+    "locks": [],
+    "key": "eab00ee1-e2d1-482b-a621-0a91db58e706",
+    "files": []
+  }
+}

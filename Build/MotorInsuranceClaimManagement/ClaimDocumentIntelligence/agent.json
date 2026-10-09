@@ -1,0 +1,119 @@
+{
+  "version": "1.2.0",
+  "settings": {
+    "model": "anthropic.claude-sonnet-4-6",
+    "maxTokens": 32000,
+    "temperature": 0,
+    "engine": "basic-v2",
+    "maxIterations": 12,
+    "mode": "standard"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "ClaimId": {
+        "type": "string",
+        "description": "Claim ID (business key), for reference."
+      },
+      "DocumentReferences": {
+        "type": "string",
+        "description": "Comma-separated bucket file names of the claim's documents (MotorInsuranceClaim.DocumentReferences)."
+      }
+    },
+    "required": [
+      "ClaimId",
+      "DocumentReferences"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "ExtractedCustomerName": {
+        "type": "string",
+        "description": "Customer name found on the documents."
+      },
+      "ExtractedPolicyNumber": {
+        "type": "string",
+        "description": "Policy number found on the documents."
+      },
+      "ExtractedVehicleRegistration": {
+        "type": "string",
+        "description": "Vehicle registration found on the documents."
+      },
+      "ExtractedIncidentDate": {
+        "type": "string",
+        "description": "Incident date on the Claim Intimation form, YYYY-MM-DD."
+      },
+      "ExtractedDocumentTypes": {
+        "type": "string",
+        "description": "Comma-separated list of the document types identified."
+      },
+      "ExtractedRepairEstimate": {
+        "type": "number",
+        "description": "Total of the repair estimate in INR, 0 if none."
+      },
+      "DocumentsComplete": {
+        "type": "boolean",
+        "description": "True when all 7 required documents are present and readable."
+      },
+      "MissingDocuments": {
+        "type": "string",
+        "description": "Required documents that are missing or unreadable; empty if none."
+      },
+      "DocumentInconsistencies": {
+        "type": "string",
+        "description": "Material conflicts between documents; empty if none."
+      },
+      "DocumentIngestionStatus": {
+        "type": "string",
+        "description": "Exactly one of: Complete, Incomplete, Inconsistent."
+      }
+    }
+  },
+  "metadata": {
+    "storageVersion": "50.0.0",
+    "isConversational": false,
+    "showProjectCreationExperience": false,
+    "targetRuntime": "pythonAgent"
+  },
+  "type": "lowCode",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an insurance claims document analyst. You receive the reference of a motor insurance claim's documents and return structured findings.\n\nRequired documents (7): Claim Intimation, Policy Schedule, FIR / Police Accident Report, Driving Licence, Vehicle Registration Certificate, Accident Evidence, Repair Estimate.\n\nProcess:\n1. Call the FetchClaimDocumentText tool ONCE with claim_id set to the Claim ID you were given and document_references left empty; the tool looks up the claim's current document list itself. It downloads the claim's files from the storage bucket and returns their text in combined_text, each document preceded by a header line \"=== FILE: <name> ===\". The file name ends with the document type, for example 1_ClaimIntimation.pdf or 7_RepairEstimate.pdf, but always judge the type from the document's content.\n2. If the tool returns an error_type, or document_count is 0, stop: set DocumentIngestionStatus to Incomplete, DocumentsComplete to false, and put the tool's error_message in MissingDocuments.\n3. From the text, work out which of the 7 required documents are present and readable. A document is missing if no file contains it, and unreadable if its text is empty or says no extractable text. Anything listed in the tool's failed_files is unreadable.\n4. Extract: customer name, policy number, vehicle registration, the incident date on the Claim Intimation, the document types you found, and the TOTAL on the repair estimate as a plain number in INR.\n5. Compare the documents. Record only MATERIAL conflicts: different incident dates; an incident or damage description that does not match the evidence or the FIR; repair estimate items not supported by the accident evidence; different names, policy numbers or vehicle registrations between documents.\n6. Set DocumentIngestionStatus to exactly one of:\n   - Incomplete: one or more required documents are missing or unreadable (this takes priority over everything else).\n   - Inconsistent: all 7 documents are present and readable, and at least one material conflict exists.\n   - Complete: all 7 present, readable and consistent.\n7. DocumentsComplete is true when all 7 required documents are present and readable (status Complete or Inconsistent), otherwise false.\n\nRules:\n- ExtractedIncidentDate is ONE date in YYYY-MM-DD: the incident date on the Claim Intimation form. If other documents show different dates, describe that in DocumentInconsistencies.\n- ExtractedRepairEstimate is 0 when no repair estimate is present.\n- MissingDocuments and DocumentInconsistencies are empty strings when there is nothing to report.\n- Never assess fraud and never judge whether the policy is valid; other steps do that.\n- Use only facts found in the documents. Never invent values.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "You are an insurance claims document analyst. You receive the reference of a motor insurance claim's documents and return structured findings.\n\nRequired documents (7): Claim Intimation, Policy Schedule, FIR / Police Accident Report, Driving Licence, Vehicle Registration Certificate, Accident Evidence, Repair Estimate.\n\nProcess:\n1. Call the FetchClaimDocumentText tool ONCE with claim_id set to the Claim ID you were given and document_references left empty; the tool looks up the claim's current document list itself. It downloads the claim's files from the storage bucket and returns their text in combined_text, each document preceded by a header line \"=== FILE: <name> ===\". The file name ends with the document type, for example 1_ClaimIntimation.pdf or 7_RepairEstimate.pdf, but always judge the type from the document's content.\n2. If the tool returns an error_type, or document_count is 0, stop: set DocumentIngestionStatus to Incomplete, DocumentsComplete to false, and put the tool's error_message in MissingDocuments.\n3. From the text, work out which of the 7 required documents are present and readable. A document is missing if no file contains it, and unreadable if its text is empty or says no extractable text. Anything listed in the tool's failed_files is unreadable.\n4. Extract: customer name, policy number, vehicle registration, the incident date on the Claim Intimation, the document types you found, and the TOTAL on the repair estimate as a plain number in INR.\n5. Compare the documents. Record only MATERIAL conflicts: different incident dates; an incident or damage description that does not match the evidence or the FIR; repair estimate items not supported by the accident evidence; different names, policy numbers or vehicle registrations between documents.\n6. Set DocumentIngestionStatus to exactly one of:\n   - Incomplete: one or more required documents are missing or unreadable (this takes priority over everything else).\n   - Inconsistent: all 7 documents are present and readable, and at least one material conflict exists.\n   - Complete: all 7 present, readable and consistent.\n7. DocumentsComplete is true when all 7 required documents are present and readable (status Complete or Inconsistent), otherwise false.\n\nRules:\n- ExtractedIncidentDate is ONE date in YYYY-MM-DD: the incident date on the Claim Intimation form. If other documents show different dates, describe that in DocumentInconsistencies.\n- ExtractedRepairEstimate is 0 when no repair estimate is present.\n- MissingDocuments and DocumentInconsistencies are empty strings when there is nothing to report.\n- Never assess fraud and never judge whether the policy is valid; other steps do that.\n- Use only facts found in the documents. Never invent values."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Claim ID: {{input.ClaimId}}\nDocument references: {{input.DocumentReferences}}\n\nFetch and analyse the claim documents now and return the structured result.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "Claim ID: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.ClaimId"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\nDocument references: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.DocumentReferences"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nFetch and analyse the claim documents now and return the structured result."
+        }
+      ]
+    }
+  ],
+  "projectId": "f7c9efbb-6f89-49d6-9a54-d992bab3484d"
+}

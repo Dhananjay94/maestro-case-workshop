@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "FraudInvestigation",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "709cfe3c-c4cf-4efe-ab92-b90a5fd95ec6",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "FraudInvestigation"
+    },
+    "locks": [],
+    "key": "486c5586-a98d-448c-be0c-7e1f65acc2d1",
+    "files": []
+  }
+}

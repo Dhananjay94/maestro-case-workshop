@@ -1,0 +1,35 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "MotorInsuranceClaim_Intake",
+    "kind": "app",
+    "type": "coded",
+    "apiVersion": "apps.uipath.com/v1",
+    "projectKey": "749ef5e2-c708-4cfb-afa6-908c48f7d290",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "name": "MotorInsuranceClaim_Intake",
+        "kind": "package"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "MotorInsuranceClaim_Intake",
+      "version": "1.0.0",
+      "routingName": "claims-intake",
+      "package": {
+        "key": "11316dac-41be-432e-9f8c-4c2873402127"
+      },
+      "externalClientId": "39d65bc4-48c5-4ea4-9c19-d96788c98486"
+    },
+    "locks": [],
+    "key": "86461c8f-78ef-4059-9ed3-98ef73c248c7",
+    "files": []
+  }
+}

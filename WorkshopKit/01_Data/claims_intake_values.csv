@@ -1,0 +1,5 @@
+CustomerName,PolicyNumber,VehicleRegistration,VehicleModel,IncidentDate,ClaimAmount,IncidentDescription,Documents
+Rahul Sharma,POL-982341,KA01AB1234,2024 Hyundai Creta 1.5 Turbo,2026-09-28,185000,"Rear-ended at a traffic signal on Outer Ring Road, Bengaluru. Rear bumper, tailgate and tail lamps damaged.",All 7 files in 02_Documents/Rahul_Sharma
+Priya Nair,POL-764512,KA05MN6789,2022 Maruti Suzuki Brezza VXi,2026-09-29,98000,"Left side of the car struck by an autorickshaw at the Indiranagar 100 Feet Road junction. Front left door, fender and mirror damaged.",6 files (NO repair estimate) in 02_Documents/Priya_Nair; supplemental estimate is a separate file
+Arjun Mehta,POL-551209,KA03PQ4455,2025 Kia Seltos HTX,2026-09-27,240000,"Head-on collision with a road divider at high speed on Hosur Road. Front bumper, bonnet, radiator, headlamps and airbags damaged.",All 7 files in 02_Documents/Arjun_Mehta
+Meera Iyer (optional),POL-000001,KA02XY9999,2020 Honda City,2026-09-30,60000,Minor collision in parking lot.,Upload any 2 files; policy is expired so case denies at Intake

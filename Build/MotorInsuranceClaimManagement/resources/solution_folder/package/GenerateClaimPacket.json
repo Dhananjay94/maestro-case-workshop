@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "GenerateClaimPacket",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "4062390a-2604-4041-8178-67f429eac119",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "GenerateClaimPacket"
+    },
+    "locks": [],
+    "key": "0bdf01bd-5b31-46e3-8a0a-52e556903100",
+    "files": []
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "1b1b618e-06dd-4885-8e8a-cf36ae7dcca4",
+  "functions": {
+    "process_settlement": "main.py:process_settlement"
+  },
+  "packOptions": {
+    "directoriesExcluded": [".venv", "__pycache__"]
+  }
+}

@@ -1,0 +1,4 @@
+CustomerName,PolicyNumber,PriorClaimCount,RecentSimilarClaimCount,LastClaimDate,HistoryRiskNote
+Rahul Sharma,POL-982341,0,0,,No prior claims identified.
+Priya Nair,POL-764512,1,0,2026-05-14T00:00:00,One prior claim with no recent similar collision pattern.
+Arjun Mehta,POL-551209,3,2,2026-08-16T00:00:00,"Three claims in the last 18 months, including two recent collision claims."

@@ -1,0 +1,44 @@
+{
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "ClaimId": {
+        "type": "string",
+        "required": false,
+        "description": "Claim ID"
+      },
+      "MissingDocuments": {
+        "type": "string",
+        "required": false,
+        "description": "Missing documents"
+      },
+      "DocumentInconsistencies": {
+        "type": "string",
+        "required": false,
+        "description": "Document inconsistencies"
+      }
+    }
+  },
+  "outputs": {
+    "type": "object",
+    "properties": {
+      "RequestStatus": {
+        "type": "string",
+        "required": false,
+        "description": "Request status"
+      }
+    }
+  },
+  "inOuts": {
+    "type": "object",
+    "properties": {}
+  },
+  "outcomes": {
+    "type": "object",
+    "properties": {
+      "RequestSent": {
+        "type": "string"
+      }
+    }
+  }
+}

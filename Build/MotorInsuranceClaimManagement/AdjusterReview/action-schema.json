@@ -1,0 +1,95 @@
+{
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "ClaimId": {
+        "type": "string",
+        "required": false,
+        "description": "Claim ID"
+      },
+      "CustomerName": {
+        "type": "string",
+        "required": false,
+        "description": "Customer"
+      },
+      "ClaimAmount": {
+        "type": "number",
+        "required": false,
+        "description": "Claim amount"
+      },
+      "DamageEstimate": {
+        "type": "number",
+        "required": false,
+        "description": "Damage estimate"
+      },
+      "PolicyValid": {
+        "type": "boolean",
+        "required": false,
+        "description": "Policy valid"
+      },
+      "PolicyValidationReason": {
+        "type": "string",
+        "required": false,
+        "description": "Policy check"
+      },
+      "DocumentIngestionStatus": {
+        "type": "string",
+        "required": false,
+        "description": "Document status"
+      },
+      "DocumentInconsistencies": {
+        "type": "string",
+        "required": false,
+        "description": "Document inconsistencies"
+      },
+      "RiskLevel": {
+        "type": "string",
+        "required": false,
+        "description": "Fraud risk level"
+      },
+      "FraudScore": {
+        "type": "number",
+        "required": false,
+        "description": "Fraud score"
+      },
+      "FraudReasons": {
+        "type": "string",
+        "required": false,
+        "description": "Fraud reasons"
+      }
+    }
+  },
+  "outputs": {
+    "type": "object",
+    "properties": {
+      "Decision": {
+        "type": "string",
+        "required": false,
+        "description": "Set to the outcome chosen"
+      },
+      "Comments": {
+        "type": "string",
+        "required": false,
+        "description": "Reviewer comments"
+      }
+    }
+  },
+  "inOuts": {
+    "type": "object",
+    "properties": {}
+  },
+  "outcomes": {
+    "type": "object",
+    "properties": {
+      "Approve": {
+        "type": "string"
+      },
+      "Reject": {
+        "type": "string"
+      },
+      "RequestInformation": {
+        "type": "string"
+      }
+    }
+  }
+}

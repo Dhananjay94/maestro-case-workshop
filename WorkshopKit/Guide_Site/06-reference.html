@@ -1,0 +1,921 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Quick reference | Motor Claims Case Workshop</title><meta name="description" content="Variables, every rule on one page, claim statuses, the test matrix, troubleshooting and a glossary."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"><style>
+/* Layout concept: a case folder. A rail of numbered documents on the left (the true reading order), one calm column of text on the right. */
+:root{
+  --bg:#F4F7F9; --surface:#FFFFFF; --surface-2:#EAF0F4; --ink:#13212B; --ink-2:#4C5F6E; --line:#D5DDE4; --line-2:#B9C5CF;
+  --accent:#0A6C85; --accent-ink:#FFFFFF; --accent-soft:#D9EEF3;
+  --why:#2557C4; --why-bg:#E4ECFB; --check:#17794A; --check-bg:#DFF2E7; --stuck:#9A5B00; --stuck-bg:#FBEED2; --trap:#B0281F; --trap-bg:#FBE4E1;
+  --code-bg:#0F1C26; --code-ink:#E4EDF3; --code-line:#233646; --shadow:0 1px 2px rgba(19,33,43,.06),0 6px 18px rgba(19,33,43,.06);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif; --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D151B; --surface:#131E27; --surface-2:#1A2833; --ink:#E5EDF3; --ink-2:#9DB0BE; --line:#26384A; --line-2:#385068;
+  --accent:#55B8D1; --accent-ink:#06222B; --accent-soft:#12323C;
+  --why:#8DB0FF; --why-bg:#18274A; --check:#6BD39B; --check-bg:#12301F; --stuck:#F0B25C; --stuck-bg:#3A2A0B; --trap:#FF9A90; --trap-bg:#40181A;
+  --code-bg:#0A1218; --code-ink:#DCE8F0; --code-line:#1E2F3D; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D151B; --surface:#131E27; --surface-2:#1A2833; --ink:#E5EDF3; --ink-2:#9DB0BE; --line:#26384A; --line-2:#385068;
+  --accent:#55B8D1; --accent-ink:#06222B; --accent-soft:#12323C;
+  --why:#8DB0FF; --why-bg:#18274A; --check:#6BD39B; --check-bg:#12301F; --stuck:#F0B25C; --stuck-bg:#3A2A0B; --trap:#FF9A90; --trap-bg:#40181A;
+  --code-bg:#0A1218; --code-ink:#DCE8F0; --code-line:#1E2F3D; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.65 var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:var(--surface);padding:8px 12px;z-index:50}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1240px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+.brand{font:700 17px/1 var(--f-display);color:var(--ink);text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+.brand i{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--accent);transform:rotate(45deg)}
+.spacer{flex:1}
+.btn{font:500 14px/1 var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer}
+.btn:hover{border-color:var(--line-2)}
+.menu-btn{display:none}
+.shell{max-width:1240px;margin:0 auto;padding:28px 20px 80px;display:grid;grid-template-columns:268px minmax(0,1fr);gap:44px}
+.rail{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;padding-right:6px}
+.rail h2{font:600 12px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin:0 0 10px}
+.docs{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:2px}
+.docs a{display:flex;gap:10px;align-items:baseline;padding:8px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-weight:500;font-size:15px}
+.docs a b{font:500 12px var(--f-mono);color:var(--ink-2);min-width:18px}
+.docs a:hover{background:var(--surface-2)}
+.docs a[aria-current="page"]{background:var(--accent-soft);color:var(--ink)}
+.docs a[aria-current="page"] b{color:var(--accent)}
+.toc{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.toc a{display:block;padding:5px 12px;margin-left:-2px;border-left:2px solid transparent;color:var(--ink-2);text-decoration:none;font-size:14px;line-height:1.4}
+.toc a:hover{color:var(--ink)}
+.toc a.on{color:var(--ink);border-left-color:var(--accent);font-weight:500}
+.toc .l3 a{padding-left:24px;font-size:13px}
+main{min-width:0}
+.eyebrow{font:600 12px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.eyebrow span+span::before{content:"";display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--line-2);margin-right:10px;vertical-align:middle}
+h1{font:700 clamp(30px,4.4vw,46px)/1.08 var(--f-display);letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}
+.lead{font-size:18px;line-height:1.55;color:var(--ink-2);max-width:60ch;margin:0 0 30px}
+.content{max-width:820px}
+.content h2{font:650 clamp(23px,2.6vw,29px)/1.2 var(--f-display);letter-spacing:-.015em;margin:48px 0 14px;padding-top:6px;text-wrap:balance}
+.content h3{font:650 21px/1.28 var(--f-display);letter-spacing:-.01em;margin:38px 0 10px;text-wrap:balance;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+.content h4{font:650 17.5px/1.3 var(--f-display);margin:30px 0 8px;padding:8px 12px;background:var(--surface-2);border-radius:8px;border-left:3px solid var(--accent)}
+.content h2 a.anchor,.content h3 a.anchor{color:var(--line-2);text-decoration:none;font-weight:400;margin-left:8px;opacity:0}
+.content h2:hover a.anchor,.content h3:hover a.anchor{opacity:1}
+.chip{font:500 12px/1 var(--f-mono);background:var(--accent-soft);color:var(--accent);padding:5px 8px;border-radius:999px;white-space:nowrap}
+.content p{margin:0 0 14px;max-width:70ch}
+.content ul,.content ol{margin:0 0 16px;padding-left:22px;max-width:70ch}
+.content li{margin:4px 0}
+.content hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+code{font:500 .88em var(--f-mono);background:var(--surface-2);padding:.12em .38em;border-radius:5px;overflow-wrap:anywhere}
+pre{position:relative;margin:0 0 18px;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--code-line);border-radius:10px;padding:16px 18px;overflow-x:auto;font:400 13.5px/1.6 var(--f-mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal;color:inherit}
+.copy{position:absolute;top:8px;right:8px;font:500 12px var(--f-body);color:var(--code-ink);background:rgba(255,255,255,.08);border:1px solid var(--code-line);border-radius:6px;padding:5px 9px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.16)}
+.tablewrap{overflow-x:auto;margin:0 0 20px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.5}
+th{font:600 12.5px/1.3 var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);background:var(--surface-2);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 14px;border-top:1px solid var(--line);vertical-align:top;min-width:96px}
+tr:first-child td{border-top:0}
+td code{white-space:normal;font-size:.8em;overflow-wrap:break-word}
+blockquote{margin:0 0 18px;padding:13px 16px;background:var(--surface-2);border-radius:10px;border-left:4px solid var(--line-2);max-width:78ch}
+blockquote p{margin:0 0 8px}blockquote p:last-child{margin:0}
+blockquote.why{background:var(--why-bg);border-left-color:var(--why)}blockquote.why>p:first-child>strong:first-child{color:var(--why)}
+blockquote.check{background:var(--check-bg);border-left-color:var(--check)}blockquote.check>p:first-child>strong:first-child{color:var(--check)}
+blockquote.stuck{background:var(--stuck-bg);border-left-color:var(--stuck)}blockquote.stuck>p:first-child>strong:first-child{color:var(--stuck)}
+blockquote.trap{background:var(--trap-bg);border-left-color:var(--trap)}blockquote.trap>p:first-child>strong:first-child{color:var(--trap)}
+.checks{list-style:none;padding:0!important;display:grid;gap:8px;margin:0 0 20px}
+.checks li{margin:0}
+.checks label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.checks input{margin-top:4px;width:18px;height:18px;accent-color:var(--accent)}
+.checks input:checked+*{opacity:.6}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:56px;max-width:820px}
+.pager a{display:block;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow)}
+.pager a:hover{border-color:var(--accent)}
+.pager small{display:block;font:600 11.5px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-bottom:8px}
+.pager .next{text-align:right;grid-column:2}
+.figure{margin:8px 0 28px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;overflow-x:auto}
+.figure svg{display:block;min-width:720px;width:100%;height:auto}
+.figure figcaption{font-size:13.5px;color:var(--ink-2);padding:10px 8px 2px}
+.n rect{fill:var(--surface);stroke:var(--line-2);stroke-width:1.5}.n text{fill:var(--ink);font:600 15px var(--f-body)}.n .s{fill:var(--ink-2);font:400 12px var(--f-body)}
+.n.sec rect{fill:var(--accent-soft);stroke:var(--accent)}.n.end rect{fill:var(--trap-bg);stroke:var(--trap)}.n.end text{fill:var(--ink)}
+.b circle{fill:var(--accent);stroke:var(--surface);stroke-width:2}.b text{fill:var(--accent-ink);font:700 12px var(--f-body)}.b.r circle{fill:var(--trap)}.b.r text{fill:#fff}
+.legend{list-style:none;margin:6px 8px 4px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:6px 24px;font-size:14px;color:var(--ink-2)}.legend li{display:flex;gap:10px;align-items:baseline}.legend b{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 12px var(--f-body)}.legend .r b{background:var(--trap);color:#fff}
+.road{stroke:var(--ink-2);stroke-width:2;fill:none}.det{stroke:var(--accent);stroke-width:2;fill:none}.ret{stroke:var(--accent);stroke-width:2;fill:none;stroke-dasharray:6 5}.den{stroke:var(--trap);stroke-width:2;fill:none}
+.lbl{fill:var(--ink-2);font:500 12px var(--f-body)}.lbl.a{fill:var(--accent)}.lbl.r{fill:var(--trap)}
+.hero{display:grid;gap:26px;padding:8px 0 10px}
+.facts{display:flex;gap:10px 28px;flex-wrap:wrap;margin:0 0 6px;padding:0;list-style:none}
+.facts li{display:flex;flex-direction:column;gap:2px}.facts b{font:700 28px/1 var(--f-display);letter-spacing:-.02em}.facts span{font-size:13px;color:var(--ink-2)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin:12px 0 8px}
+.card{display:flex;flex-direction:column;gap:8px;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);min-width:0}
+.card:hover{border-color:var(--accent)}
+.card .no{font:500 12px var(--f-mono);color:var(--accent)}
+.card h3{font:650 20px/1.2 var(--f-display);margin:0;letter-spacing:-.01em}
+.card p{margin:0;color:var(--ink-2);font-size:15px;line-height:1.5}
+.card .meta{margin-top:auto;padding-top:6px;font-size:13px;color:var(--ink-2);display:flex;gap:8px;flex-wrap:wrap}
+.card .meta span{background:var(--surface-2);padding:4px 8px;border-radius:999px}
+.sec-t{font:650 24px/1.2 var(--f-display);letter-spacing:-.015em;margin:44px 0 12px}
+.path{width:100%;max-width:820px}
+@media (max-width:920px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:20px;padding-top:18px}
+  .rail{position:static;max-height:none;display:none}
+  .rail.open{display:block;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .menu-btn{display:inline-block}
+  .pager{grid-template-columns:1fr}.pager .next{grid-column:1}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style></head><body><a class="skip" href="#main">Skip to content</a><header class="topbar"><div class="topbar-in"><a class="brand" href="index.html"><i></i>Motor Claims Case Workshop</a><span class="spacer"></span><button class="btn menu-btn" id="menu" type="button" aria-expanded="false" aria-controls="rail">Contents</button><button class="btn" id="theme" type="button">Dark mode</button></div></header><div class="shell"><nav class="rail" id="rail" aria-label="Documents"><h2>Documents</h2><ul class="docs"><li><a href="index.html"><b>0</b>Overview</a></li><li><a href="01-scenario.html"><b>1</b>Business scenario</a></li><li><a href="02-setup.html"><b>2</b>Import and set up</a></li><li><a href="03-building-blocks.html"><b>3</b>Building blocks</a></li><li><a href="04-business-rules.html"><b>4</b>Business rules</a></li><li><a href="05-build-guide.html"><b>5</b>Build guide</a></li><li><a href="06-reference.html" aria-current="page"><b>6</b>Quick reference</a></li></ul><h2>On this page</h2><ul class="toc"><li class="l2"><a href="#appendix-a-variable-dictionary">Appendix A: variable dictionary</a></li><li class="l2"><a href="#appendix-b-every-rule-on-one-page">Appendix B: every rule on one page</a></li><li class="l2"><a href="#appendix-c-claim-status-values-what-the-claim-row-shows">Appendix C: claim status values (what the claim row shows)</a></li><li class="l2"><a href="#appendix-d-test-matrix">Appendix D: test matrix</a></li><li class="l2"><a href="#appendix-e-troubleshooting">Appendix E: troubleshooting</a></li><li class="l2"><a href="#appendix-f-glossary">Appendix F: glossary</a></li></ul></nav><main id="main"><p class="eyebrow"><span>Document 6 of 6</span><span>Everyone</span><span>Look-up</span></p><h1>Quick reference</h1><p class="lead">Variables, every rule on one page, claim statuses, the test matrix, troubleshooting and a glossary.</p><div class="content"><h2 id="appendix-a-variable-dictionary">Appendix A: variable dictionary<a class="anchor" href="#appendix-a-variable-dictionary" title="Permanent link">#</a></h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Produced by</th>
+<th>Type</th>
+<th>Values / meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>response</code></td>
+<td>The trigger</td>
+<td>object</td>
+<td>The claim row as it was when created. Read with <code>vars.response?.Field</code></td>
+</tr>
+<tr>
+<td><code>documentIngestionStatus</code></td>
+<td>ClaimDocumentIntelligence</td>
+<td>text</td>
+<td>Complete, Inconsistent, Incomplete</td>
+</tr>
+<tr>
+<td><code>documentsComplete</code></td>
+<td>ClaimDocumentIntelligence</td>
+<td>true/false</td>
+<td>All 7 documents present</td>
+</tr>
+<tr>
+<td><code>missingDocuments</code></td>
+<td>ClaimDocumentIntelligence</td>
+<td>text</td>
+<td>Names of missing documents</td>
+</tr>
+<tr>
+<td><code>documentInconsistencies</code></td>
+<td>ClaimDocumentIntelligence</td>
+<td>text</td>
+<td>Contradictions found</td>
+</tr>
+<tr>
+<td><code>extractedCustomerName</code>, <code>extractedPolicyNumber</code>, <code>extractedVehicleRegistration</code>, <code>extractedIncidentDate</code>, <code>extractedDocumentTypes</code></td>
+<td>ClaimDocumentIntelligence</td>
+<td>text</td>
+<td>What the documents say</td>
+</tr>
+<tr>
+<td><code>extractedRepairEstimate</code></td>
+<td>ClaimDocumentIntelligence</td>
+<td>number</td>
+<td>Total on the repair estimate</td>
+</tr>
+<tr>
+<td><code>policyValid</code></td>
+<td>ValidatePolicy</td>
+<td>true/false</td>
+<td></td>
+</tr>
+<tr>
+<td><code>policyValidationReason</code></td>
+<td>ValidatePolicy</td>
+<td>text</td>
+<td>Why valid or invalid. Always filled once checked</td>
+</tr>
+<tr>
+<td><code>customerEmail</code></td>
+<td>ValidatePolicy</td>
+<td>text</td>
+<td>From PolicyMaster</td>
+</tr>
+<tr>
+<td><code>fraudScore</code></td>
+<td>FraudRiskAssessment</td>
+<td>number</td>
+<td>0 to 100</td>
+</tr>
+<tr>
+<td><code>riskLevel</code></td>
+<td>FraudRiskAssessment</td>
+<td>text</td>
+<td>Low, Medium, High</td>
+</tr>
+<tr>
+<td><code>fraudFlag</code></td>
+<td>FraudRiskAssessment</td>
+<td>true/false</td>
+<td>True only for High</td>
+</tr>
+<tr>
+<td><code>fraudReasons</code></td>
+<td>FraudRiskAssessment</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td><code>damageEstimate</code></td>
+<td>AssessDamage</td>
+<td>number</td>
+<td></td>
+</tr>
+<tr>
+<td><code>decision</code></td>
+<td>AdjusterReview</td>
+<td>text</td>
+<td>Approve, Reject, RequestInformation</td>
+</tr>
+<tr>
+<td><code>comments</code></td>
+<td>AdjusterReview</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td><code>settlementAmount</code></td>
+<td>CalculateSettlement</td>
+<td>number</td>
+<td>After deductible</td>
+</tr>
+<tr>
+<td><code>seniorApprovalRequired</code></td>
+<td>CalculateSettlement</td>
+<td>true/false</td>
+<td>Above 175,000</td>
+</tr>
+<tr>
+<td><code>decision2</code></td>
+<td>SeniorApproval</td>
+<td>text</td>
+<td>Approved, Rejected</td>
+</tr>
+<tr>
+<td><code>comments2</code></td>
+<td>SeniorApproval</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td><code>settlementStatus</code></td>
+<td>ProcessSettlement</td>
+<td>text</td>
+<td>Paid</td>
+</tr>
+<tr>
+<td><code>paymentReference</code></td>
+<td>ProcessSettlement</td>
+<td>text</td>
+<td>PAY-<claim number></td>
+</tr>
+<tr>
+<td><code>settlementDate</code></td>
+<td>ProcessSettlement</td>
+<td>text</td>
+<td></td>
+</tr>
+<tr>
+<td><code>claimPacketReference</code></td>
+<td>GenerateClaimPacket</td>
+<td>text</td>
+<td>PACKET-<claim number></td>
+</tr>
+<tr>
+<td><code>notificationStatus</code>, <code>claimOutcome</code>, <code>notificationText</code></td>
+<td>CreateCustomerNotification (Closure)</td>
+<td>text</td>
+<td>Outcome Settled</td>
+</tr>
+<tr>
+<td><code>notificationStatus2</code>, <code>claimOutcome2</code>, <code>notificationText2</code></td>
+<td>CreateCustomerNotification (Denied)</td>
+<td>text</td>
+<td>Outcome Denied or FraudRejected</td>
+</tr>
+<tr>
+<td><code>fraudResult</code></td>
+<td>FraudInvestigation</td>
+<td>text</td>
+<td>Cleared, Confirmed</td>
+</tr>
+<tr>
+<td><code>comments3</code></td>
+<td>FraudInvestigation</td>
+<td>text</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-b-every-rule-on-one-page">Appendix B: every rule on one page<a class="anchor" href="#appendix-b-every-rule-on-one-page" title="Permanent link">#</a></h2>
+<p><strong>Case settings</strong></p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Case ID</td>
+<td>External key: <code>vars.response?.ClaimId</code></td>
+</tr>
+<tr>
+<td>Completion rule 1</td>
+<td><code>All required stages completed</code></td>
+</tr>
+<tr>
+<td>Completion rule 2</td>
+<td><code>Claim denied and case closed</code>: Denied completed</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Stage entry rules</strong></p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Rule name</th>
+<th>Type</th>
+<th>From</th>
+<th>Condition</th>
+<th>Interrupting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intake</td>
+<td>Case started</td>
+<td>Case entered</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Assessment</td>
+<td>Intake completed</td>
+<td>Stage completed</td>
+<td>Intake</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Review</td>
+<td>Assessment completed</td>
+<td>Stage completed</td>
+<td>Assessment</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Settlement</td>
+<td>Adjuster approved the claim</td>
+<td>Stage completed</td>
+<td>Review</td>
+<td><code>vars.decision === "Approve"</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Closure</td>
+<td>Settlement completed</td>
+<td>Stage completed</td>
+<td>Settlement</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Pending Customer</td>
+<td>Documents incomplete at Intake</td>
+<td>Stage exited</td>
+<td>Intake</td>
+<td><code>vars.documentIngestionStatus === 'Incomplete' &amp;&amp; vars.policyValid === true</code></td>
+<td>On</td>
+</tr>
+<tr>
+<td>Pending Customer</td>
+<td>Adjuster requested more information</td>
+<td>Stage exited</td>
+<td>Review</td>
+<td><code>vars.decision === 'RequestInformation'</code></td>
+<td>On</td>
+</tr>
+<tr>
+<td>Denied</td>
+<td>Policy found invalid at Intake</td>
+<td>Stage exited</td>
+<td>Intake</td>
+<td><code>!!vars.policyValidationReason &amp;&amp; vars.policyValid === false</code></td>
+<td>On</td>
+</tr>
+<tr>
+<td>Denied</td>
+<td>Adjuster rejected the claim</td>
+<td>Stage exited</td>
+<td>Review</td>
+<td><code>vars.decision === 'Reject'</code></td>
+<td>On</td>
+</tr>
+<tr>
+<td>Denied</td>
+<td>Senior approver rejected the settlement</td>
+<td>Stage exited</td>
+<td>Settlement</td>
+<td><code>vars.decision2 === 'Rejected'</code></td>
+<td>On</td>
+</tr>
+<tr>
+<td>Denied</td>
+<td>Fraud confirmed by investigator</td>
+<td>Stage <strong>completed</strong></td>
+<td>Fraud Investigation</td>
+<td><code>vars.fraudResult === 'Confirmed'</code></td>
+<td>On</td>
+</tr>
+<tr>
+<td>Fraud Investigation</td>
+<td>Assessment found high fraud risk</td>
+<td>Stage exited</td>
+<td>Assessment</td>
+<td><code>vars.fraudFlag === true &amp;&amp; !vars.fraudResult</code></td>
+<td>On</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Stage completion rules (normal finish)</strong></p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Rule name</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intake</td>
+<td>Documents analysed and policy checked</td>
+<td><code>(vars.documentIngestionStatus === 'Complete' \|\| vars.documentIngestionStatus === 'Inconsistent') &amp;&amp; vars.policyValid === true</code></td>
+</tr>
+<tr>
+<td>Assessment</td>
+<td>Fraud score and damage estimate ready</td>
+<td><code>!(vars.fraudFlag === true &amp;&amp; !vars.fraudResult)</code></td>
+</tr>
+<tr>
+<td>Review</td>
+<td>Adjuster decision recorded</td>
+<td><code>vars.decision === 'Approve'</code></td>
+</tr>
+<tr>
+<td>Settlement</td>
+<td>Settlement paid</td>
+<td><code>vars.settlementStatus === "Paid"</code></td>
+</tr>
+<tr>
+<td>Closure</td>
+<td>Packet and notification done</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Denied</td>
+<td>Denial notification sent</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Fraud Investigation</td>
+<td>Investigation cleared and case resumes (return to origin)</td>
+<td><code>vars.fraudResult === 'Cleared'</code></td>
+</tr>
+<tr>
+<td>Fraud Investigation</td>
+<td>Fraud confirmed and claim denied</td>
+<td><code>vars.fraudResult === 'Confirmed'</code></td>
+</tr>
+<tr>
+<td>Pending Customer</td>
+<td>Customer information received and back to Intake (return to origin)</td>
+<td>Event: Data Fabric record updated, ClaimId equals this claim and CustomerInformationStatus equals Received</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Stage exit rules (detours)</strong></p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>On stage</th>
+<th>Rule name</th>
+<th>After tasks</th>
+<th>Goes to</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intake</td>
+<td>Policy invalid so claim is denied</td>
+<td>ValidatePolicy</td>
+<td>Denied</td>
+<td><code>!!vars.policyValidationReason &amp;&amp; vars.policyValid === false</code></td>
+</tr>
+<tr>
+<td>Intake</td>
+<td>Documents incomplete so customer is contacted</td>
+<td>ClaimDocumentIntelligence, ValidatePolicy</td>
+<td>Pending Customer</td>
+<td><code>vars.documentIngestionStatus === 'Incomplete' &amp;&amp; vars.policyValid === true</code></td>
+</tr>
+<tr>
+<td>Assessment</td>
+<td>High fraud risk so investigation starts</td>
+<td>FraudRiskAssessment, AssessDamage</td>
+<td>Fraud Investigation</td>
+<td><code>vars.fraudFlag === true &amp;&amp; !vars.fraudResult</code></td>
+</tr>
+<tr>
+<td>Review</td>
+<td>Exit to Denied after adjuster rejection</td>
+<td>AdjusterReview</td>
+<td>Denied</td>
+<td><code>vars.decision === 'Reject'</code></td>
+</tr>
+<tr>
+<td>Review</td>
+<td>Exit to Pending Customer after adjuster information request</td>
+<td>AdjusterReview</td>
+<td>Pending Customer</td>
+<td><code>vars.decision === 'RequestInformation'</code></td>
+</tr>
+<tr>
+<td>Settlement</td>
+<td>Exit to Denied after senior approver rejection</td>
+<td>SeniorApproval</td>
+<td>Denied</td>
+<td><code>vars.decision2 === 'Rejected'</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>(If you built 6F, each "After tasks" list also contains that stage's save task.)</p>
+<p><strong>Task rules that have a condition</strong></p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Rule</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SeniorApproval</td>
+<td>Only if senior approval is required</td>
+<td><code>vars.seniorApprovalRequired === true</code></td>
+</tr>
+<tr>
+<td>ProcessSettlement</td>
+<td>Pay only if no approval needed or approved</td>
+<td><code>vars.seniorApprovalRequired === false \|\| vars.decision2 === 'Approved'</code></td>
+</tr>
+<tr>
+<td>Save payment details to the claim record</td>
+<td></td>
+<td><code>vars.settlementStatus === 'Paid'</code></td>
+</tr>
+<tr>
+<td>Email at Closure / Denied</td>
+<td></td>
+<td><code>!!vars.customerEmail</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-c-claim-status-values-what-the-claim-row-shows">Appendix C: claim status values (what the claim row shows)<a class="anchor" href="#appendix-c-claim-status-values-what-the-claim-row-shows" title="Permanent link">#</a></h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Set by</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Registered</td>
+<td>The Intake App</td>
+<td>Just created</td>
+</tr>
+<tr>
+<td>Intake complete / Documents incomplete / Policy invalid</td>
+<td>Intake save step</td>
+<td></td>
+</tr>
+<tr>
+<td>Assessment complete / High fraud risk</td>
+<td>Assessment save step</td>
+<td></td>
+</tr>
+<tr>
+<td>Awaiting customer information</td>
+<td>Pending Customer save step</td>
+<td>Waiting for the customer</td>
+</tr>
+<tr>
+<td>Fraud cleared / Fraud confirmed</td>
+<td>Fraud save step</td>
+<td></td>
+</tr>
+<tr>
+<td>Approved by adjuster / Rejected by adjuster / Information requested</td>
+<td>Review save step</td>
+<td></td>
+</tr>
+<tr>
+<td>Settlement calculated / Awaiting senior approval</td>
+<td>Settlement calculation save step</td>
+<td></td>
+</tr>
+<tr>
+<td>Settled</td>
+<td>Payment save step</td>
+<td>Paid</td>
+</tr>
+<tr>
+<td>Closed</td>
+<td>Closure save step</td>
+<td>Final, paid</td>
+</tr>
+<tr>
+<td>Denied</td>
+<td>Denied save step</td>
+<td>Final, not paid</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-d-test-matrix">Appendix D: test matrix<a class="anchor" href="#appendix-d-test-matrix" title="Permanent link">#</a></h2>
+<p>Run one claim at a time. Press the buttons as shown.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Claim</th>
+<th>Your clicks</th>
+<th>Expected trail</th>
+<th>Check afterwards</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>Rahul</td>
+<td>Adjuster <strong>Approve</strong></td>
+<td>Intake, Assessment, Review, Settlement, Closure</td>
+<td>Paid 162,400</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>Rahul</td>
+<td>Adjuster <strong>Reject</strong> (comment)</td>
+<td>Intake, Assessment, Review, Denied</td>
+<td>Denial email. Claim status Denied</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>Rahul</td>
+<td>Adjuster <strong>Request information</strong>, then add a document in the Intake App, then <strong>Approve</strong></td>
+<td>Intake, Assessment, Review, Pending Customer, Review, Settlement, Closure</td>
+<td>Email received</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>Priya</td>
+<td>Add the estimate in the Intake App, then adjuster <strong>Approve</strong></td>
+<td>Intake, Pending Customer, Intake, Assessment, Review, Settlement, Closure</td>
+<td>Paid 84,600</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>Arjun</td>
+<td>Fraud <strong>Cleared</strong>, adjuster <strong>Approve</strong>, senior <strong>Approved</strong></td>
+<td>Intake, Assessment, Fraud Investigation, Assessment, Review, Settlement, Closure</td>
+<td>Paid 230,000</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>Arjun</td>
+<td>Fraud <strong>Confirmed</strong></td>
+<td>Intake, Assessment, Fraud Investigation, Denied</td>
+<td>Denial email does not say fraud</td>
+</tr>
+<tr>
+<td>T7</td>
+<td>Arjun</td>
+<td>Fraud <strong>Cleared</strong>, adjuster <strong>Approve</strong>, senior <strong>Rejected</strong></td>
+<td>... Settlement, Denied</td>
+<td>Nothing paid</td>
+</tr>
+<tr>
+<td>T8</td>
+<td>Meera (policy POL-000001, expired)</td>
+<td>none</td>
+<td>Intake, Denied</td>
+<td>Claim status Denied. No email is sent, because the expired policy has no email address on it (this is the "missing address never blocks the case" rule)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-e-troubleshooting">Appendix E: troubleshooting<a class="anchor" href="#appendix-e-troubleshooting" title="Permanent link">#</a></h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The case jumps to <strong>Denied</strong> at the very start</td>
+<td>A Denied entry rule uses <code>policyValid === false</code> without the guard</td>
+<td>Use <code>!!vars.policyValidationReason &amp;&amp; vars.policyValid === false</code></td>
+</tr>
+<tr>
+<td>A secondary stage never starts</td>
+<td>Its entry rule is <em>Case entered</em> or <em>Ad hoc</em>, or there is no matching exit rule on the origin stage</td>
+<td>Entry type must be <strong>Selected stage exited</strong>, and the origin stage needs the matching exit rule</td>
+</tr>
+<tr>
+<td>The case waits after a human task</td>
+<td>Output renamed in the designer, so the variable stays empty</td>
+<td>Do not rename outputs. The name must match the app</td>
+</tr>
+<tr>
+<td>Stuck in Fraud Investigation after <strong>Confirmed</strong></td>
+<td>Denied's entry rule from Fraud is <em>exited</em> instead of <em>completed</em></td>
+<td>Change it to <strong>Selected stage completed</strong></td>
+</tr>
+<tr>
+<td>A stage never finishes</td>
+<td>A required task was skipped</td>
+<td>Mark tasks that only sometimes run as <strong>not required</strong></td>
+</tr>
+<tr>
+<td>Two stages start at once</td>
+<td>The normal completion rule and a detour are both true</td>
+<td>Make the completion condition the opposite of the detour conditions</td>
+</tr>
+<tr>
+<td>The email does not arrive</td>
+<td><em>Save as draft</em> is on, or the policy has no email</td>
+<td>Set Save as draft to false. Check <code>customerEmail</code> in the run</td>
+</tr>
+<tr>
+<td>Rule name rejected</td>
+<td>Not unique, or contains a colon</td>
+<td>Rename</td>
+</tr>
+<tr>
+<td>Setup says the name cannot be used</td>
+<td>A leftover deployment or a folder deleted by hand blocks <code>ClaimsSolution</code></td>
+<td>Run Setup with <strong>DeploymentName</strong> set to a new name, for example <code>ClaimsSolutionNew</code>, and use that name later</td>
+</tr>
+<tr>
+<td>The Setup screen looks stuck</td>
+<td>Studio Web shows only the first lines until the run ends</td>
+<td>Run Setup again with <strong>Action</strong> = <code>Status</code>; it prints how far Setup got and says FINISHED or NOT FINISHED</td>
+</tr>
+<tr>
+<td>Debug asks you to pick a Gmail or Data Fabric connection</td>
+<td>The connection does not exist yet</td>
+<td>Create it in Integration Service &gt; Connections, then bind it when the designer asks</td>
+</tr>
+<tr>
+<td>Debug cannot find an app or worker</td>
+<td>The Debug links were not created (Setup did not finish)</td>
+<td>Run Setup with <strong>Action</strong> = <code>Status</code>. If it did not finish, delete the solution <strong>MotorInsuranceClaimManagement</strong> and run Setup again</td>
+</tr>
+<tr>
+<td>After Upgrade the deployment says <em>Needs setup to activate</em></td>
+<td>The cases need your connections</td>
+<td><strong>Set up activation</strong>, bind your Gmail and Data Fabric connections, then <strong>Activate</strong></td>
+</tr>
+<tr>
+<td>The case does not start when a claim is registered</td>
+<td>The deployment is not activated, or the Data Fabric connection is not bound</td>
+<td>Finish <strong>Set up activation</strong> and <strong>Activate</strong> (3.7)</td>
+</tr>
+<tr>
+<td>Two copies of the solution appear in Studio Web</td>
+<td>Setup was run twice</td>
+<td>Delete the extra copy of <strong>MotorInsuranceClaimManagement</strong></td>
+</tr>
+<tr>
+<td>Settlement step fails for a claim you already ran</td>
+<td>The payment was already recorded</td>
+<td>This is safe: the worker returns the same payment</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-f-glossary">Appendix F: glossary<a class="anchor" href="#appendix-f-glossary" title="Permanent link">#</a></h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Case</strong></td>
+<td>One running claim, from start to end</td>
+</tr>
+<tr>
+<td><strong>Case plan</strong></td>
+<td>The design of the process (what you build)</td>
+</tr>
+<tr>
+<td><strong>Stage</strong></td>
+<td>A phase of the process</td>
+</tr>
+<tr>
+<td><strong>Primary / secondary stage</strong></td>
+<td>Main road / exception path</td>
+</tr>
+<tr>
+<td><strong>Task</strong></td>
+<td>One unit of work in a stage</td>
+</tr>
+<tr>
+<td><strong>Variable</strong></td>
+<td>A value stored from a task's output, read as <code>vars.name</code></td>
+</tr>
+<tr>
+<td><strong>Entry rule</strong></td>
+<td>When a stage starts</td>
+</tr>
+<tr>
+<td><strong>Completion rule</strong></td>
+<td>When a stage is done</td>
+</tr>
+<tr>
+<td><strong>Exit rule</strong></td>
+<td>When the case must leave a stage early</td>
+</tr>
+<tr>
+<td><strong>Return to origin</strong></td>
+<td>Go back to the stage the case came from</td>
+</tr>
+<tr>
+<td><strong>Interrupting</strong></td>
+<td>A stage that takes over even while another is active</td>
+</tr>
+<tr>
+<td><strong>SLA</strong></td>
+<td>A time limit with warnings</td>
+</tr>
+<tr>
+<td><strong>Action task</strong></td>
+<td>A task a person completes in Action Center</td>
+</tr>
+<tr>
+<td><strong>Connector</strong></td>
+<td>A link to another system (Gmail, Data Fabric)</td>
+</tr>
+<tr>
+<td><strong>Entity</strong></td>
+<td>A Data Fabric table</td>
+</tr>
+<tr>
+<td><strong>Asset</strong></td>
+<td>A named setting kept in Orchestrator</td>
+</tr>
+<tr>
+<td><strong>Example case</strong></td>
+<td>One of the five finished cases (<code>1_HappyPath</code> to <code>5_Complete</code>) inside your solution, to compare with or to jump in from</td>
+</tr>
+</tbody>
+</table></div></div><div class="pager"><a class="prev" href="05-build-guide.html"><small>Previous</small>Build it, step by step</a></div></main></div><script>
+(function(){
+  function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  var root=document.documentElement,t=get('mc-theme'); if(t==='dark'||t==='light'){root.setAttribute('data-theme',t)}
+  var tb=document.getElementById('theme');
+  if(tb){tb.addEventListener('click',function(){var cur=root.getAttribute('data-theme');if(!cur){cur=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}
+    var nx=cur==='dark'?'light':'dark';root.setAttribute('data-theme',nx);set('mc-theme',nx);tb.textContent=nx==='dark'?'Light mode':'Dark mode'});
+    var c=root.getAttribute('data-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');tb.textContent=c==='dark'?'Light mode':'Dark mode'}
+  var mb=document.getElementById('menu'),rail=document.getElementById('rail');
+  if(mb&&rail){mb.addEventListener('click',function(){var o=rail.classList.toggle('open');mb.setAttribute('aria-expanded',o?'true':'false')})}
+  document.querySelectorAll('pre').forEach(function(pre){
+    if(pre.classList.contains('nocopy'))return;
+    var b=document.createElement('button');b.className='copy';b.type='button';b.textContent='Copy';
+    b.addEventListener('click',function(){
+      var txt=pre.innerText.replace(/\sCopy$/,'');
+      function done(ok){b.textContent=ok?'Copied':'Select and copy';setTimeout(function(){b.textContent='Copy'},1600)}
+      try{navigator.clipboard.writeText(txt).then(function(){done(true)},function(){sel();done(false)})}catch(e){sel();done(false)}
+      function sel(){var r=document.createRange();r.selectNodeContents(pre.querySelector('code')||pre);var s=getSelection();s.removeAllRanges();s.addRange(r)}
+    });pre.appendChild(b)});
+  document.querySelectorAll('input[data-key]').forEach(function(i){
+    var k='mc-chk-'+location.pathname+'-'+i.getAttribute('data-key');i.checked=get(k)==='1';
+    i.addEventListener('change',function(){set(k,i.checked?'1':'0')})});
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  if(links.length&&'IntersectionObserver' in window){
+    var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a});
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.remove('on')});var a=map[e.target.id];if(a)a.classList.add('on')}})},{rootMargin:'-80px 0px -70% 0px'});
+    document.querySelectorAll('.content h2[id],.content h3[id]').forEach(function(h){io.observe(h)})}
+})();
+</script></body></html>

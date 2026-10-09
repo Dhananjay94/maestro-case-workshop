@@ -1,0 +1,274 @@
+{
+  "displayName": "MotorInsuranceClaim",
+  "description": "Represents a motor insurance claim from initial submission through assessment, review, settlement, and closure. Stores the business state used by UiPath Maestro to orchestrate automated activities, AI decisions, and human actions throughout the claim lifecycle.",
+  "fields": [
+    {
+      "name": "ClaimAmount",
+      "type": "DECIMAL",
+      "description": "Amount claimed by the customer.",
+      "decimalPrecision": 2
+    },
+    {
+      "name": "ClaimId",
+      "type": "STRING",
+      "description": "Unique business identifier for the insurance claim, such as CLM-1001.",
+      "isRequired": true,
+      "isUnique": true,
+      "lengthLimit": 200
+    },
+    {
+      "name": "CustomerName",
+      "type": "STRING",
+      "description": "Full name of the customer or policyholder submitting the claim.",
+      "isRequired": true,
+      "lengthLimit": 200
+    },
+    {
+      "name": "IncidentDate",
+      "type": "DATE",
+      "description": "Date on which the accident or insured incident occurred.",
+      "isRequired": true
+    },
+    {
+      "name": "IncidentDescription",
+      "type": "MULTILINE_TEXT",
+      "description": "Customer-provided description of the accident or incident.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "PolicyNumber",
+      "type": "STRING",
+      "description": "Insurance policy number associated with the claim.",
+      "isRequired": true,
+      "lengthLimit": 200
+    },
+    {
+      "name": "VehicleModel",
+      "type": "STRING",
+      "description": "Make and model of the insured vehicle.",
+      "lengthLimit": 200
+    },
+    {
+      "name": "VehicleRegistration",
+      "type": "STRING",
+      "description": "Vehicle registration number associated with the claim.",
+      "isRequired": true,
+      "lengthLimit": 200
+    },
+    {
+      "name": "DocumentReferences",
+      "type": "MULTILINE_TEXT",
+      "description": "One document reference per line in the format DocumentType=StoragePath. This stores the files associated with the claim without putting ClaimId into filenames.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "DocumentIngestionStatus",
+      "type": "STRING",
+      "description": "Lifecycle state of document ingestion, such as Received, Extracted, or Failed.",
+      "lengthLimit": 100
+    },
+    {
+      "name": "ExtractedCustomerName",
+      "type": "STRING",
+      "description": "Customer name extracted from submitted documents.",
+      "lengthLimit": 200
+    },
+    {
+      "name": "ExtractedPolicyNumber",
+      "type": "STRING",
+      "description": "Policy number extracted from submitted documents.",
+      "lengthLimit": 200
+    },
+    {
+      "name": "ExtractedVehicleRegistration",
+      "type": "STRING",
+      "description": "Vehicle registration extracted from submitted documents.",
+      "lengthLimit": 200
+    },
+    {
+      "name": "ExtractedIncidentDate",
+      "type": "DATE",
+      "description": "Incident date extracted from submitted documents."
+    },
+    {
+      "name": "ExtractedDocumentTypes",
+      "type": "MULTILINE_TEXT",
+      "description": "Document types successfully identified in the submission package.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "ExtractedRepairEstimate",
+      "type": "DECIMAL",
+      "description": "Repair estimate amount extracted from an estimate document, when present.",
+      "decimalPrecision": 2
+    },
+    {
+      "name": "PolicyValid",
+      "type": "BOOLEAN",
+      "description": "Indicates whether policy validation passed."
+    },
+    {
+      "name": "PolicyValidationReason",
+      "type": "MULTILINE_TEXT",
+      "description": "Explanation produced by policy validation.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "DocumentsComplete",
+      "type": "BOOLEAN",
+      "description": "Indicates whether the required initial document package is complete."
+    },
+    {
+      "name": "MissingDocuments",
+      "type": "MULTILINE_TEXT",
+      "description": "List of required documents that are not yet available.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "FraudScore",
+      "type": "DECIMAL",
+      "description": "Fraud risk score produced by the fraud assessment agent.",
+      "decimalPrecision": 2
+    },
+    {
+      "name": "RiskLevel",
+      "type": "STRING",
+      "description": "Risk classification such as Low, Medium, or High.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "FraudFlag",
+      "type": "BOOLEAN",
+      "description": "Indicates whether the fraud assessment requires an investigation."
+    },
+    {
+      "name": "FraudReasons",
+      "type": "MULTILINE_TEXT",
+      "description": "Signals and inconsistencies identified by the fraud assessment agent.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "DamageEstimate",
+      "type": "DECIMAL",
+      "description": "Estimated repair or damage value produced by damage assessment.",
+      "decimalPrecision": 2
+    },
+    {
+      "name": "AdjusterDecision",
+      "type": "STRING",
+      "description": "Adjuster decision such as Approve, Reject, or RequestInformation.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "AdjusterComments",
+      "type": "MULTILINE_TEXT",
+      "description": "Adjuster review comments.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "AdditionalInformationRequested",
+      "type": "MULTILINE_TEXT",
+      "description": "Information requested from the customer when the claim cannot proceed.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "CustomerInformationStatus",
+      "type": "STRING",
+      "description": "Status such as NotRequired, Requested, Received, or Rejected.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "CustomerResponseDate",
+      "type": "DATE",
+      "description": "Date the customer response or supplemental information was received."
+    },
+    {
+      "name": "ReceivedDocumentReference",
+      "type": "STRING",
+      "description": "Reference for the latest supplemental document received from the customer.",
+      "lengthLimit": 1000
+    },
+    {
+      "name": "FraudInvestigationResult",
+      "type": "STRING",
+      "description": "Investigation outcome such as Cleared or Confirmed.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "FraudInvestigationComments",
+      "type": "MULTILINE_TEXT",
+      "description": "Fraud investigation findings and comments.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "SeniorApprovalRequired",
+      "type": "BOOLEAN",
+      "description": "Indicates whether settlement requires senior approval."
+    },
+    {
+      "name": "SeniorApprovalDecision",
+      "type": "STRING",
+      "description": "Senior approval decision such as Approved or Rejected.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "SeniorApprovalComments",
+      "type": "MULTILINE_TEXT",
+      "description": "Senior approval comments.",
+      "lengthLimit": 9000
+    },
+    {
+      "name": "SettlementAmount",
+      "type": "DECIMAL",
+      "description": "Final amount approved for settlement.",
+      "decimalPrecision": 2
+    },
+    {
+      "name": "SettlementStatus",
+      "type": "STRING",
+      "description": "Settlement status such as Pending, Processed, or Failed.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "PaymentReference",
+      "type": "STRING",
+      "description": "Reference returned by the simulated settlement process.",
+      "lengthLimit": 200
+    },
+    {
+      "name": "SettlementDate",
+      "type": "DATE",
+      "description": "Date settlement payment was processed."
+    },
+    {
+      "name": "ClaimPacketReference",
+      "type": "STRING",
+      "description": "Reference to the generated claim packet.",
+      "lengthLimit": 1000
+    },
+    {
+      "name": "NotificationStatus",
+      "type": "STRING",
+      "description": "Customer notification status.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "ClaimOutcome",
+      "type": "STRING",
+      "description": "Final outcome such as Settled, Denied, Withdrawn, or Closed.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "ClaimStatus",
+      "type": "STRING",
+      "description": "Current business lifecycle status of the claim.",
+      "lengthLimit": 50
+    },
+    {
+      "name": "DocumentInconsistencies",
+      "type": "MULTILINE_TEXT",
+      "lengthLimit": 9000,
+      "description": "Material conflicts between claim documents, written by ClaimDocumentIntelligence and read by FraudRiskAssessment."
+    }
+  ]
+}

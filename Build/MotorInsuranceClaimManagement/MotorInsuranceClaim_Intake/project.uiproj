@@ -1,0 +1,10 @@
+{
+  "ProjectType": "AppV2",
+  "WebAppSettings": {
+    "AppId": null,
+    "IsCoreProject": false
+  },
+  "Name": "MotorInsuranceClaim_Intake",
+  "Description": null,
+  "MainFile": null
+}

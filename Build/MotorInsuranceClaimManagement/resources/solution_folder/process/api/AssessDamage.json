@@ -1,0 +1,39 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AssessDamage",
+    "kind": "process",
+    "type": "api",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "9539df1d-a5de-40f2-a30d-24a8bd00988b",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "AssessDamage"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Api",
+      "name": "AssessDamage",
+      "package": {
+        "key": "eab00ee1-e2d1-482b-a621-0a91db58e706"
+      },
+      "packageName": "MotorInsuranceClaimManagement.api.AssessDamage",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180
+    },
+    "locks": [],
+    "key": "f71660da-82e6-40ae-8bd0-39aab38c6c04",
+    "files": []
+  }
+}

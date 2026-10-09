@@ -1,0 +1,323 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "update_claim",
+            "uniqueId": "d0694458-476f-4a60-9bbc-1c0cf8187549",
+            "type": "function",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "DataFolder": {
+                        "default": "",
+                        "title": "Datafolder",
+                        "type": "string"
+                    },
+                    "ClaimId": {
+                        "default": "",
+                        "title": "Claimid",
+                        "type": "string"
+                    },
+                    "Stage": {
+                        "default": "",
+                        "title": "Stage",
+                        "type": "string"
+                    },
+                    "ClaimStatus": {
+                        "default": "",
+                        "title": "Claimstatus",
+                        "type": "string"
+                    },
+                    "DocumentIngestionStatus": {
+                        "default": "",
+                        "title": "Documentingestionstatus",
+                        "type": "string"
+                    },
+                    "DocumentsComplete": {
+                        "default": false,
+                        "title": "Documentscomplete",
+                        "type": "boolean"
+                    },
+                    "MissingDocuments": {
+                        "default": "",
+                        "title": "Missingdocuments",
+                        "type": "string"
+                    },
+                    "DocumentInconsistencies": {
+                        "default": "",
+                        "title": "Documentinconsistencies",
+                        "type": "string"
+                    },
+                    "PolicyValid": {
+                        "default": false,
+                        "title": "Policyvalid",
+                        "type": "boolean"
+                    },
+                    "PolicyValidationReason": {
+                        "default": "",
+                        "title": "Policyvalidationreason",
+                        "type": "string"
+                    },
+                    "ExtractedCustomerName": {
+                        "default": "",
+                        "title": "Extractedcustomername",
+                        "type": "string"
+                    },
+                    "ExtractedPolicyNumber": {
+                        "default": "",
+                        "title": "Extractedpolicynumber",
+                        "type": "string"
+                    },
+                    "ExtractedVehicleRegistration": {
+                        "default": "",
+                        "title": "Extractedvehicleregistration",
+                        "type": "string"
+                    },
+                    "ExtractedIncidentDate": {
+                        "default": "",
+                        "title": "Extractedincidentdate",
+                        "type": "string"
+                    },
+                    "ExtractedDocumentTypes": {
+                        "default": "",
+                        "title": "Extracteddocumenttypes",
+                        "type": "string"
+                    },
+                    "ExtractedRepairEstimate": {
+                        "default": 0,
+                        "title": "Extractedrepairestimate",
+                        "type": "number"
+                    },
+                    "FraudScore": {
+                        "default": 0,
+                        "title": "Fraudscore",
+                        "type": "number"
+                    },
+                    "RiskLevel": {
+                        "default": "",
+                        "title": "Risklevel",
+                        "type": "string"
+                    },
+                    "FraudFlag": {
+                        "default": false,
+                        "title": "Fraudflag",
+                        "type": "boolean"
+                    },
+                    "FraudReasons": {
+                        "default": "",
+                        "title": "Fraudreasons",
+                        "type": "string"
+                    },
+                    "DamageEstimate": {
+                        "default": 0,
+                        "title": "Damageestimate",
+                        "type": "number"
+                    },
+                    "FraudInvestigationResult": {
+                        "default": "",
+                        "title": "Fraudinvestigationresult",
+                        "type": "string"
+                    },
+                    "FraudInvestigationComments": {
+                        "default": "",
+                        "title": "Fraudinvestigationcomments",
+                        "type": "string"
+                    },
+                    "AdjusterDecision": {
+                        "default": "",
+                        "title": "Adjusterdecision",
+                        "type": "string"
+                    },
+                    "AdjusterComments": {
+                        "default": "",
+                        "title": "Adjustercomments",
+                        "type": "string"
+                    },
+                    "CustomerInformationStatus": {
+                        "default": "",
+                        "title": "Customerinformationstatus",
+                        "type": "string"
+                    },
+                    "SettlementAmount": {
+                        "default": 0,
+                        "title": "Settlementamount",
+                        "type": "number"
+                    },
+                    "SeniorApprovalRequired": {
+                        "default": false,
+                        "title": "Seniorapprovalrequired",
+                        "type": "boolean"
+                    },
+                    "SeniorApprovalDecision": {
+                        "default": "",
+                        "title": "Seniorapprovaldecision",
+                        "type": "string"
+                    },
+                    "SeniorApprovalComments": {
+                        "default": "",
+                        "title": "Seniorapprovalcomments",
+                        "type": "string"
+                    },
+                    "SettlementStatus": {
+                        "default": "",
+                        "title": "Settlementstatus",
+                        "type": "string"
+                    },
+                    "PaymentReference": {
+                        "default": "",
+                        "title": "Paymentreference",
+                        "type": "string"
+                    },
+                    "SettlementDate": {
+                        "default": "",
+                        "title": "Settlementdate",
+                        "type": "string"
+                    },
+                    "ClaimPacketReference": {
+                        "default": "",
+                        "title": "Claimpacketreference",
+                        "type": "string"
+                    },
+                    "NotificationStatus": {
+                        "default": "",
+                        "title": "Notificationstatus",
+                        "type": "string"
+                    },
+                    "ClaimOutcome": {
+                        "default": "",
+                        "title": "Claimoutcome",
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "title": "Input"
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "Updated": {
+                        "default": false,
+                        "title": "Updated",
+                        "type": "boolean"
+                    },
+                    "FieldsWritten": {
+                        "default": "",
+                        "title": "Fieldswritten",
+                        "type": "string"
+                    },
+                    "error_type": {
+                        "default": "",
+                        "title": "Error Type",
+                        "type": "string"
+                    },
+                    "error_message": {
+                        "default": "",
+                        "title": "Error Message",
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "title": "Output"
+            },
+            "graph": {
+                "nodes": [
+                    {
+                        "id": "main.py:236",
+                        "name": "update_claim",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:66",
+                        "name": "data_folder_key",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:34",
+                        "name": "job_folder_key",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:104",
+                        "name": "_find_in_subfolders",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:29",
+                        "name": "sdk",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "main.py:127",
+                        "name": "to_date",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    }
+                ],
+                "edges": [
+                    {
+                        "source": "main.py:66",
+                        "target": "main.py:34"
+                    },
+                    {
+                        "source": "main.py:104",
+                        "target": "main.py:29"
+                    },
+                    {
+                        "source": "main.py:104",
+                        "target": "main.py:29"
+                    },
+                    {
+                        "source": "main.py:66",
+                        "target": "main.py:104"
+                    },
+                    {
+                        "source": "main.py:66",
+                        "target": "main.py:29"
+                    },
+                    {
+                        "source": "main.py:66",
+                        "target": "main.py:29"
+                    },
+                    {
+                        "source": "main.py:236",
+                        "target": "main.py:66"
+                    },
+                    {
+                        "source": "main.py:236",
+                        "target": "main.py:127"
+                    },
+                    {
+                        "source": "main.py:236",
+                        "target": "main.py:29"
+                    },
+                    {
+                        "source": "main.py:236",
+                        "target": "main.py:29"
+                    },
+                    {
+                        "source": "main.py:236",
+                        "target": "main.py:29"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,44 @@
+# Not part of the workshop repository
+
+# old versions, working copies, big downloads
+_archive/
+Build/_backups/
+Build/out/
+
+# anything that can hold a sign-in token or ids from a test account
+.env
+.env.*
+userProfile/
+Build/tools/test_harness/
+*.log
+*.pfx
+*secret*
+
+# generated / local tooling
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.uipath/
+.agent/
+.claude/
+AGENTS.md
+CLAUDE.md
+Thumbs.db
+.DS_Store
+build_deck.py
+
+# built package for sharing; rebuild with Build/tools/make_participant_zip.py
+MotorClaims_Workshop_Participant_Kit.zip
+
+# the author's own addresses, used only to scrub the build
+Build/tools/private_names.json
+
+# hand-made zips of the kit (stale copies); the participant package is built by Build/tools/make_participant_zip.py
+WorkshopKit/Starter_Solution.zip
+WorkshopKit/02_Documents.zip
+
+# facilitator-only material (speaker names, photo): not part of the participant repository
+WorkshopKit/Deck/
+WorkshopKit/Facilitator/
+Build/tools/build_deck_v1.py
