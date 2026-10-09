@@ -449,7 +449,10 @@ def build_doc(i, d):
 
 
 def build_index():
-    cards = "".join(
+    setup_card = ('<a class="card" href="Setup_Guide.html"><span class="no">Setup guide</span><h3>Get ready and run Rahul's claim</h3>'
+                  '<p>Run Setup, configure your Gmail and Data Fabric connections, and run a finished claim end to end.</p>'
+                  '<div class="meta"><span>Everyone</span><span>25 min</span></div></a>')
+    cards = setup_card + "".join(
         f'<a class="card" href="{d["slug"]}.html"><span class="no">Document {i + 1}</span><h3>{html.escape(d["short"])}</h3><p>{html.escape(d["lead"])}</p>'
         f'<div class="meta"><span>{html.escape(d["who"])}</span><span>{html.escape(d["time"])}</span></div></a>' for i, d in enumerate(DOCS))
     path = [
@@ -490,7 +493,7 @@ def build_setup_page():
         f'<li class="l{lvl}"><a href="#{id_}">{html.escape(txt)}</a></li>' for lvl, id_, txt in toc) + "</ul></nav>"
     eyebrow = '<p class="eyebrow"><span>Setup guide</span><span>Everyone</span><span>About 25 minutes</span></p>'
     main = f'<main id="main">{eyebrow}<h1>{html.escape(title)}</h1><p class="lead">{html.escape(lead)}</p><div class="content">{h}</div></main>'
-    top = topbar().replace('href="index.html"', 'href="#"')
+    top = topbar()
     return (f'<!doctype html><html lang="en"><head>{head(title + " | " + SITE, lead)}</head><body>{top}'
             f'<div class="shell">{nav}{main}</div><script>{JS}</script></body></html>')
 

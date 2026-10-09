@@ -6,6 +6,8 @@ You need **only a UiPath Community account**. Nothing to install.
 
 ## Start here
 
+Read the guide as a web page: **https://dhananjay94.github.io/maestro-case-workshop/**
+
 1. Download [`WorkshopKit/Starter_Solution/MotorClaimsWorkshop_Setup.uis`](WorkshopKit/Starter_Solution/MotorClaimsWorkshop_Setup.uis).
 2. In **Studio Web**, use **Import** and choose that file. Open **SetupWorkshop**, press **Debug**, set **Action** to `InstallWorkshop`, and wait for **Done**.
 3. Open the solution **MotorInsuranceClaimManagement** that Setup put into your Studio Web, and follow the guide.
