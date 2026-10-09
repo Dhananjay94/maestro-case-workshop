@@ -6,7 +6,7 @@ You need **only a UiPath Community account**. Nothing to install.
 
 ## Start here
 
-Read the guide as a web page: **https://dhananjay94.github.io/maestro-case-workshop/**
+Read the guide as a web page: **https://dhananjay94.github.io/maestro-case-workshop/** (or download [`WorkshopKit/Motor_Claims_Workshop_Guide.html`](WorkshopKit/Motor_Claims_Workshop_Guide.html) and double-click it; it works offline)
 
 1. Download [`WorkshopKit/Starter_Solution/MotorClaimsWorkshop_Setup.uis`](WorkshopKit/Starter_Solution/MotorClaimsWorkshop_Setup.uis).
 2. In **Studio Web**, use **Import** and choose that file. Open **SetupWorkshop**, press **Debug**, set **Action** to `InstallWorkshop`, and wait for **Done**.
