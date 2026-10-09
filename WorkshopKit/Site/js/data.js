@@ -104,15 +104,13 @@ window.DATA = (function () {
     intake: {
       title: "Intake",
       tagline: "Read the paperwork. Check the cover.",
-      story: [
-        "A customer has had an accident. They open the Intake App, enter their policy number and the claim amount, and upload their documents: the claim form, police report, photos, repair estimate, licence, registration and policy copy.",
-        "In the old world a clerk opens every PDF, then opens a spreadsheet to see whether the policy is even live. That takes days, and nobody can say where the claim is.",
-        "In your case, the moment a claim lands the case starts. The first stage has to find out two things before anyone else spends a minute on it: **what do the documents say**, and **is the customer actually covered**."
-      ],
+      context: "A customer registers a claim and uploads their documents. Before anyone spends time on it, the business wants two answers.",
+      wants: ["Read the documents: are they all there, and what do they say?", "Check the cover: is the policy valid for this accident?"],
+      watch: "Mark both tasks **Required**. If a required task never runs, the stage waits forever.",
       steps: [
         addStage("Intake", "Reads the claim documents with an AI agent and checks the policy is valid."),
         { title: "Job 1: make sense of the documents", kind: "Which activity?",
-          q: "The first job: read the documents the customer uploaded and say whether they are complete, whether they contradict each other, and pull out the facts. Which activity does that?",
+          q: "Read the documents: complete? contradicting? what do they say? Which activity does that?",
           hint: "Someone has to read PDFs and understand them. Think of the activity types in the panel.",
           answer: { lead: "An **agent**. Reading and judging documents is what AI is for.",
             tasks: [{ act: "ClaimDocumentIntelligence", required: true }] },
@@ -127,7 +125,7 @@ window.DATA = (function () {
             { t: "why", text: "`vars.response` is the claim as it was when the case started. `?.` gives nothing instead of an error if a value is missing." }
           ] },
         { title: "Job 2: check the cover", kind: "Which activity?",
-          q: "The second job: is the customer actually covered? The policy must exist, be active, match the vehicle, and the accident must fall inside the cover period. Which activity?",
+          q: "Check the cover: the policy exists, is active, matches the vehicle, and the accident is inside the cover period. Which activity?",
           hint: "This is a fixed set of rules. The answer should be the same every time. No AI needed.",
           answer: { lead: "A **function**: plain code that always gives the same answer for the same input.",
             tasks: [{ act: "ValidatePolicy", required: true }] },
@@ -142,7 +140,7 @@ window.DATA = (function () {
             { t: "note", text: "Leave the optional input **DataFolder** empty. The workers find the data themselves." }
           ] },
         { title: "Can we make it faster?", kind: "Faster?",
-          q: "Right now the second task waits for the first. Does the policy check need the document result, or the other way round? Can we make this faster?",
+          q: "Right now the second task waits for the first. Does either need the other's answer? Can we speed this up?",
           hint: "What if both started at the same moment?",
           answer: { lead: "Yes. **Neither needs the other's answer**, so both can start together, **in parallel**.",
             tasks: [
@@ -151,10 +149,11 @@ window.DATA = (function () {
             ] },
           build: [
             { t: "ol", items: [
-              "Place the two tasks side by side, in parallel, instead of one after the other. (The designer lets you add a task beside another.)",
-              "Give each task its start rule:"
+              "**Right-click the first task** and choose the option that runs it **in parallel with the next task**. The two tasks now sit side by side.",
+              "Give each task its start rule (open the task, then its entry rule):"
             ] },
-            { t: "kv", rows: [["Rule on ClaimDocumentIntelligence", "Start document analysis"], ["Rule on ValidatePolicy", "Start policy validation"], ["Type (both)", "Runs sequentially"]] },
+            { t: "note", text: "The wording of the right-click option can differ a little between releases. Look for the one that puts the two tasks in parallel." },
+            { t: "kv", rows: [["Rule on ClaimDocumentIntelligence", "Start document analysis"], ["Rule on ValidatePolicy", "Start policy validation"], ["Rule type (leave as the designer sets it)", "Runs sequentially"]] },
             { t: "why", text: "Running them together saves time, and a claim waits for nobody." }
           ] },
         entryStep(
@@ -175,7 +174,7 @@ window.DATA = (function () {
            { t: "note", text: "No expression for now." }],
           MARK),
         leaveStep(
-          "Think about what could go wrong at Intake. When should a claim leave this stage for somewhere else?",
+          "What could go wrong here that should pull a claim out of Intake?",
           "Two things can go wrong, one with the paperwork and one with the cover.",
           "Two things can pull a claim out of Intake:",
           [
@@ -193,15 +192,13 @@ window.DATA = (function () {
     assessment: {
       title: "Assessment",
       tagline: "Judge the risk. Size the damage.",
-      story: [
-        "The papers have been read and the policy is confirmed. Before a person looks at the claim, the insurer wants two more answers.",
-        "**Does anything look suspicious?** The amount, the history, the way the documents fit together. An AI agent can weigh that up and say why. **How big is the loss?** The repair estimate is already in the documents, so this is a straightforward calculation.",
-        "Both answers will be put in front of the adjuster in the next stage, so that the human decides with full information."
-      ],
+      context: "The papers are read and the policy is confirmed. Before a person sees the claim, the business wants two more answers.",
+      wants: ["Does the claim look suspicious, and why?", "How big is the loss?"],
+      watch: "Two inputs of the fraud task come from Intake's variables (`vars.extractedRepairEstimate`, `vars.documentInconsistencies`). Type them exactly, or pick them with `@`.",
       steps: [
         addStage("Assessment", "Scores the fraud risk with an AI agent and works out the damage estimate from the repair estimate. Both run together."),
         { title: "Job 1: how suspicious does it look?", kind: "Which activity?",
-          q: "The first job: judge whether the claim looks suspicious, with reasons, from the amount, the history and any conflicts in the documents. Which activity?",
+          q: "Judge how suspicious the claim looks, with reasons. Which activity?",
           hint: "It is a judgement call that comes with an explanation. Same type as the document reader.",
           answer: { lead: "An **agent**. It scores the risk from 0 to 100 and says why.",
             tasks: [{ act: "FraudRiskAssessment", required: true }] },
@@ -220,7 +217,7 @@ window.DATA = (function () {
             { t: "why", text: "The last two inputs come from Intake. That is why Assessment has to come after Intake." }
           ] },
         { title: "Job 2: how big is the loss?", kind: "Which activity?",
-          q: "The second job: put a number on the damage, using the repair estimate that was pulled out of the documents. Which activity?",
+          q: "Put a number on the damage from the repair estimate. Which activity?",
           hint: "A small calculation. It does not need an agent or a person.",
           answer: { lead: "An **API workflow**, a tiny calculation that turns the repair estimate into the damage estimate.",
             tasks: [{ act: "AssessDamage", required: true }] },
@@ -230,7 +227,7 @@ window.DATA = (function () {
             { t: "table", head: ["Input", "Value"], rows: [["ExtractedRepairEstimate", "vars.extractedRepairEstimate"]] }
           ] },
         { title: "Can we make it faster?", kind: "Faster?",
-          q: "Does the damage estimate need the fraud score, or the other way round? Can these two run at the same time?",
+          q: "Does either need the other's result? Can they run together?",
           hint: "Look at the inputs of each task. Does either use the other's output?",
           answer: { lead: "Yes. Both only need what Intake produced, so they run **in parallel**.",
             tasks: [
@@ -238,11 +235,11 @@ window.DATA = (function () {
               { act: "AssessDamage", required: true, rule: { name: "Start damage assessment", type: SEQ } }
             ] },
           build: [
-            { t: "text", text: "Place the two tasks side by side, then give each its start rule:" },
-            { t: "kv", rows: [["Rule on FraudRiskAssessment", "Start fraud risk assessment"], ["Rule on AssessDamage", "Start damage assessment"], ["Type (both)", "Runs sequentially"]] }
+            { t: "text", text: "**Right-click the first task** and run it **in parallel with the next task**, so they sit side by side. Then give each its start rule:" },
+            { t: "kv", rows: [["Rule on FraudRiskAssessment", "Start fraud risk assessment"], ["Rule on AssessDamage", "Start damage assessment"], ["Rule type (leave as the designer sets it)", "Runs sequentially"]] }
           ] },
         entryStep(
-          "What must have finished before Assessment can start? Why can it not simply run beside Intake?",
+          "What must finish before Assessment can start, and why?",
           "Look at the inputs of the two tasks you just added.",
           "Intake must be completed first. Both tasks use what Intake produced: the repair estimate and any conflicts between documents.",
           { label: "Entry rule", name: "Intake completed", type: "Selected stage completed", plain: "Start Assessment when Intake has completed.", expr: null, stage: "Intake",
@@ -258,7 +255,7 @@ window.DATA = (function () {
            { t: "note", text: "No expression for now." }],
           MARK),
         leaveStep(
-          "What could the assessment find that should stop the claim here, before a person sees it?",
+          "What could Assessment find that should stop the claim here?",
           "Think about what the fraud score might say.",
           "One thing can pull a claim out of Assessment:",
           [{ what: "The fraud risk is High (a score of 70 or more)", goes: "Fraud Investigation", chapter: 4 }])
@@ -273,15 +270,13 @@ window.DATA = (function () {
     review: {
       title: "Review",
       tagline: "A person owns the decision.",
-      story: [
-        "The claim now has a policy result, a damage estimate and a fraud score. Money is about to be decided, so a person must own the decision: the claims adjuster.",
-        "The adjuster does not open PDFs or spreadsheets. They get one screen in Action Center with everything the machines found, and three buttons: **Approve**, **Reject** and **RequestInformation**.",
-        "For this chapter the adjuster presses Approve. You will play the adjuster yourself."
-      ],
+      context: "Money is about to be decided, so a person owns the decision.",
+      wants: ["Show the adjuster everything the machines found, on one screen.", "Let them Approve, Reject, or ask the customer for more information."],
+      watch: "Assign the task to yourself. If it is assigned to nobody, you will not see it in Action Center.",
       steps: [
         addStage("Review", "A claims adjuster reviews the documents, policy result and fraud assessment, then approves, rejects or asks the customer for more information."),
         { title: "The job: someone decides", kind: "Which activity?",
-          q: "The insurer wants a person to own this decision. How does the case put the claim in front of them, and what do they get back?",
+          q: "A person must decide. Which activity puts the claim in front of them?",
           hint: "Not an agent, not code. A person, working in Action Center.",
           answer: { lead: "A **human task**. The case creates a task in Action Center and waits until the person submits it.",
             tasks: [{ act: "AdjusterReview", required: true, rule: { name: "Start adjuster review", type: SEQ } }] },
@@ -323,7 +318,7 @@ window.DATA = (function () {
            { t: "note", text: "No expression for now." }],
           MARK),
         leaveStep(
-          "The adjuster has three buttons. For which buttons should the claim not carry on to Settlement?",
+          "The adjuster has three buttons. Which ones should NOT carry on to Settlement?",
           "Only one of the three means \"go ahead and pay\".",
           "Two of the three buttons pull a claim out of Review:",
           [
@@ -341,15 +336,13 @@ window.DATA = (function () {
     settlement: {
       title: "Settlement",
       tagline: "Work out the money. Pay it once.",
-      story: [
-        "The adjuster approved. Now the money. The payable amount is the smallest of three numbers (the claim amount, the damage estimate and the policy's cover limit), minus the deductible, never below zero.",
-        "Big payouts get a second pair of eyes. Above **175,000**, a senior approver must sign off before anything is paid. Most claims are below that, so for them the approval is skipped.",
-        "Then the payment is recorded. Once. A second attempt must never pay twice."
-      ],
+      context: "The adjuster approved. Now the money.",
+      wants: ["Work out how much to pay.", "Get a second opinion on large amounts (above 175,000).", "Record the payment, once."],
+      watch: "**SeniorApproval is not Required.** If it were, every claim below the threshold would wait for an approval that never comes.",
       steps: [
         addStage("Settlement", "Calculates the payable amount (loss minus deductible, capped at cover). Above the approval threshold a senior approver must approve before payment is recorded."),
         { title: "Job 1: how much do we pay?", kind: "Which activity?",
-          q: "The first job: work out the payable amount, and whether it is large enough to need a senior approver. Which activity?",
+          q: "Work out the payable amount, and whether a senior approver is needed. Which activity?",
           hint: "Money is arithmetic, not judgement. The same input must give the same answer.",
           answer: { lead: "A **function**. Plain code, always the same answer.",
             tasks: [{ act: "CalculateSettlement", required: true, rule: { name: "Start settlement calculation", type: SEQ } }] },
@@ -364,7 +357,7 @@ window.DATA = (function () {
             { t: "kv", rows: [["Task rule name", "Start settlement calculation"], ["Task rule type", "Runs sequentially"]] }
           ] },
         { title: "Job 2: a second opinion for big amounts", kind: "Which activity?",
-          q: "Large payouts need a senior person to approve them first. Which activity, and should every claim wait for it?",
+          q: "Large payouts need a senior approver first. Which activity, and should every claim wait for it?",
           hint: "Another person, in Action Center. Would it be right to make every small claim wait?",
           answer: { lead: "A **human task**, and it is **not required**: for most claims it never runs. If it were required and skipped, the stage would wait forever.",
             tasks: [{ act: "SeniorApproval", required: false }] },
@@ -378,7 +371,7 @@ window.DATA = (function () {
             ] }
           ] },
         { title: "Job 3: record the payment", kind: "Which activity?",
-          q: "The last job: record the payment, once per claim, and get a payment reference back. Which activity?",
+          q: "Record the payment, once per claim. Which activity?",
           hint: "Code that must never pay twice.",
           answer: { lead: "A **function**. It records the payment once, and a second attempt returns the same payment.",
             tasks: [{ act: "ProcessSettlement", required: true }] },
@@ -395,7 +388,7 @@ window.DATA = (function () {
             ] }
           ] },
         { title: "Which tasks should wait, and for what?", kind: "Task rules",
-          q: "Two of these tasks should not simply start with the stage. What should the senior approval wait for? And what must be true before the payment is recorded?",
+          q: "Two tasks should not simply start with the stage. What should the senior approval wait for, and what must be true before payment?",
           hint: "One waits for a need. The other waits for permission.",
           answer: { lead: "**SeniorApproval** runs only when the calculation says approval is needed. **ProcessSettlement** pays only if no approval was needed, or it was granted. Nothing is paid before approval.",
             rules: [
@@ -429,7 +422,7 @@ window.DATA = (function () {
           [{ t: "kv", rows: [["Name", "Settlement paid"], ["Completes the stage when", "Required tasks completed"], ["Expression", "vars.settlementStatus === \"Paid\""]] }],
           MARK),
         leaveStep(
-          "What could happen at Settlement that should stop the payment and end the claim?",
+          "What could stop the payment and end the claim here?",
           "Think about the senior approver's buttons.",
           "One thing can pull a claim out of Settlement:",
           [{ what: "The senior approver rejects", goes: "Denied", chapter: 3 }])
@@ -444,14 +437,13 @@ window.DATA = (function () {
     closure: {
       title: "Closure",
       tagline: "Wrap up. Tell the customer.",
-      story: [
-        "The customer has been paid. Two loose ends remain. The file needs a **claim packet**: one reference that ties the evidence and the result together. And the customer needs to be **told the outcome** in words that make sense to them.",
-        "Both are small and independent. When they are done the case has nothing left to do, so it closes."
-      ],
+      context: "The customer has been paid. Two loose ends remain.",
+      wants: ["Close the file with a claim packet.", "Tell the customer the outcome."],
+      watch: "Leave **FraudInvestigationResult** empty for now. Chapter 4 fills it in.",
       steps: [
         addStage("Closure", "Creates the claim packet and prepares the customer notification, then the case closes."),
         { title: "Job 1: close the file", kind: "Which activity?",
-          q: "The first job: produce one reference that ties the claim's evidence and result together, for the file. Which activity?",
+          q: "Produce one reference that ties the claim's evidence and result together. Which activity?",
           hint: "A small, fixed piece of work. No judgement.",
           answer: { lead: "An **API workflow**, a tiny automation that creates the claim packet reference.",
             tasks: [{ act: "GenerateClaimPacket", required: true }] },
@@ -461,7 +453,7 @@ window.DATA = (function () {
             { t: "table", head: ["Input", "Value"], rows: [["ClaimId", "vars.response?.ClaimId"]] }
           ] },
         { title: "Job 2: tell the customer", kind: "Which activity?",
-          q: "The second job: write the outcome message for the customer, based on how the claim ended. Which activity?",
+          q: "Write the outcome message for the customer. Which activity?",
           hint: "Another small automation. It writes the text. Sending it by email comes later.",
           answer: { lead: "An **API workflow** that writes the outcome message.",
             tasks: [{ act: "CreateCustomerNotification", required: true }] },
@@ -477,7 +469,7 @@ window.DATA = (function () {
             { t: "note", text: "Leave **FraudInvestigationResult** empty for now. Chapter 4 fills it in." }
           ] },
         { title: "Can we make it faster?", kind: "Faster?",
-          q: "Does the notification need the claim packet, or the other way round? Can they run at the same time?",
+          q: "Does either need the other? Can they run at the same time?",
           hint: "Look at their inputs.",
           answer: { lead: "Yes. They are independent, so they run **in parallel**.",
             tasks: [
@@ -485,8 +477,8 @@ window.DATA = (function () {
               { act: "CreateCustomerNotification", required: true, rule: { name: "Start customer notification", type: SEQ } }
             ] },
           build: [
-            { t: "text", text: "Place the two tasks side by side, then give each its start rule:" },
-            { t: "kv", rows: [["Rule on GenerateClaimPacket", "Start claim packet"], ["Rule on CreateCustomerNotification", "Start customer notification"], ["Type (both)", "Runs sequentially"]] }
+            { t: "text", text: "**Right-click the first task** and run it **in parallel with the next task**, so they sit side by side. Then give each its start rule:" },
+            { t: "kv", rows: [["Rule on GenerateClaimPacket", "Start claim packet"], ["Rule on CreateCustomerNotification", "Start customer notification"], ["Rule type (leave as the designer sets it)", "Runs sequentially"]] }
           ] },
         entryStep(
           "When should Closure start?",

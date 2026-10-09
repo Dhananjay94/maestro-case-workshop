@@ -164,8 +164,8 @@
             h("thead", {}, h("tr", {}, b.head.map(function (x) { return h("th", { text: x }); }))),
             h("tbody", {}, b.rows.map(function (r) { return h("tr", {}, r.map(function (c) { return h("td", {}, rich(c)); })); }))))); break;
         case "code": out.push(codeLine(b.text)); break;
-        case "why": case "note": case "check": case "stuck": case "heads":
-          var title = { why: "Why", note: "Note", check: "Check", stuck: "Stuck?", heads: "Heads-up" }[b.t];
+        case "why": case "note": case "check": case "stuck": case "heads": case "watch":
+          var title = { why: "Why", note: "Note", check: "Check", stuck: "Stuck?", heads: "Heads-up", watch: "Watch out" }[b.t];
           out.push(h("aside", { class: "callout " + b.t },
             h("div", { class: "callout-t" }, title),
             b.items ? h("ul", {}, b.items.map(function (i) { return h("li", {}, rich(i)); })) : p(b.text)));
@@ -387,6 +387,7 @@
         { title: "Required", text: "A task marked required (`*`) must finish before its stage can complete. A task that only sometimes runs must not be required." }
       ] }]),
       p("`vars.response?.ClaimId` uses `?.` so that a missing value gives nothing instead of an error. Use it for `vars.response`.", "muted small"),
+      blocks([{ t: "watch", text: "Rule names must be **unique across the whole case** and must not contain a colon. Copy the names from this guide and you will be fine." }]),
       h("h2", { class: "sec", text: "How each stage page works" }),
       blocks([{ t: "ol", items: [
         "**Read the story.** What is happening in the business at this point?",
@@ -477,7 +478,10 @@
     root.push(pageHead("Chapter 1 · Stage " + (idx + 1) + " of 5", sp.title, sp.tagline));
     root.push(h("section", { class: "story" },
       h("div", { class: "sec-k" }, "The business story"),
-      sp.story.map(function (t) { return p(t); })));
+      p(sp.context, "story-ctx"),
+      h("div", { class: "wants-t" }, "The business wants"),
+      h("ol", { class: "wants" }, sp.wants.map(function (w) { return h("li", {}, rich(w)); })),
+      p("Your job: match each one to an activity.", "muted small")));
     root.push(h("section", {},
       h("div", { class: "sec-k" }, "Build this stage, one step at a time"),
       p("Work in **MyClaimsCase**. Where a step asks a question, think first, say it out loud, and press Reveal when you are ready. Keep the activity list open if it helps.", "muted"),
@@ -491,6 +495,13 @@
       h("div", { class: "sec-k" }, "Check it"),
       blocks([{ t: "check", items: sp.check }]),
       h("label", { class: "builtbox", for: "built-" + id }, builtBox, h("span", {}, "I built and checked this stage"))));
+    var gives = [];
+    D.ACTIVITIES.forEach(function (a) { if (a.chapter === 1 && a.stages.indexOf(id) >= 0) a.gives.forEach(function (g) { if (gives.indexOf(g) < 0) gives.push(g); }); });
+    root.push(h("section", {},
+      h("div", { class: "sec-k" }, "What this stage hands over"),
+      p("These variables now exist, ready for the stages after this one to read:", "muted"),
+      h("div", { class: "handover" }, gives.map(function (g) { return h("code", { class: "var", text: g }); }))));
+    root.push(blocks([{ t: "watch", text: sp.watch }]));
     root.push(h("p", { class: "muted small" }, rich("Stuck? Open the example case `1_HappyPath` and compare. It already has a few conditions that this chapter leaves for later, so small differences are expected.")));
 
     var prev = idx > 0 ? primaries()[idx - 1] : null;

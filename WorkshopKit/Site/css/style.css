@@ -124,6 +124,13 @@ li{margin:0 0 6px}
 .story{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--t-connector);border-radius:var(--radius);padding:6px 20px 8px;margin-top:8px}
 .story .sec-k{margin-top:14px}
 .story p{font-size:1.04rem}
+.story-ctx{font-weight:600}
+.wants-t{font-size:.76rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--t-connector);margin:14px 0 8px}
+.wants{margin:0 0 8px;padding-left:0;list-style:none;counter-reset:w}
+.wants li{counter-increment:w;display:flex;gap:12px;align-items:flex-start;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);margin:0 0 8px;font-size:1.02rem}
+.wants li::before{content:counter(w);flex:none;width:26px;height:26px;border-radius:50%;background:var(--t-connector);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.handover{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.callout.watch{background:var(--warn-bg);border-color:var(--warn)}.callout.watch .callout-t{color:var(--warn)}
 
 /* think cards */
 .think{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:0 0 14px;box-shadow:var(--shadow)}
