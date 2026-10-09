@@ -1,6 +1,6 @@
 # Setup guide: get ready and run Rahul's claim
 
-- **What you will do:** prepare your own UiPath account with one import and one run, connect Gmail and Data Fabric, and run a finished claim case end to end for the customer **Rahul**.
+- **What you will do:** prepare your own UiPath account with one import and one run, configure your Gmail and Data Fabric connections, and run a finished claim case end to end for the customer **Rahul**.
 - **What you need:** a UiPath Community account and the file `MotorClaimsWorkshop_Setup.uis` from the workshop folder. Nothing to install on your computer.
 - **Time:** about 25 minutes.
 - **Where we stop:** after Rahul's claim has run. Building your own case comes next in the workshop, and deploying comes after that.
@@ -9,46 +9,17 @@
 
 ---
 
-## 1. Connect Gmail and Data Fabric (once, about 5 minutes)
-
-The case sends real emails through **Gmail** and starts from a row in **Data Fabric**. Both need a connection that belongs to you. You create them once, before anything else.
-
-### 1.1 Open the connections page
-1. Sign in to UiPath and open **Orchestrator**.
-2. At the top, choose **Tenant** (top left), then the **Connections** tab. If you do not see it, open **Integration Service** from the apps menu (the grid icon, top left) and choose **Connections**.
-3. Make sure the folder shown is **My Workspace**, the default.
-
-### 1.2 Create the Data Fabric connection
-1. Press **Add connection**.
-2. Search for **UiPath Data Fabric** and select it.
-3. Press **Connect** and follow the prompt. It uses your UiPath sign-in, so there is nothing to type.
-
-> **Check:** the list now shows a **UiPath Data Fabric** connection with the state **Enabled**.
-
-### 1.3 Create the Gmail connection
-1. Press **Add connection** again.
-2. Search for **Gmail** and select it.
-3. Press **Connect**. A Google window opens. Choose a Google account **whose inbox you can open**, and allow access.
-
-> **Check:** the list shows a **Gmail** connection with the state **Enabled**.
-
-> **Why:** the customer emails in this workshop are sent from your Gmail connection to **your own email address**, so you can see exactly what a customer would receive. You can use any Gmail address you can read.
-
-> **Stuck?** If a connection later says **expired**, open it here and press **Login** (or **Reconnect**) once more.
-
----
-
-## 2. Import and run Setup (about 5 minutes)
+## 1. Import and run Setup (about 5 minutes)
 
 Setup prepares everything the case needs, so you do not have to build any of it.
 
-### 2.1 Import the Setup solution
+### 1.1 Import the Setup solution
 1. Open **Studio Web** and go to the home page.
 2. Use **Import** (next to **Create New**; the exact label can differ).
 3. Choose the file `MotorClaimsWorkshop_Setup.uis`.
 4. Open the solution **MotorClaimsWorkshop_Setup**. It has one project, **SetupWorkshop**.
 
-### 2.2 Run Setup
+### 1.2 Run Setup
 1. Open **SetupWorkshop** and press **Debug**. A small form opens.
 2. Set **Action** to `InstallWorkshop`. **Leave every other field empty.**
 3. Run it, and **wait for the result**. It takes about a minute.
@@ -59,7 +30,7 @@ Setup prepares everything the case needs, so you do not have to build any of it.
 
 > **If it says a name cannot be used:** a leftover from an earlier try is in your account. Run Setup again with **DeploymentName** set to another name, for example `ClaimsSolutionB`. Leave the rest as it was.
 
-### 2.3 What Setup just created for you
+### 1.3 What Setup just created for you
 
 | What | Where |
 |---|---|
@@ -69,6 +40,32 @@ Setup prepares everything the case needs, so you do not have to build any of it.
 | The workshop solution **MotorInsuranceClaimManagement**, linked to that environment | Your Studio Web |
 
 No claims exist yet. You create one in the next part.
+
+---
+
+## 2. Configure your connections (about 5 minutes)
+
+The case sends real emails through **Gmail** and starts from a row in **Data Fabric**. Both need a connection that belongs to you. You set them up from inside the workshop solution that Setup just put into your Studio Web.
+
+### 2.1 Open the solution and its connections
+1. In **Studio Web**, open the solution **MotorInsuranceClaimManagement**.
+2. Open the **Connections** item of the solution. It lists the two connections the case needs: **Data Fabric connection** and **Gmail connection**. If a connection is not set up yet, it is marked as needing attention.
+
+### 2.2 Configure the Data Fabric connection
+1. Click **Data Fabric connection**.
+2. Choose to connect (or add a new connection), and follow the prompt. It uses your UiPath sign-in, so there is nothing to type.
+
+> **Check:** the Data Fabric connection now shows as connected, with no warning.
+
+### 2.3 Configure the Gmail connection
+1. Click **Gmail connection**.
+2. Choose to connect (or add a new connection). A Google window opens. Choose a Google account **whose inbox you can open**, and allow access.
+
+> **Check:** the Gmail connection now shows as connected, with no warning.
+
+> **Why:** the customer emails in this workshop are sent from your Gmail connection to **your own email address**, so you can see exactly what a customer would receive. You can use any Gmail address you can read.
+
+> **Stuck?** If a connection says **expired** or asks you to sign in again, open it and use **Login** (or **Reconnect**) once more.
 
 ---
 
@@ -92,7 +89,7 @@ Rahul is the clean case: a valid policy, all seven documents, no fraud signs. Yo
 ### 3.3 Debug it
 1. Press **Debug**.
 2. When it asks which claim to start with, choose **CLM-1001**.
-3. If it asks you to choose a connection, pick the **UiPath Data Fabric** and **Gmail** connections you created in part 1.
+3. If it asks you to choose a connection, pick the **Data Fabric** and **Gmail** connections you configured in part 2.
 4. Let it run. The case moves through its stages by itself. The agents read Rahul's documents, which takes a minute or two.
 
 ### 3.4 The one human step
@@ -114,7 +111,7 @@ The case continues on its own: it calculates the settlement, records the payment
 > - **Nothing happens, or Debug cannot find the claim:** run Setup with `RegisterClaim` for Rahul again, and then Debug.
 > - **The case reports a policy problem:** the policies may not have loaded. Run Setup with **Action** = `LoadData`, then Debug again.
 > - **No task appears in Action Center:** wait a minute and refresh the page. The agents take time to read the documents.
-> - **The Gmail step fails or the email does not arrive:** check that your Gmail connection is **Enabled** (part 1) and look in the spam folder.
+> - **The Gmail step fails or the email does not arrive:** check that your Gmail connection is **Enabled** (part 2) and look in the spam folder.
 > - **Anything else:** run Setup with **Action** = `Status`, and send the facilitator the full text of what you see.
 
 ---

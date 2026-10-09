@@ -485,7 +485,7 @@ def build_setup_page():
     title = first.lstrip("# ").strip()
     h, toc = render(normalise_levels(prep(rest)))
     toc = [t for t in toc if t[0] <= 3]
-    lead = "Connect Gmail and Data Fabric, run Setup once, and run Rahul's claim end to end. Building and deploying come later in the workshop."
+    lead = "Run Setup once, configure your Gmail and Data Fabric connections, and run Rahul's claim end to end. Building and deploying come later in the workshop."
     nav = '<nav class="rail" id="rail" aria-label="On this page"><h2>On this page</h2><ul class="toc">' + "".join(
         f'<li class="l{lvl}"><a href="#{id_}">{html.escape(txt)}</a></li>' for lvl, id_, txt in toc) + "</ul></nav>"
     eyebrow = '<p class="eyebrow"><span>Setup guide</span><span>Everyone</span><span>About 25 minutes</span></p>'

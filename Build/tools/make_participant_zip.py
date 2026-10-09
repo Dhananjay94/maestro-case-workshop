@@ -16,8 +16,8 @@ You need only a UiPath Community account. Nothing to install.
 2. Open the solution MotorClaimsWorkshop_Setup, then the project SetupWorkshop.
    Press Debug. Set  Action = InstallWorkshop  and leave every other field empty.
    Wait for the result. The last line says Done and gives your Intake App address.
-3. Follow the Setup guide: Setup_Guide.html (open it in a browser) or Setup_Guide.md. It covers connecting Gmail and
-   Data Fabric, running Setup, and running Rahul's claim. The full build guide is in Guide/index.html.
+3. Follow the Setup guide: Setup_Guide.html (open it in a browser) or Setup_Guide.md. It covers running Setup, configuring the Gmail and
+   Data Fabric connections, and running Rahul's claim. The full build guide is in Guide/index.html.
 
 If the screen looks stuck: run SetupWorkshop again with  Action = Status.
 Sample customer documents: Sample_Documents/   Claim values for the Intake App: claims_intake_values.csv
