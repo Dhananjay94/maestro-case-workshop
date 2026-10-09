@@ -235,9 +235,20 @@ JS = r"""
 
 
 # ---------------------------------------------------------------- markdown to html
+SPLIT_CALLOUTS = False  # the Setup page writes each box as its own quote; the converter merges neighbours, so split them again
+
+
 def callouts(h):
     def repl(m):
         inner = m.group(1)
+        if SPLIT_CALLOUTS:
+            parts = re.split(r"(?=<p><strong>(?:Check|Why|Stuck|If )[^<]*</strong>)", inner)
+            parts = [x for x in parts if x.strip()]
+            if len(parts) > 1:
+                return "".join(repl2(x) for x in parts)
+        return repl2(inner)
+
+    def repl2(inner):
         first = re.match(r"\s*<p><strong>([^<]*)</strong>", inner)
         kind = ""
         if first:
@@ -246,7 +257,7 @@ def callouts(h):
                 kind = "why"
             elif t.startswith("check"):
                 kind = "check"
-            elif t.startswith("stuck"):
+            elif t.startswith("stuck") or (SPLIT_CALLOUTS and t.startswith("if ")):
                 kind = "stuck"
             elif t.startswith(("two traps", "do not rename", "not used")):
                 kind = "trap" if not t.startswith("not used") else "stuck"
@@ -462,11 +473,37 @@ def build_index():
     return frag, body_html
 
 
+def build_setup_page():
+    """The standalone Setup guide (WorkshopKit/Setup_Guide.md) as one page in the same look."""
+    md_path = os.path.join(os.path.dirname(os.path.abspath(SRC)), "Setup_Guide.md")
+    if not os.path.exists(md_path):
+        return None
+    global SPLIT_CALLOUTS
+    SPLIT_CALLOUTS = True
+    raw = open(md_path, encoding="utf-8").read()
+    first, rest = raw.split(NL, 1)
+    title = first.lstrip("# ").strip()
+    h, toc = render(normalise_levels(prep(rest)))
+    toc = [t for t in toc if t[0] <= 3]
+    lead = "Connect Gmail and Data Fabric, run Setup once, and run Rahul's claim end to end. Building and deploying come later in the workshop."
+    nav = '<nav class="rail" id="rail" aria-label="On this page"><h2>On this page</h2><ul class="toc">' + "".join(
+        f'<li class="l{lvl}"><a href="#{id_}">{html.escape(txt)}</a></li>' for lvl, id_, txt in toc) + "</ul></nav>"
+    eyebrow = '<p class="eyebrow"><span>Setup guide</span><span>Everyone</span><span>About 25 minutes</span></p>'
+    main = f'<main id="main">{eyebrow}<h1>{html.escape(title)}</h1><p class="lead">{html.escape(lead)}</p><div class="content">{h}</div></main>'
+    top = topbar().replace('href="index.html"', 'href="#"')
+    return (f'<!doctype html><html lang="en"><head>{head(title + " | " + SITE, lead)}</head><body>{top}'
+            f'<div class="shell">{nav}{main}</div><script>{JS}</script></body></html>')
+
+
+
 os.makedirs(OUT, exist_ok=True)
 for i, d in enumerate(DOCS):
     open(os.path.join(OUT, d["slug"] + ".html"), "w", encoding="utf-8").write(build_doc(i, d))
 hd, bd = build_index()
 open(os.path.join(OUT, "index.html"), "w", encoding="utf-8").write(hd + bd)
-print("built", [d["slug"] + ".html" for d in DOCS], "+ index.html")
+sp = build_setup_page()
+if sp:
+    open(os.path.join(OUT, "Setup_Guide.html"), "w", encoding="utf-8").write(sp)
+print("built", [d["slug"] + ".html" for d in DOCS], "+ index.html" + (" + Setup_Guide.html" if sp else ""))
 for f in sorted(os.listdir(OUT)):
     print(f, os.path.getsize(os.path.join(OUT, f)) // 1024, "KB")
