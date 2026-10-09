@@ -111,6 +111,19 @@ li{margin:0 0 6px}
 .side-k{font-size:.78rem;color:var(--muted);font-weight:700;margin-right:4px}
 .ghost{border:2px dashed var(--line-2);border-radius:10px;padding:6px 12px;font-size:.84rem;color:var(--muted);font-weight:600;display:inline-flex;flex-direction:column}
 .ghost small{font-size:.68rem;font-weight:500}
+a.ghost{text-decoration:none}
+.ghost.open{border-style:solid;border-color:var(--line-2);color:var(--ink);background:var(--surface)}
+a.ghost.open:hover{border-color:var(--accent);color:var(--accent)}
+.ghost.built{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.ghost.current{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.ghost.sm{flex-direction:row;padding:4px 10px;font-size:.78rem;border-radius:8px}
+.compactside{margin:10px 0 0}
+.chbar{display:flex;align-items:center;gap:6px;margin:0 0 14px}
+.chnum{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.85rem;text-decoration:none;color:var(--ink-2);border:1px solid var(--line-2);background:var(--surface)}
+.chnum:hover{border-color:var(--accent);color:var(--accent)}
+.chnum.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip.revisit{background:var(--warn-bg);color:var(--warn);margin:0 0 0 auto}
+.step-h .chip.revisit+.think-kind{margin-left:8px}
 .mapwrap.compact{padding-top:26px;margin:0 0 18px}
 .compact .node-box{padding:8px 8px;flex-direction:row;align-items:center;gap:7px}
 .compact .node-no{width:20px;height:20px;font-size:.68rem;flex:none}
@@ -844,6 +857,712 @@ window.DATA = (function () {
 
 </script>
 <script>
+/* Chapters 2 to 5. Extends window.DATA (loaded after data.js).
+   Facts: WorkshopKit/CASE_FLOW_PLAN.md and Participant_Build_Guide.md (6C to 6I). */
+(function () {
+  var D = window.DATA;
+  var SEQ = "Runs sequentially";
+  function lc(s) { return s.charAt(0).toLowerCase() + s.slice(1); }
+  function varRows(names) { return names.map(function (n) { return [n, "vars." + lc(n)]; }); }
+
+  /* ---------- activity list: connector activities by their picker names ---------- */
+  D.ACTIVITIES = D.ACTIVITIES.filter(function (a) { return a.name !== "UiPath Data Fabric" && a.name !== "Gmail"; });
+  D.ACTIVITIES.push(
+    { name: "Gmail > Send Email", type: "connector", stages: ["pending", "closure", "denied"], chapter: 2,
+      line: "Sends a real email from your Gmail connection. Remember to set Save as draft to false.", gives: [] },
+    { name: "UiPath Data Fabric > Record Updated", type: "connector", stages: ["pending"], chapter: 2,
+      line: "An event: wakes the case when a row in a Data Fabric table changes. Used to wait for the customer's document.", gives: [] }
+  );
+  D.ACTIVITIES.forEach(function (a) { if (a.name === "UpdateClaim") a.stages = ["record"]; });
+  D.CHAPTERS.forEach(function (c) { c.open = true; });
+
+  /* ---------- chapter overview pages ---------- */
+  D.CHAPTER_PAGES = {
+    c2: {
+      eyebrow: "Chapter 2", title: "Missing documents",
+      lead: "Not every claim is clean. When a document is missing, the case must tell the customer, wait, and carry on. You add your first secondary stage and learn the most important idea in the workshop: the detour.",
+      start: "pending",
+      blocks: [
+        { t: "h", text: "Two kinds of stage" },
+        { t: "info", head: ["", "What it is"], rows: [
+          ["**Primary stage**", "On the main road. A claim normally passes through all five. A primary stage finishes only on its own completion rule."],
+          ["**Secondary stage**", "A side road for exceptions. A claim only enters it when something unusual happens. It does not count towards finishing the case."]
+        ] },
+        { t: "h", text: "The detour pattern" },
+        { t: "text", text: "Every detour is **two halves that match**. If one half is missing or does not match, the detour does not work." },
+        { t: "info", head: ["Where", "Rule", "How it is set"], rows: [
+          ["**Origin stage** (where the claim leaves)", "An **exit rule**", "Type **Selected tasks completed**: the task that decides. **Marks stage complete: off**. **Exit to stage**: the secondary stage. Plus a condition."],
+          ["**Target stage** (where it goes)", "An **entry rule**", "Type **Selected stage exited**, the origin stage, **Interrupting** on, and the **same condition**."]
+        ] },
+        { t: "why", text: "The origin stage's normal completion rule must be the **exact opposite** of its exits. Exactly one rule must be true. If two are true, two stages start at once. If none is true, the case waits forever." },
+        { t: "watch", items: [
+          "A secondary stage's entry rule must be **Selected stage exited**. Not \"Case entered\" with a condition (that is only checked once, at the start). Not \"Ad hoc\" (that exists only for tasks).",
+          "If the origin stage **completes** (instead of exiting) towards the target, the target must use **Selected stage completed**. This happens once, in Chapter 4."
+        ] },
+        { t: "h", text: "What you will do in this chapter" },
+        { t: "ol", items: [
+          "See what the case does today with a missing document.",
+          "Build the **Pending Customer** stage.",
+          "**Go back** to Intake and Review and add the other half of each detour.",
+          "Make the stage wait for the customer by itself.",
+          "Run it with a claim that has a missing document."
+        ] }
+      ]
+    },
+    c3: {
+      eyebrow: "Chapter 3", title: "Denied",
+      lead: "Sometimes the answer is no. There are three ways a claim ends up denied, and the customer must be told fairly. The Denied stage ends the case.",
+      start: "denied",
+      blocks: [
+        { t: "h", text: "Three ways to a no" },
+        { t: "info", head: ["Where it happens", "What the business says", "Condition"], rows: [
+          ["Intake", "The policy is not valid.", "The policy was checked, and it is not valid."],
+          ["Review", "The adjuster presses **Reject**.", "`vars.decision === 'Reject'`"],
+          ["Settlement", "The senior approver presses **Rejected**.", "`vars.decision2 === 'Rejected'`"]
+        ] },
+        { t: "text", text: "A fourth way (fraud is confirmed) arrives in Chapter 4." },
+        { t: "why", text: "A denial tells the customer, gives the reason where one is known, and ends the case. **Fraud is never named to the customer.** A customer is told only the reason that is safe to tell." },
+        { t: "h", text: "What you will do in this chapter" },
+        { t: "ol", items: [
+          "Build the **Denied** stage and its notification.",
+          "Give it three entry rules, one for each way to a no.",
+          "**Go back** to Intake, Review and Settlement and add the exits.",
+          "Tell the case how a denied claim ends.",
+          "Run it three ways."
+        ] }
+      ]
+    },
+    c4: {
+      eyebrow: "Chapter 4", title: "Fraud investigation",
+      lead: "A claim that looks fraudulent must not be paid on trust. A person investigates, and either clears the claim (the case carries on) or confirms fraud (the claim is denied).",
+      start: "fraud",
+      blocks: [
+        { t: "h", text: "What is new here" },
+        { t: "cards", items: [
+          { title: "A detour that comes back", text: "When the investigator clears the claim, the case **returns to Assessment**, not forward. This is **Return to origin**." },
+          { title: "A stage that completes", text: "When fraud is **confirmed**, Fraud Investigation **completes** and Denied waits for it. This is the one place a target uses **Selected stage completed**." },
+          { title: "Variables that survive", text: "After the return, old values are still set. That is why the Assessment rule checks `!vars.fraudResult`." }
+        ] },
+        { t: "h", text: "What you will do in this chapter" },
+        { t: "ol", items: [
+          "See what the case does with a high-risk claim today.",
+          "Build the **Fraud Investigation** stage.",
+          "**Go back** to Assessment and add the exit, then tighten its completion rule.",
+          "Add the two ways out of the investigation.",
+          "Add the fourth entry rule to Denied.",
+          "Run it twice: cleared and confirmed."
+        ] }
+      ]
+    },
+    c5: {
+      eyebrow: "Chapter 5", title: "The complete case",
+      lead: "The case works. Now make it something a business can run: a claim record anyone can read, emails to the customer, and time limits so nothing gets stuck unseen.",
+      start: "record",
+      blocks: [
+        { t: "h", text: "Three finishing touches" },
+        { t: "cards", items: [
+          { title: "Keep the record up to date", text: "After each stage, save its results on the claim row, so anyone can see where a claim is." },
+          { title: "Tell the customer", text: "One email when the claim is settled and one when it is declined." },
+          { title: "Time limits", text: "An SLA on every stage and on the case. At 80%, someone is warned. When it runs out, someone is told." }
+        ] },
+        { t: "text", text: "Then you run every test claim, one after another." }
+      ]
+    }
+  };
+
+  D.TITLES = {
+    home: "Home", scenario: "Scenario", setup: "Setup", c1: "Chapter 1", deploy: "Run it and deploy",
+    c2: "Chapter 2", c3: "Chapter 3", c4: "Chapter 4", c5: "Chapter 5"
+  };
+  D.ORDER = ["home", "scenario", "setup",
+    "c1", "intake", "assessment", "review", "settlement", "closure", "deploy",
+    "c2", "pending", "c3", "denied", "c4", "fraud", "c5", "record", "emails", "sla", "final"];
+
+  /* ---------- small builders ---------- */
+  function exitRule(name, tasks, cond, target) {
+    return { label: "Exit rule", name: name, type: "Selected tasks completed",
+      plain: "Leave early for " + target + " when the deciding task is done and the condition is true.", expr: cond,
+      rows: [["Selected tasks", tasks], ["Marks stage complete", "Off"], ["Exit to stage", target]] };
+  }
+  function entrySE(label, name, stage, cond, plain) {
+    return { label: label, name: name, type: "Selected stage exited", stage: stage, plain: plain, expr: cond,
+      rows: [["Interrupting", "On"]] };
+  }
+  function gap(q, hint, lead, build) {
+    return { title: "See the gap", kind: "Try it first", q: q, hint: hint, answer: { lead: lead }, build: build };
+  }
+  function back(stage, extra) { var s = extra; s.revisit = stage; return s; }
+
+  var P = D.STAGE_PAGES;
+
+  /* ============================ CHAPTER 2: PENDING CUSTOMER ============================ */
+  P.pending = {
+    title: "Pending Customer", chapter: 2, secondary: true,
+    tagline: "Tell the customer. Wait. Carry on.",
+    context: "Some claims are not clean: a document is missing, or the adjuster needs more from the customer. The case needs a place to put that claim while it waits.",
+    wants: [
+      "Tell the customer exactly what is missing.",
+      "Wait until they add it, without anyone chasing.",
+      "Then carry on from where the claim stopped."
+    ],
+    watch: "Switch **Secondary stage** on and **Required for case completion** off. Otherwise the case would wait for a stage that most claims never visit.",
+    steps: [
+      gap("A customer forgot to upload the repair estimate. Run their claim through the case you built. Is there anything that notices it, tells the customer, and waits?",
+        "Look at the rules you have. Does any of them mention a missing document?",
+        "No. Every rule so far assumes a clean claim. The case has no road for a missing document, so it cannot tell the customer and wait. Whatever you see in the run, it is not that. That is what you add now.",
+        [{ t: "ol", items: [
+          "Run Setup with **Action** = `RegisterClaim` and **Customer** = `Priya`. It creates claim **CLM-1002** with the repair estimate missing.",
+          "Debug your case with **CLM-1002** and watch what it does."
+        ] }]),
+      { title: "Add the stage", build: [
+        { t: "kv", rows: [["Name", "Pending Customer"], ["Secondary stage", "On"], ["Required for case completion", "Off"],
+          ["Description", "Exception path. Entered when documents are missing or the adjuster asks for more information. The case emails the customer, waits until they add the document, then returns to where it came from."]] }
+      ] },
+      { title: "Tell the customer", kind: "Which activity?",
+        q: "The customer must be told what is missing, by email. Which activity?",
+        hint: "An email sent from your own Gmail connection.",
+        answer: { lead: "A **connector activity**: Gmail, Send Email. The email address comes from the policy, not from the claim form.",
+          tasks: [{ act: "Gmail > Send Email", required: true, rule: { name: "Send the customer request email", type: SEQ } }] },
+        build: [
+          { t: "text", text: "Add a task to Pending Customer." },
+          { t: "kv", rows: [["Type", "Connector activity"], ["Activity", "Gmail > Send Email"], ["Connection", "Your Gmail connection"], ["Required", "Yes"]] },
+          { t: "table", head: ["Field", "Value"], rows: [
+            ["To", "vars.customerEmail"],
+            ["Subject", "'Action needed: documents required for claim ' + vars.response?.ClaimId"],
+            ["Save as draft", "false"]
+          ] },
+          { t: "text", text: "**Body**, as an expression:" },
+          { t: "code", text: `'Dear ' + vars.response?.CustomerName + ',\\n\\nWe are processing your motor insurance claim ' + vars.response?.ClaimId + ' but we still need the following before we can continue:\\n\\n' + (vars.missingDocuments || 'additional supporting documents') + '\\n\\nPlease add them to your claim in the claims portal. We will carry on automatically as soon as they arrive.\\n\\nThank you,\\nMotor Claims Team'` },
+          { t: "kv", rows: [["Task rule name", "Send the customer request email"], ["Task rule type", "Runs sequentially"]] },
+          { t: "watch", text: "**Save as draft must be false.** The default is true, which saves a draft and sends nothing." },
+          { t: "why", text: "`vars.customerEmail` was produced by ValidatePolicy from the policy table, so the email always goes to the address on the policy." }
+        ] },
+      { title: "When does a claim come here?", kind: "Way in",
+        q: "Two situations send a claim to this stage. What are they, and which stage does each come from?",
+        hint: "One is about the documents. The other is about what the adjuster asked.",
+        answer: { lead: "From **Intake** when documents are incomplete (and the policy is valid), and from **Review** when the adjuster presses RequestInformation.",
+          rules: [
+            entrySE("Entry rule 1", "Documents incomplete at Intake", "Intake", "vars.documentIngestionStatus === 'Incomplete' && vars.policyValid === true", "Enter when Intake is exited because the documents are incomplete."),
+            entrySE("Entry rule 2", "Adjuster requested more information", "Review", "vars.decision === 'RequestInformation'", "Enter when Review is exited because the adjuster asked for more.")
+          ] },
+        build: [
+          { t: "text", text: "Add two entry rules to Pending Customer." },
+          { t: "kv", rows: [["Rule 1 name", "Documents incomplete at Intake"], ["Type", "Selected stage exited"], ["Stage", "Intake"], ["Interrupting", "On"], ["Condition", "vars.documentIngestionStatus === 'Incomplete' && vars.policyValid === true"]] },
+          { t: "kv", rows: [["Rule 2 name", "Adjuster requested more information"], ["Type", "Selected stage exited"], ["Stage", "Review"], ["Interrupting", "On"], ["Condition", "vars.decision === 'RequestInformation'"]] }
+        ] },
+      back("Intake", { title: "Intake: let a claim leave", kind: "Leave early",
+        q: "Intake must now be able to send a claim away. After which tasks, under what condition, and should the stage count as complete when it does?",
+        hint: "The claim is leaving early. It has not completed.",
+        answer: { lead: "After **both** tasks have finished, if the documents are incomplete and the policy is valid. **The stage does not count as complete.**",
+          rules: [exitRule("Documents incomplete so customer is contacted", "ClaimDocumentIntelligence and ValidatePolicy", "vars.documentIngestionStatus === 'Incomplete' && vars.policyValid === true", "Pending Customer")] },
+        build: [
+          { t: "text", text: "Open **Intake** and add an exit rule." },
+          { t: "kv", rows: [["Name", "Documents incomplete so customer is contacted"], ["Type", "Selected tasks completed"], ["Tasks", "ClaimDocumentIntelligence and ValidatePolicy"], ["Marks stage complete", "Off"], ["Exit to stage", "Pending Customer"], ["Condition", "vars.documentIngestionStatus === 'Incomplete' && vars.policyValid === true"]] }
+        ] }),
+      back("Intake", { title: "Intake: tighten the normal exit", kind: "Done when",
+        q: "Now two rules could fire for the same claim: the new exit and the normal completion. What must be true of the completion rule so that exactly one of them fires?",
+        hint: "It must be the exact opposite of the exit you just added.",
+        answer: { lead: "Complete the stage only when the documents are **Complete** or **Inconsistent**. **Incomplete** is no longer allowed through. (Inconsistent documents go on to the fraud check, so they are not a reason to stop.)",
+          rules: [{ label: "Completion rule", name: "Documents analysed and policy checked", type: "Required tasks completed",
+            plain: "Intake is done when both tasks have finished and the documents are not incomplete.",
+            expr: "vars.documentIngestionStatus === 'Complete' || vars.documentIngestionStatus === 'Inconsistent'",
+            why: "Exactly one road is open for every claim: forward, or to Pending Customer. If two were open, two stages would start. If none, the case would wait forever." }] },
+        build: [
+          { t: "text", text: "Open Intake's completion rule **Documents analysed and policy checked** and add this expression:" },
+          { t: "code", text: "vars.documentIngestionStatus === 'Complete' || vars.documentIngestionStatus === 'Inconsistent'" }
+        ] }),
+      back("Review", { title: "Review: let a claim leave", kind: "Leave early",
+        q: "The adjuster can ask for more information. Which task decides, and what is the condition?",
+        hint: "Which button was pressed?",
+        answer: { lead: "After the **AdjusterReview** task, when the decision is RequestInformation.",
+          rules: [exitRule("Exit to Pending Customer after adjuster information request", "AdjusterReview", "vars.decision === 'RequestInformation'", "Pending Customer")] },
+        build: [
+          { t: "text", text: "Open **Review** and add an exit rule." },
+          { t: "kv", rows: [["Name", "Exit to Pending Customer after adjuster information request"], ["Type", "Selected tasks completed"], ["Tasks", "AdjusterReview"], ["Marks stage complete", "Off"], ["Exit to stage", "Pending Customer"], ["Condition", "vars.decision === 'RequestInformation'"]] }
+        ] }),
+      back("Review", { title: "Review: tighten the normal exit", kind: "Done when",
+        q: "Review used to finish on any button. Now only one of the buttons should carry the claim forward. Which one, and what does the rule say?",
+        hint: "Only one of the three means \"go ahead and pay\".",
+        answer: { lead: "Only **Approve** completes Review.",
+          rules: [{ label: "Completion rule", name: "Adjuster decision recorded", type: "Required tasks completed",
+            plain: "Review is done when the adjuster has pressed Approve.", expr: "vars.decision === 'Approve'",
+            why: "Reject will get its own road in Chapter 3. Until then, do not press Reject in a test." }] },
+        build: [
+          { t: "text", text: "Open Review's completion rule **Adjuster decision recorded** and add this expression:" },
+          { t: "code", text: "vars.decision === 'Approve'" }
+        ] }),
+      { title: "How does it know the customer replied?", kind: "Done when",
+        q: "The claim waits here. How does the case find out the customer has added the document, without anyone clicking a button?",
+        hint: "When the customer adds a document in the Intake App, something about the claim changes.",
+        answer: { lead: "The Intake App's **Add document** button already sets `CustomerInformationStatus = Received` on the claim row. The case just **listens for that change** (an event), and then **returns to the stage the claim came from**.",
+          rules: [{ label: "Completion rule", name: "Customer information received and back to Intake", type: "Return to origin stage",
+            plain: "Wait for this claim's row to change to Received, then go back to where the claim came from.", expr: null,
+            rows: [["Complete stage when", "Connector event occurs"], ["Activity", "UiPath Data Fabric > Record Updated"], ["Connection", "Your Data Fabric connection"], ["Entity Scope", "Folder"], ["Entity", "MotorInsuranceClaim (under Defined resources)"],
+              ["Filter 1", "ClaimId equals the case's claim number"], ["Filter 2", "CustomerInformationStatus equals Received"]],
+            why: "If Intake sent the claim here, Intake runs again and reads every document, including the new one. If Review sent it here, Review runs again." }] },
+        build: [
+          { t: "text", text: "Add a **completion rule** to Pending Customer." },
+          { t: "kv", rows: [["Name", "Customer information received and back to Intake"], ["Completion rule type", "Return to origin stage"], ["Complete stage when", "Connector event occurs"], ["Select activity", "UiPath Data Fabric > Record Updated"], ["Connection", "Your Data Fabric connection"], ["Entity Scope", "Folder"], ["Entity", "MotorInsuranceClaim"]] },
+          { t: "text", text: "Add a **filter** (all of the following):" },
+          { t: "ol", items: [
+            "`ClaimId` **equals** the case's claim number. In the value box press `@`, expand `trigger_1` with the small arrow next to it, and pick the claim number. **Do not** click the `trigger_1` name itself: that picks the whole object.",
+            "`CustomerInformationStatus` **equals** `Received`."
+          ] },
+          { t: "why", text: "Other claims are updated all the time. Only **this** claim changing to Received may wake this case, which is why the filter has two conditions." }
+        ] },
+      { title: "Run it", kind: "Try it", build: [
+        { t: "ol", items: [
+          "Run Setup with **Action** = `RegisterClaim` and **Customer** = `Priya` (CLM-1002), if you have not already. Debug your case with it.",
+          "The case reaches **Pending Customer** and sends the email. Check your inbox.",
+          "In the **Intake App**, choose **Add document** for her claim and upload `Priya_Nair/SUPPLEMENTAL_RepairEstimate.pdf` from the sample documents.",
+          "The case goes back to Intake, then Assessment, then Review. Approve it in Action Center."
+        ] },
+        { t: "check", items: [
+          "The trail is Intake, Pending Customer, Intake, Assessment, Review, Settlement, Closure.",
+          "The settlement is **84,600**."
+        ] },
+        { t: "text", text: "To see it in Maestro, publish and upgrade again: [Run it, then deploy it](#/deploy)." }
+      ] }
+    ],
+    check: [
+      "Pending Customer is a secondary stage and is not required for case completion.",
+      "Intake and Review each have an exit to Pending Customer, and a completion rule that is the opposite.",
+      "A claim with a missing document waits, then resumes by itself when the document is added."
+    ]
+  };
+
+  /* ============================ CHAPTER 3: DENIED ============================ */
+  var DENIED_ENTRY = [
+    entrySE("Entry rule 1", "Policy found invalid at Intake", "Intake", "!!vars.policyValidationReason && vars.policyValid === false", "Enter when Intake is exited because the policy is invalid."),
+    entrySE("Entry rule 2", "Adjuster rejected the claim", "Review", "vars.decision === 'Reject'", "Enter when Review is exited because the adjuster rejected the claim."),
+    entrySE("Entry rule 3", "Senior approver rejected the settlement", "Settlement", "vars.decision2 === 'Rejected'", "Enter when Settlement is exited because the senior approver rejected it.")
+  ];
+  DENIED_ENTRY[0].why = "`policyValid` starts as false before the policy has been checked. Without the `!!vars.policyValidationReason` guard, every claim would be denied instantly at the start. The reason text is only filled once the policy has actually been checked.";
+
+  P.denied = {
+    title: "Denied", chapter: 3, secondary: true,
+    tagline: "Three ways to a no. Told fairly. Case over.",
+    context: "Sometimes the answer is no. The customer must be told, and the case must end.",
+    wants: [
+      "Tell the customer the claim is declined, with the reason where it is safe to give one.",
+      "End the case, because nothing more can happen to a denied claim."
+    ],
+    watch: "Switch **Secondary stage** on and **Required for case completion** off, as for Pending Customer.",
+    steps: [
+      gap("A customer's policy has expired. Or the adjuster presses Reject. What does the case do with that claim today?",
+        "Look at your rules. Is there any road marked \"no\"?",
+        "There is none. No rule sends a claim anywhere when the policy is invalid or the adjuster rejects, so the claim is not denied and the customer is not told.",
+        [{ t: "text", text: "You will prove it at the end of the chapter, with all three ways to a no." }]),
+      { title: "Add the stage", build: [
+        { t: "kv", rows: [["Name", "Denied"], ["Secondary stage", "On"], ["Required for case completion", "Off"],
+          ["Description", "Exception path that ends the case. Entered when the policy is invalid, the adjuster or senior approver rejects the claim, or fraud is confirmed. Prepares the denial notification."]] }
+      ] },
+      { title: "Tell the customer", kind: "Which activity?",
+        q: "The customer must hear the outcome. Which activity, and is it one you have already used?",
+        hint: "You used it in Closure, for the happy ending.",
+        answer: { lead: "The same API workflow as in Closure, **CreateCustomerNotification**. It writes the outcome message, and for a denial it avoids naming fraud.",
+          tasks: [{ act: "CreateCustomerNotification", required: true, rule: { name: "Start denial notification", type: SEQ } }] },
+        build: [
+          { t: "text", text: "Add a task to Denied." },
+          { t: "kv", rows: [["Task name", "Notify customer of denial"], ["Type", "API workflow"], ["Resource", "CreateCustomerNotification"], ["Required", "Yes"]] },
+          { t: "table", head: ["Input", "Value"], rows: [
+            ["ClaimId", "vars.response?.ClaimId"],
+            ["CustomerName", "vars.response?.CustomerName"],
+            ["SettlementStatus", "vars.settlementStatus"],
+            ["SettlementAmount", "vars.settlementAmount"]
+          ] },
+          { t: "note", text: "Leave **FraudInvestigationResult** empty until Chapter 4. Its outputs get new variable names such as `notificationStatus2`. That is fine." },
+          { t: "kv", rows: [["Task rule name", "Start denial notification"], ["Task rule type", "Runs sequentially"]] }
+        ] },
+      { title: "When is Denied done?", kind: "Done when",
+        q: "When can you say the Denied stage is finished?",
+        hint: "Same idea as the other stages.",
+        answer: { lead: "When the notification has been created.",
+          rules: [{ label: "Completion rule", name: "Denial notification sent", type: "Required tasks completed", plain: "Denied is done when the notification task has finished.", expr: null }] },
+        build: [{ t: "kv", rows: [["Name", "Denial notification sent"], ["Completes the stage when", "Required tasks completed"]] }] },
+      { title: "Three ways in", kind: "Way in",
+        q: "Three situations end in a no. Which stage does each come from, and what is the condition?",
+        hint: "The policy check, the adjuster's button, the senior approver's button.",
+        answer: { lead: "Three entry rules, all **Selected stage exited**, all **Interrupting** on.", rules: DENIED_ENTRY },
+        build: [
+          { t: "text", text: "Add three entry rules to Denied." },
+          { t: "kv", rows: [["Rule 1 name", "Policy found invalid at Intake"], ["Type", "Selected stage exited"], ["Stage", "Intake"], ["Interrupting", "On"], ["Condition", "!!vars.policyValidationReason && vars.policyValid === false"]] },
+          { t: "kv", rows: [["Rule 2 name", "Adjuster rejected the claim"], ["Type", "Selected stage exited"], ["Stage", "Review"], ["Interrupting", "On"], ["Condition", "vars.decision === 'Reject'"]] },
+          { t: "kv", rows: [["Rule 3 name", "Senior approver rejected the settlement"], ["Type", "Selected stage exited"], ["Stage", "Settlement"], ["Interrupting", "On"], ["Condition", "vars.decision2 === 'Rejected'"]] }
+        ] },
+      back("Intake", { title: "Intake: let an invalid policy leave", kind: "Leave early",
+        q: "Intake must send a claim with an invalid policy to Denied. After which task, and under what condition?",
+        hint: "Only the policy check decides this.",
+        answer: { lead: "After **ValidatePolicy**, when the reason is filled and the policy is not valid.",
+          rules: [exitRule("Policy invalid so claim is denied", "ValidatePolicy", "!!vars.policyValidationReason && vars.policyValid === false", "Denied")] },
+        build: [
+          { t: "text", text: "Open **Intake** and add an exit rule." },
+          { t: "kv", rows: [["Name", "Policy invalid so claim is denied"], ["Type", "Selected tasks completed"], ["Tasks", "ValidatePolicy"], ["Marks stage complete", "Off"], ["Exit to stage", "Denied"], ["Condition", "!!vars.policyValidationReason && vars.policyValid === false"]] }
+        ] }),
+      back("Intake", { title: "Intake: tighten the normal exit again", kind: "Done when",
+        q: "Intake now has two exits. The normal completion must stay the exact opposite of both. What must it also require?",
+        hint: "A claim with an invalid policy must not be allowed to carry on.",
+        answer: { lead: "It must also require that the policy is valid. This is the final form of the rule.",
+          rules: [{ label: "Completion rule", name: "Documents analysed and policy checked", type: "Required tasks completed",
+            plain: "Intake is done when the documents are Complete or Inconsistent, and the policy is valid.",
+            expr: "(vars.documentIngestionStatus === 'Complete' || vars.documentIngestionStatus === 'Inconsistent') && vars.policyValid === true" }] },
+        build: [
+          { t: "text", text: "Replace the expression of Intake's completion rule with:" },
+          { t: "code", text: "(vars.documentIngestionStatus === 'Complete' || vars.documentIngestionStatus === 'Inconsistent') && vars.policyValid === true" }
+        ] }),
+      back("Review", { title: "Review: let a rejection leave", kind: "Leave early",
+        q: "The adjuster presses Reject. Which task decides, and what is the condition?",
+        hint: "The same shape as the exit to Pending Customer.",
+        answer: { lead: "After **AdjusterReview**, when the decision is Reject.",
+          rules: [exitRule("Exit to Denied after adjuster rejection", "AdjusterReview", "vars.decision === 'Reject'", "Denied")] },
+        build: [
+          { t: "text", text: "Open **Review** and add an exit rule. (Review's completion rule already requires Approve, so it needs no change.)" },
+          { t: "kv", rows: [["Name", "Exit to Denied after adjuster rejection"], ["Type", "Selected tasks completed"], ["Tasks", "AdjusterReview"], ["Marks stage complete", "Off"], ["Exit to stage", "Denied"], ["Condition", "vars.decision === 'Reject'"]] }
+        ] }),
+      back("Settlement", { title: "Settlement: let a rejection leave", kind: "Leave early",
+        q: "The senior approver presses Rejected. Which task decides, and what is the condition?",
+        hint: "Which task did they press the button in?",
+        answer: { lead: "After **SeniorApproval**, when the decision is Rejected.",
+          rules: [exitRule("Exit to Denied after senior approver rejection", "SeniorApproval", "vars.decision2 === 'Rejected'", "Denied")] },
+        build: [
+          { t: "text", text: "Open **Settlement** and add an exit rule." },
+          { t: "kv", rows: [["Name", "Exit to Denied after senior approver rejection"], ["Type", "Selected tasks completed"], ["Tasks", "SeniorApproval"], ["Marks stage complete", "Off"], ["Exit to stage", "Denied"], ["Condition", "vars.decision2 === 'Rejected'"]] }
+        ] }),
+      { title: "How does a denied case end?", kind: "The whole case",
+        q: "A denied claim never completes the five main stages. So how does the case know it is finished?",
+        hint: "The case already has one completion rule. It will never be true here.",
+        answer: { lead: "A second case completion rule: the case also finishes when Denied is completed.",
+          rules: [{ label: "Case completion rule", name: "Claim denied and case closed", type: "Selected stage completed", stage: "Denied",
+            plain: "Finish the case when the Denied stage is completed.", expr: null,
+            why: "Without it, *All required stages completed* would never become true for a denied claim, and the case would wait forever." }] },
+        build: [
+          { t: "text", text: "Open **Case plan properties > Completion rules** and add a second rule." },
+          { t: "kv", rows: [["Name", "Claim denied and case closed"], ["Type", "Selected stage completed"], ["Stage", "Denied"]] }
+        ] },
+      { title: "Run it", kind: "Try it", build: [
+        { t: "text", text: "Run three claims, one at a time." },
+        { t: "ol", items: [
+          "**Adjuster rejects.** Run Setup with `RegisterClaim` for `Rahul` and Debug it. In Action Center press **Reject** and enter a comment.",
+          "**Expired policy.** In the Intake App register a claim for policy `POL-000001` (the optional Meera Iyer row in `claims_intake_values.csv`; upload any two files).",
+          "**Senior approver rejects.** You will run this one in Chapter 4, together with the fraud question."
+        ] },
+        { t: "check", items: [
+          "The adjuster rejection trail is Intake, Assessment, Review, Denied.",
+          "The expired policy trail is Intake, Denied.",
+          "In both, the case ends after Denied, and a denial notification is written."
+        ] }
+      ] }
+    ],
+    check: [
+      "Denied is a secondary stage with three entry rules.",
+      "Intake, Review and Settlement each have an exit to Denied.",
+      "The case has a second completion rule, *Claim denied and case closed*."
+    ]
+  };
+
+  /* ============================ CHAPTER 4: FRAUD ============================ */
+  P.fraud = {
+    title: "Fraud Investigation", chapter: 4, secondary: true,
+    tagline: "A person looks. Cleared or confirmed.",
+    context: "When the fraud agent flags a claim as high risk, nothing else should happen until a person has looked at it.",
+    wants: [
+      "Stop a high-risk claim before it goes any further.",
+      "Let an investigator look at the reasons and decide.",
+      "Cleared: carry on where it stopped. Confirmed: deny the claim."
+    ],
+    watch: "**Do not rename the output `InvestigationResult`** in the designer. Its name must match the app exactly, or the variable stays empty and the stage never finishes.",
+    steps: [
+      gap("A claim's documents contradict each other and the customer has three earlier claims. The fraud agent scores it High. What does the case do with it today?",
+        "Does any rule read the fraud flag?",
+        "Nothing reacts to the flag. The claim carries on to the adjuster as if it were normal, with the score on their screen. The business wants it stopped and investigated first.",
+        [{ t: "ol", items: [
+          "Run Setup with **Action** = `RegisterClaim` and **Customer** = `Arjun` (CLM-1003).",
+          "Debug your case with it and watch it go through Assessment."
+        ] }]),
+      { title: "Add the stage", build: [
+        { t: "kv", rows: [["Name", "Fraud Investigation"], ["Secondary stage", "On"], ["Required for case completion", "Off"],
+          ["Description", "Exception path. Starts as soon as the fraud agent flags a High risk and interrupts normal work. An investigator clears the claim (the case resumes) or confirms fraud (the claim is denied)."]] }
+      ] },
+      { title: "A person decides", kind: "Which activity?",
+        q: "An investigator must look at the claim and decide. Which activity?",
+        hint: "The same kind as the adjuster's review.",
+        answer: { lead: "A **human task**, **FraudInvestigation**. The investigator sees the fraud score, the reasons and the document conflicts, and presses Cleared or Confirmed.",
+          tasks: [{ act: "FraudInvestigation", required: true, rule: { name: "Start fraud investigation", type: SEQ } }] },
+        build: [
+          { t: "text", text: "Add a task to Fraud Investigation." },
+          { t: "kv", rows: [["Type", "Action (human task)"], ["App", "FraudInvestigation"], ["Required", "Yes"], ["Task title", "Investigate the flagged claim"], ["Assign to", "A specific user: yourself"]] },
+          { t: "table", head: ["Input", "Value"], rows: [
+            ["ClaimId", "vars.response?.ClaimId"],
+            ["FraudScore", "vars.fraudScore"],
+            ["FraudReasons", "vars.fraudReasons"],
+            ["DocumentInconsistencies", "vars.documentInconsistencies"]
+          ] },
+          { t: "kv", rows: [["Task rule name", "Start fraud investigation"], ["Task rule type", "Runs sequentially"]] },
+          { t: "note", text: "Outputs: `fraudResult` (Cleared or Confirmed) and `comments3`." }
+        ] },
+      { title: "When does a claim come here?", kind: "Way in",
+        q: "Which stage sends a claim here, and when exactly?",
+        hint: "The fraud agent lives in Assessment. Look at its flag, and think about a claim that comes back after being cleared.",
+        answer: { lead: "From **Assessment**, when the fraud flag is set and no investigation result exists yet. The \"no result yet\" part matters: after the investigator clears a claim, the result is filled, and the claim must not be sent back here again.",
+          rules: [entrySE("Entry rule", "Assessment found high fraud risk", "Assessment", "vars.fraudFlag === true && !vars.fraudResult", "Enter when Assessment is exited because the risk is High and nobody has investigated yet.")] },
+        build: [
+          { t: "kv", rows: [["Name", "Assessment found high fraud risk"], ["Type", "Selected stage exited"], ["Stage", "Assessment"], ["Interrupting", "On"], ["Condition", "vars.fraudFlag === true && !vars.fraudResult"]] }
+        ] },
+      back("Assessment", { title: "Assessment: let a claim leave", kind: "Leave early",
+        q: "Assessment must send a high-risk claim away. After which tasks, and under what condition?",
+        hint: "Both of its tasks, so that the fraud score and the damage estimate are saved before it leaves.",
+        answer: { lead: "After **FraudRiskAssessment and AssessDamage**, when the flag is set and there is no result yet.",
+          rules: [exitRule("High fraud risk so investigation starts", "FraudRiskAssessment and AssessDamage", "vars.fraudFlag === true && !vars.fraudResult", "Fraud Investigation")] },
+        build: [
+          { t: "text", text: "Open **Assessment** and add an exit rule." },
+          { t: "kv", rows: [["Name", "High fraud risk so investigation starts"], ["Type", "Selected tasks completed"], ["Tasks", "FraudRiskAssessment and AssessDamage"], ["Marks stage complete", "Off"], ["Exit to stage", "Fraud Investigation"], ["Condition", "vars.fraudFlag === true && !vars.fraudResult"]] }
+        ] }),
+      back("Assessment", { title: "Assessment: tighten the normal exit", kind: "Done when",
+        q: "Assessment's completion rule had no condition. What must it say now, so that exactly one road is open?",
+        hint: "The opposite of the exit you just added. And remember a cleared claim returns here.",
+        answer: { lead: "Complete the stage unless the claim is flagged and not yet investigated.",
+          rules: [{ label: "Completion rule", name: "Fraud score and damage estimate ready", type: "Required tasks completed",
+            plain: "Assessment is done when both tasks have finished, unless the claim needs investigating.",
+            expr: "!(vars.fraudFlag === true && !vars.fraudResult)",
+            why: "After the investigator clears the claim, `fraudResult` is filled, so the claim is allowed through Assessment instead of being sent to the investigator again." }] },
+        build: [
+          { t: "text", text: "Add this expression to Assessment's completion rule:" },
+          { t: "code", text: "!(vars.fraudFlag === true && !vars.fraudResult)" }
+        ] }),
+      { title: "Two ways out of the investigation", kind: "Done when",
+        q: "The investigator presses Cleared or Confirmed. What should happen after each?",
+        hint: "One goes back. One goes on to a no.",
+        answer: { lead: "**Cleared:** the case returns to Assessment (it runs again, which costs two more agent calls but gives a clean result). **Confirmed:** the stage completes, and Denied picks it up.",
+          rules: [
+            { label: "Completion rule 1", name: "Investigation cleared and case resumes", type: "Return to origin stage", plain: "When cleared, go back to where the claim came from.",
+              expr: "vars.fraudResult === 'Cleared'", rows: [["Complete stage when", "Required tasks completed"]] },
+            { label: "Completion rule 2", name: "Fraud confirmed and claim denied", type: "Normal completion", plain: "When confirmed, complete the stage.",
+              expr: "vars.fraudResult === 'Confirmed'", rows: [["Complete stage when", "Required tasks completed"]],
+              why: "Confirmed completes the stage, which is why Denied waits for the stage to be completed, not exited." }
+          ] },
+        build: [
+          { t: "text", text: "Add two completion rules to Fraud Investigation." },
+          { t: "kv", rows: [["Rule 1 name", "Investigation cleared and case resumes"], ["Completion rule type", "Return to origin stage"], ["Complete stage when", "Required tasks completed"], ["Condition", "vars.fraudResult === 'Cleared'"]] },
+          { t: "kv", rows: [["Rule 2 name", "Fraud confirmed and claim denied"], ["Completion rule type", "Normal completion"], ["Complete stage when", "Required tasks completed"], ["Condition", "vars.fraudResult === 'Confirmed'"]] }
+        ] },
+      back("Denied", { title: "Denied: a fourth way in", kind: "Way in",
+        q: "Denied must now also start when fraud is confirmed. Which stage does it wait for, and is it \"exited\" or \"completed\"?",
+        hint: "Remember what the Confirmed rule does to the Fraud Investigation stage.",
+        answer: { lead: "It waits for Fraud Investigation to be **completed**. This is the one place a target uses *Selected stage completed* instead of *exited*.",
+          rules: [{ label: "Entry rule 4", name: "Fraud confirmed by investigator", type: "Selected stage completed", stage: "Fraud Investigation",
+            plain: "Enter Denied when the Fraud Investigation stage completes with a confirmation.", expr: "vars.fraudResult === 'Confirmed'", rows: [["Interrupting", "On"]] }] },
+        build: [
+          { t: "text", text: "Open **Denied** and add a fourth entry rule." },
+          { t: "kv", rows: [["Name", "Fraud confirmed by investigator"], ["Type", "Selected stage completed"], ["Stage", "Fraud Investigation"], ["Interrupting", "On"], ["Condition", "vars.fraudResult === 'Confirmed'"]] }
+        ] }),
+      back("Denied and Closure", { title: "Fill the fraud result in the notifications", kind: "Which activity?",
+        q: "The notification tasks have an input you left empty. Where should each one read the fraud result from?",
+        hint: "In Denied, the result was produced by the investigation.",
+        answer: { lead: "In **Denied**, from `vars.fraudResult`. In **Closure**, from the claim as it was registered. (The notification never names fraud to the customer. It only uses the result to choose the right wording.)",
+          rules: [] },
+        build: [
+          { t: "kv", rows: [["Denied: FraudInvestigationResult", "vars.fraudResult"], ["Closure: FraudInvestigationResult", "vars.response?.FraudInvestigationResult"]] }
+        ] }),
+      { title: "Run it", kind: "Try it", build: [
+        { t: "text", text: "Debug **Arjun** (CLM-1003) twice." },
+        { t: "ol", items: [
+          "**Cleared.** Investigator presses **Cleared**, adjuster presses **Approve**, senior approver presses **Approved**.",
+          "**Confirmed.** Investigator presses **Confirmed**.",
+          "Optional: run Arjun a third time with the senior approver pressing **Rejected**. This is the third way to a no from Chapter 3."
+        ] },
+        { t: "check", items: [
+          "Cleared trail: Intake, Assessment, Fraud Investigation, Assessment, Review, Settlement, Closure. Settlement is **230,000** and needed senior approval.",
+          "Confirmed trail: Intake, Assessment, Fraud Investigation, Denied."
+        ] }
+      ] }
+    ],
+    check: [
+      "Fraud Investigation is a secondary stage with one human task and two completion rules.",
+      "Assessment has an exit to Fraud Investigation and an opposite completion rule.",
+      "Denied has a fourth entry rule."
+    ]
+  };
+
+  /* ============================ CHAPTER 5 ============================ */
+  function saveTask(title, placed, stageVal, status, rows, extra) {
+    var blocks = [
+      { t: "text", text: "Add a task to **" + placed + "**." },
+      { t: "kv", rows: [["Task name", title], ["Type", "Function (process)"], ["Resource", "UpdateClaim"], ["Required", "Yes"], ["Task rule type", "Runs sequentially"]] },
+      { t: "kv", rows: [["ClaimId", "vars.response?.ClaimId"], ["Stage", stageVal], ["ClaimStatus", status]] }
+    ];
+    if (rows.length) blocks.push({ t: "table", head: ["Input", "Value"], rows: rows });
+    if (extra) blocks = blocks.concat(extra);
+    return { title: title, build: blocks, tag: placed };
+  }
+
+  P.record = {
+    title: "Keep the claim record up to date", chapter: 5, plain: true,
+    tagline: "Anyone can see where a claim is.",
+    context: "Today the claim row says little. The business wants every claim to show its status and results, at any moment.",
+    wants: ["After each stage, write that stage's results to the claim row."],
+    watch: "The save worker only writes fields that belong to the stage you name, so a mistake in one stage cannot overwrite another stage's data.",
+    steps: [
+      { title: "One worker, nine places", kind: "Which activity?",
+        q: "Every stage must save its results. Do we need a different worker for each stage?",
+        hint: "Think about maintenance: where would you want to change how claims are written?",
+        answer: { lead: "No. One worker, **UpdateClaim**, used after every stage. You tell it which stage you are in and give it that stage's values. It writes only that stage's fields.",
+          tasks: [{ act: "UpdateClaim", required: true, rule: { name: "(one per stage, below)", type: SEQ } }] },
+        build: [
+          { t: "text", text: "Every call has the same three fields, then that stage's own values:" },
+          { t: "kv", rows: [["ClaimId", "vars.response?.ClaimId"], ["Stage", "(the stage name, see each step)"], ["ClaimStatus", "(the label, see each step)"]] },
+          { t: "note", text: "Each save task is **Required**, with task rule **Runs sequentially**. Put it **last** in its stage unless the step says otherwise." }
+        ] },
+      saveTask("Save intake results to the claim record", "Intake, last", "Intake",
+        "vars.policyValid === false ? 'Policy invalid' : (vars.documentIngestionStatus === 'Incomplete' ? 'Documents incomplete' : 'Intake complete')",
+        varRows(["DocumentIngestionStatus", "DocumentsComplete", "MissingDocuments", "DocumentInconsistencies", "PolicyValid", "PolicyValidationReason", "ExtractedCustomerName", "ExtractedPolicyNumber", "ExtractedVehicleRegistration", "ExtractedIncidentDate", "ExtractedDocumentTypes", "ExtractedRepairEstimate"])),
+      saveTask("Save assessment results to the claim record", "Assessment, last", "Assessment",
+        "(vars.fraudFlag === true && !vars.fraudResult) ? 'High fraud risk' : 'Assessment complete'",
+        varRows(["FraudScore", "RiskLevel", "FraudFlag", "FraudReasons", "DamageEstimate"])),
+      saveTask("Save adjuster decision to the claim record", "Review, last", "Review",
+        "vars.decision === 'Approve' ? 'Approved by adjuster' : (vars.decision === 'Reject' ? 'Rejected by adjuster' : 'Information requested')",
+        [["AdjusterDecision", "vars.decision"], ["AdjusterComments", "vars.comments"]]),
+      saveTask("Save settlement calculation to the claim record", "Settlement, right after CalculateSettlement", "SettlementCalculation",
+        "vars.seniorApprovalRequired === true ? 'Awaiting senior approval' : 'Settlement calculated'",
+        varRows(["SettlementAmount", "SeniorApprovalRequired"])),
+      saveTask("Save payment details to the claim record", "Settlement, last", "Settlement", "Settled",
+        [["SeniorApprovalDecision", "vars.seniorApprovalRequired === true ? vars.decision2 : 'NotRequired'"], ["SeniorApprovalComments", "vars.comments2"], ["SettlementStatus", "vars.settlementStatus"], ["PaymentReference", "vars.paymentReference"], ["SettlementDate", "vars.settlementDate"]],
+        [{ t: "kv", rows: [["Task rule expression", "vars.settlementStatus === 'Paid'"]] }]),
+      saveTask("Save closure results to the claim record", "Closure, last", "Closure", "Closed",
+        varRows(["ClaimPacketReference", "NotificationStatus", "ClaimOutcome"])),
+      saveTask("Save customer request status to the claim record", "Pending Customer, after the email", "PendingCustomer", "Awaiting customer information",
+        [["CustomerInformationStatus", "Requested"]], [{ t: "note", text: "Type `Requested` as plain text, not an expression." }]),
+      saveTask("Save fraud investigation result to the claim record", "Fraud Investigation, last", "FraudInvestigation",
+        "vars.fraudResult === 'Confirmed' ? 'Fraud confirmed' : 'Fraud cleared'",
+        [["FraudInvestigationResult", "vars.fraudResult"], ["FraudInvestigationComments", "vars.comments3"]]),
+      saveTask("Save denial to the claim record", "Denied, last", "Denied", "Denied",
+        [["NotificationStatus", "vars.notificationStatus2"], ["ClaimOutcome", "vars.claimOutcome2"], ["SeniorApprovalDecision", "vars.decision2"], ["SeniorApprovalComments", "vars.comments2"]]),
+      { title: "Make every detour wait for the save", kind: "Leave early",
+        q: "A detour leaves a stage as soon as its deciding task completes. What goes wrong if the save task has not run yet?",
+        hint: "Think of a rejected claim leaving Review.",
+        answer: { lead: "The claim leaves **before** its decision is saved, and the record misses it. So every exit rule must also wait for the stage's save task." },
+        build: [
+          { t: "text", text: "In **every exit rule** on Intake, Assessment and Review, add the stage's save task to the **Selected tasks completed** list." },
+          { t: "info", head: ["Stage", "Exit rules", "Add this task"], rows: [
+            ["Intake", "Documents incomplete..., Policy invalid...", "Save intake results to the claim record"],
+            ["Assessment", "High fraud risk so investigation starts", "Save assessment results to the claim record"],
+            ["Review", "Both exits to Pending Customer and to Denied", "Save adjuster decision to the claim record"]
+          ] },
+          { t: "text", text: "For example, Review's rules become **AdjusterReview and Save adjuster decision to the claim record**." }
+        ] },
+      { title: "Check the record", kind: "Try it", build: [
+        { t: "text", text: "After a full run, open the claim row in **Data Fabric > MotorInsuranceClaim**." },
+        { t: "check", text: "`ClaimStatus` is **Closed**, and the fraud score, adjuster decision, payment reference and notification are all filled." }
+      ] }
+    ],
+    check: ["Every stage ends with its save task.", "Every exit on Intake, Assessment and Review also waits for that stage's save task."]
+  };
+
+  P.emails = {
+    title: "Emails to the customer", chapter: 5, plain: true,
+    tagline: "Settled or declined, they hear from us.",
+    context: "The case creates the outcome message. Now it should actually reach the customer.",
+    wants: ["Tell the customer when the claim is settled.", "Tell the customer when it is declined, without ever naming fraud."],
+    watch: "Both emails are **not required**, with the task rule expression `!!vars.customerEmail`. A missing address must never block the case.",
+    steps: [
+      { title: "How do we send them?", kind: "Which activity?",
+        q: "You already sent an email in Pending Customer. Which activity sends these two?",
+        hint: "The same one.",
+        answer: { lead: "The same connector activity, **Gmail > Send Email**, with **Save as draft** set to false.",
+          tasks: [{ act: "Gmail > Send Email", required: false, rule: { name: "Send the settlement email / Send the denial email", type: SEQ, expr: "!!vars.customerEmail" } }] },
+        build: [{ t: "note", text: "Add each email **before** the save task of its stage." }] },
+      { title: "Closure: the settlement email", build: [
+        { t: "kv", rows: [["Task name", "Email the customer that the claim is settled"], ["Activity", "Gmail > Send Email"], ["Connection", "Your Gmail connection"], ["Required", "No"], ["Task rule name", "Send the settlement email"], ["Task rule type", "Runs sequentially"], ["Task rule expression", "!!vars.customerEmail"]] },
+        { t: "table", head: ["Field", "Value"], rows: [
+          ["To", "vars.customerEmail"],
+          ["Subject", "'Your claim ' + vars.response?.ClaimId + ' has been settled'"],
+          ["Save as draft", "false"]
+        ] },
+        { t: "text", text: "**Body**, as an expression:" },
+        { t: "code", text: `'Dear ' + vars.response?.CustomerName + ',\\n\\nGood news: your motor insurance claim ' + vars.response?.ClaimId + ' has been settled.\\n\\nSettlement amount: INR ' + vars.settlementAmount + '\\nPayment reference: ' + vars.paymentReference + '\\n\\nThank you for choosing us.\\nMotor Claims Team'` }
+      ] },
+      { title: "Denied: the denial email", build: [
+        { t: "kv", rows: [["Task name", "Email the customer that the claim is declined"], ["Activity", "Gmail > Send Email"], ["Connection", "Your Gmail connection"], ["Required", "No"], ["Task rule name", "Send the denial email"], ["Task rule type", "Runs sequentially"], ["Task rule expression", "!!vars.customerEmail"]] },
+        { t: "table", head: ["Field", "Value"], rows: [
+          ["To", "vars.customerEmail"],
+          ["Subject", "'Update on your claim ' + vars.response?.ClaimId"],
+          ["Save as draft", "false"]
+        ] },
+        { t: "text", text: "**Body**, as an expression:" },
+        { t: "code", text: `'Dear ' + vars.response?.CustomerName + ',\\n\\nWe have reviewed your motor insurance claim ' + vars.response?.ClaimId + ' and we are sorry to tell you that we cannot approve it.\\n\\n' + ((vars.policyValid === false && vars.policyValidationReason) ? ('Reason: ' + vars.policyValidationReason) : 'The decision was made after review by our claims team.') + '\\n\\nIf you believe this is a mistake, please reply to this email or contact us with any additional information.\\nMotor Claims Team'` },
+        { t: "why", text: "The denial never says \"fraud\". A customer is told only the reason that is safe to tell." }
+      ] }
+    ],
+    check: ["Closure and Denied each have a not-required email task before their save task.", "A settled claim and a denied claim both produce an email in your inbox."]
+  };
+
+  P.sla = {
+    title: "Time limits (SLAs)", chapter: 5, plain: true,
+    tagline: "Nothing gets stuck unseen.",
+    context: "Claims must not sit unnoticed. Every stage and the whole case should have a time limit.",
+    wants: ["Warn someone when a stage is close to its limit.", "Tell someone when the limit is passed."],
+    watch: "Escalation names must be unique across the case, for example `Intake at risk` and `Intake breached`.",
+    steps: [
+      { title: "What do we add, and when does someone hear?", kind: "Which activity?",
+        q: "Every stage needs a time limit. At which two moments should someone be told?",
+        hint: "One before it is too late, one when it is.",
+        answer: { lead: "An **SLA** on each stage and on the case, with two notifications: **at risk** at 80% of the limit, and **breached** when it runs out. Both go to you. The clock starts when the stage starts." },
+        build: [
+          { t: "ol", items: [
+            "Open the stage, then **SLA and escalations**.",
+            "Add an SLA with the name and limit from the table below.",
+            "Add an **at risk** notification at **80%** and a **breached** notification, both to yourself."
+          ] }
+        ] },
+      { title: "The limits", build: [
+        { t: "info", head: ["Where", "Name", "Limit"], rows: [
+          ["Case", "Claim resolution SLA", "5 days"],
+          ["Intake", "Intake SLA", "2 hours"],
+          ["Assessment", "Assessment SLA", "2 hours"],
+          ["Review", "Adjuster review SLA", "2 days"],
+          ["Settlement", "Settlement SLA", "1 day"],
+          ["Closure", "Closure SLA", "2 hours"],
+          ["Pending Customer", "Pending customer SLA", "2 days"],
+          ["Fraud Investigation", "Fraud investigation SLA", "1 day"],
+          ["Denied", "Denied SLA", "2 hours"]
+        ] },
+        { t: "why", text: "People are slower than machines, so the limits for stages with a person (Review, Fraud, Pending) are in days, and the machine stages are in hours." }
+      ] }
+    ],
+    check: ["The case and all eight stages have an SLA, each with an at-risk and a breached escalation."]
+  };
+
+  P.final = {
+    title: "Final test", chapter: 5, plain: true,
+    tagline: "Run every road.",
+    context: "The case is complete. Prove every road works, one claim at a time.",
+    wants: ["Run each test and compare the trail with what is expected."],
+    watch: "Run one claim at a time. After Pending Customer or a cleared fraud claim, the origin stage runs again with the old values still set.",
+    steps: [
+      { title: "The test claims", build: [
+        { t: "info", head: ["#", "Claim and choices", "Expected trail"], rows: [
+          ["T1", "Rahul, adjuster **Approve**", "Intake, Assessment, Review, Settlement (no senior approval), Closure, complete"],
+          ["T2", "Rahul, adjuster **Reject**", "Intake, Assessment, Review, Denied, complete"],
+          ["T3", "Rahul, adjuster **RequestInformation**, then Approve", "Review, Pending Customer, Review again, Settlement, Closure"],
+          ["T4", "Priya (incomplete documents), then add the document", "Intake, Pending Customer, Intake again, Assessment, and on to Closure"],
+          ["T5", "Arjun, fraud **Cleared**, adjuster Approve, senior **Approved**", "Assessment, Fraud, Assessment again, Review, Settlement with SeniorApproval, Closure"],
+          ["T6", "Arjun, fraud **Confirmed**", "Assessment, Fraud, Denied, complete"],
+          ["T7", "Arjun, fraud Cleared, adjuster Approve, senior **Rejected**", "Settlement, Denied, complete"],
+          ["T8", "A claim for policy `POL-000001` (expired), made in the Intake App", "Intake, Denied, complete"]
+        ] }
+      ] },
+      { title: "Tick them off", build: [
+        { t: "text", text: "Tick this step when every row has matched." },
+        { t: "check", text: "You built a complete claims case: five stages, three exception paths, a live claim record, customer emails and time limits." },
+        { t: "text", text: "Publish and upgrade one last time: [Run it, then deploy it](#/deploy)." }
+      ] }
+    ],
+    check: ["All eight test claims followed their expected trail."]
+  };
+
+})();
+
+</script>
+<script>
 /* Motor Claims workshop site: a small single-page app. Hash routes, no server, works from a file or GitHub Pages. */
 (function () {
   "use strict";
@@ -930,7 +1649,7 @@ window.DATA = (function () {
 
   function actCard(a, opts) {
     opts = opts || {};
-    var later = a.chapter > 1;
+    var later = false;
     return h("article", { class: "act t-" + a.type + (later ? " later" : ""), id: "act-" + a.name },
       h("div", { class: "act-top" },
         h("span", { class: "act-icon t-" + a.type, "aria-hidden": "true" }, D.TYPES[a.type].icon),
@@ -944,8 +1663,8 @@ window.DATA = (function () {
         a.gives.map(function (g) { return h("code", { class: "var", text: g }); })) : null,
       h("div", { class: "used" }, h("span", { class: "k" }, "Used in: "),
         a.stages.map(function (sid) {
-          var s = stage(sid);
-          return s && !opts.noLinks && a.chapter === 1 ? h("a", { class: "chip", href: "#/" + sid }, s.name) : h("span", { class: "chip" }, s ? s.name : sid);
+          var s = stage(sid) || (D.STAGE_PAGES[sid] ? { name: D.STAGE_PAGES[sid].title } : null);
+          return s && !opts.noLinks && D.STAGE_PAGES[sid] ? h("a", { class: "chip", href: "#/" + sid }, s.name) : h("span", { class: "chip" }, s ? s.name : sid);
         })));
   }
 
@@ -974,6 +1693,9 @@ window.DATA = (function () {
       }
       body.appendChild(h("div", { class: "kvline" }, h("span", { class: "k" }, "Name"), h("code", { text: rule.name }), copyBtn(rule.name)));
       body.appendChild(h("div", { class: "kvline" }, h("span", { class: "k" }, "Type"), h("span", {}, rule.type + (rule.stage ? " · stage " + rule.stage : ""))));
+      (rule.rows || []).forEach(function (r) {
+        body.appendChild(h("div", { class: "kvline" }, h("span", { class: "k" }, r[0]), h("span", {}, r[1])));
+      });
       body.appendChild(h("div", { class: "kvline" }, h("span", { class: "k" }, "Expression"),
         rule.expr ? h("span", { class: "expr" }, h("code", { text: rule.expr }), copyBtn(rule.expr)) : h("span", { class: "muted" }, "None. Leave it empty.")));
       if (rule.why) body.appendChild(p(rule.why, "why-line"));
@@ -1042,12 +1764,19 @@ window.DATA = (function () {
     });
     var wrap = h("div", { class: "mapwrap" + (opts.compact ? " compact" : "") }, row);
     if (tokenAt === "done") wrap.appendChild(h("div", { class: "finish" }, "✓ Your claim has made it through the happy path"));
+    var sideStages = D.STAGES.filter(function (s) { return s.kind === "secondary"; });
+    function ghost(s, compact) {
+      var has = !!D.STAGE_PAGES[s.id];
+      var cls = "ghost" + (has ? " open" : "") + (S.built[s.id] ? " built" : "") + (cur === s.id ? " current" : "") + (compact ? " sm" : "");
+      var kids = [S.built[s.id] ? "✓ " : "", s.name, compact ? null : h("small", {}, "Chapter " + s.chapter)];
+      return has ? h("a", { class: cls, href: "#/" + s.id }, kids) : h("span", { class: cls }, kids);
+    }
     if (!opts.compact) {
       wrap.appendChild(h("div", { class: "side" },
-        h("span", { class: "side-k" }, "Later chapters add the detours"),
-        D.STAGES.filter(function (s) { return s.kind === "secondary"; }).map(function (s) {
-          return h("span", { class: "ghost" }, s.name, h("small", {}, "Chapter " + s.chapter));
-        })));
+        h("span", { class: "side-k" }, "The detours, added in chapters 2 to 4"),
+        sideStages.map(function (s) { return ghost(s, false); })));
+    } else if (opts.side) {
+      wrap.appendChild(h("div", { class: "side compactside" }, sideStages.map(function (s) { return ghost(s, true); })));
     }
     return wrap;
   }
@@ -1219,6 +1948,7 @@ window.DATA = (function () {
 
   function pageChapter1() {
     return [
+      chapterBar(1),
       pageHead("Chapter 1", "The happy path", "You build five stages in a line, run a claim through them, and deploy it. Nothing goes wrong yet. That is on purpose."),
       caseMap(),
       h("h2", { class: "sec", text: "Step 0: the trigger" }),
@@ -1280,7 +2010,7 @@ window.DATA = (function () {
         { t: "note", text: "Whatever cases are still in the solution when you Publish get deployed, and each starts on every new claim. That is why step 1 removes the examples. If you want an example back later, import `MotorClaims_Workshop.uis` from the kit." },
         { t: "check", text: "Your case appears under **Maestro > Case management**, and a claim registered in the Intake App starts an instance." }
       ]),
-      h("div", { class: "next" }, h("span", { class: "muted" }, "Chapter 2 opens later in the workshop: what happens when documents are missing."))
+      h("div", { class: "next" }, h("a", { class: "btn primary", href: "#/c2" }, "Next: Chapter 2, missing documents"), h("span", { class: "muted" }, "After each chapter, deploy again the same way: Publish a new version, Upgrade, Activate."))
     ];
   }
 
@@ -1296,6 +2026,7 @@ window.DATA = (function () {
       });
       li.appendChild(h("div", { class: "step-h" }, box,
         h("label", { for: "st-" + key }, h("span", { class: "step-no" }, String(i + 1)), h("span", { class: "step-title" }, step.title)),
+        step.revisit ? h("span", { class: "chip revisit" }, "Back to " + step.revisit) : null,
         step.kind ? h("span", { class: "think-kind" }, step.kind) : null));
       li.appendChild(h("div", { class: "step-b" }, step.q ? thinkCard(pageKey, i, step) : blocks(step.build)));
       return li;
@@ -1306,9 +2037,18 @@ window.DATA = (function () {
     var c = 0; for (var i = 0; i < n; i++) if (S.done[pageKey + ":" + i]) c++; return c;
   }
 
+  function chapterBar(cur) {
+    return h("nav", { class: "chbar", "aria-label": "Chapters" },
+      h("span", { class: "k" }, "Chapters"),
+      D.CHAPTERS.map(function (c) {
+        return h("a", { class: "chnum" + (c.no === cur ? " on" : ""), href: "#/c" + c.no, title: c.title }, String(c.no));
+      }));
+  }
+
   function pageStage(id) {
     var sp = D.STAGE_PAGES[id];
-    var idx = primaries().map(function (x) { return x.id; }).indexOf(id);
+    var chapter = sp.chapter || 1;
+    var st = stage(id);
     var total = sp.steps.length;
     var prog = h("div", { class: "prog" });
     function paintProg() {
@@ -1319,9 +2059,15 @@ window.DATA = (function () {
     }
     paintProg();
 
+    var kicker = "Chapter " + chapter;
+    if (st && st.kind === "primary") kicker += " \u00b7 Stage " + (primaries().map(function (x) { return x.id; }).indexOf(id) + 1) + " of 5";
+    else if (st) kicker += " \u00b7 Secondary stage";
+    else kicker += " \u00b7 Finishing touches";
+
     var root = [];
-    root.push(caseMap({ compact: true, current: id }));
-    root.push(pageHead("Chapter 1 · Stage " + (idx + 1) + " of 5", sp.title, sp.tagline));
+    root.push(chapterBar(chapter));
+    root.push(caseMap({ compact: true, current: id, side: chapter >= 2 }));
+    root.push(pageHead(kicker, sp.title, sp.tagline));
     root.push(h("section", { class: "story" },
       h("div", { class: "sec-k" }, "The business story"),
       p(sp.context, "story-ctx"),
@@ -1329,8 +2075,8 @@ window.DATA = (function () {
       h("ol", { class: "wants" }, sp.wants.map(function (w) { return h("li", {}, rich(w)); })),
       p("Your job: match each one to an activity.", "muted small")));
     root.push(h("section", {},
-      h("div", { class: "sec-k" }, "Build this stage, one step at a time"),
-      p("Work in **MyClaimsCase**. Where a step asks a question, think first, say it out loud, and press Reveal when you are ready. Keep the activity list open if it helps.", "muted"),
+      h("div", { class: "sec-k" }, st ? "Build this stage, one step at a time" : "Do this, one step at a time"),
+      p("Work in **MyClaimsCase**. Where a step asks a question, think first, say it out loud, and press Reveal when you are ready. A step marked \"Back to\" a stage sends you to a stage you already built.", "muted"),
       prog,
       stepList(id, sp.steps, paintProg)));
 
@@ -1340,22 +2086,40 @@ window.DATA = (function () {
     root.push(h("section", {},
       h("div", { class: "sec-k" }, "Check it"),
       blocks([{ t: "check", items: sp.check }]),
-      h("label", { class: "builtbox", for: "built-" + id }, builtBox, h("span", {}, "I built and checked this stage"))));
+      h("label", { class: "builtbox", for: "built-" + id }, builtBox, h("span", {}, st ? "I built and checked this stage" : "I finished this part"))));
+
     var gives = [];
-    D.ACTIVITIES.forEach(function (a) { if (a.chapter === 1 && a.stages.indexOf(id) >= 0) a.gives.forEach(function (g) { if (gives.indexOf(g) < 0) gives.push(g); }); });
-    root.push(h("section", {},
+    if (st) D.ACTIVITIES.forEach(function (a) { if (a.stages.indexOf(id) >= 0) a.gives.forEach(function (g) { if (gives.indexOf(g) < 0) gives.push(g); }); });
+    if (gives.length) root.push(h("section", {},
       h("div", { class: "sec-k" }, "What this stage hands over"),
       p("These variables now exist, ready for the stages after this one to read:", "muted"),
       h("div", { class: "handover" }, gives.map(function (g) { return h("code", { class: "var", text: g }); }))));
     root.push(blocks([{ t: "watch", text: sp.watch }]));
-    root.push(h("p", { class: "muted small" }, rich("Stuck? Open the example case `1_HappyPath` and compare. It already has a few conditions that this chapter leaves for later, so small differences are expected.")));
+    if (chapter === 1) root.push(h("p", { class: "muted small" }, rich("Stuck? Open the example case `1_HappyPath` and compare. It already has a few conditions that this chapter leaves for later, so small differences are expected.")));
+    else {
+      var ex = { 2: "2_PendingCustomer", 3: "3_Denied", 4: "4_FraudInvestigation", 5: "5_Complete" }[chapter];
+      root.push(h("p", { class: "muted small" }, rich("Stuck? Open the example case `" + ex + "` in the example solution (`MotorClaims_Workshop.uis`) and compare.")));
+    }
 
-    var prev = idx > 0 ? primaries()[idx - 1] : null;
-    var next = idx < 4 ? primaries()[idx + 1] : null;
+    var order = D.ORDER, at = order.indexOf(id);
+    function label(rid) { return (D.STAGE_PAGES[rid] && D.STAGE_PAGES[rid].title) || D.TITLES[rid] || rid; }
+    var prev = at > 0 ? order[at - 1] : null, next = at < order.length - 1 ? order[at + 1] : null;
     root.push(h("div", { class: "pager" },
-      prev ? h("a", { class: "btn", href: "#/" + prev.id }, "← " + prev.name) : h("a", { class: "btn", href: "#/c1" }, "← Chapter 1"),
-      next ? h("a", { class: "btn primary", href: "#/" + next.id }, next.name + " →") : h("a", { class: "btn primary", href: "#/deploy" }, "Run it and deploy →")));
+      prev ? h("a", { class: "btn", href: "#/" + prev }, "\u2190 " + label(prev)) : h("span"),
+      next ? h("a", { class: "btn primary", href: "#/" + next }, label(next) + " \u2192") : h("span")));
     return root;
+  }
+
+  function pageChapterN(n) {
+    var c = D.CHAPTER_PAGES["c" + n];
+    var ch = D.CHAPTERS[n - 1];
+    return [
+      chapterBar(n),
+      pageHead(c.eyebrow, c.title, c.lead),
+      caseMap({ side: true }),
+      blocks(c.blocks),
+      h("div", { class: "next" }, h("a", { class: "btn primary", href: "#/" + c.start }, "Start: " + (D.STAGE_PAGES[c.start] ? D.STAGE_PAGES[c.start].title : ch.title)))
+    ];
   }
 
   function thinkCard(pageKey, i, step) {
@@ -1450,7 +2214,7 @@ window.DATA = (function () {
   function openDrawer(name) {
     if (name) { drawerState = { type: "all", q: "", stage: "all" }; }
     else {
-      var m = /^#\/(intake|assessment|review|settlement|closure)$/.exec(location.hash);
+      var m = /^#\/(intake|assessment|review|settlement|closure|pending|denied|fraud)$/.exec(location.hash);
       if (m && drawerState.stage === "all") drawerState.stage = m[1];
     }
     paintDrawer(name);
@@ -1469,14 +2233,15 @@ window.DATA = (function () {
     else if (id === "setup") view = pageSetup();
     else if (id === "c1") view = pageChapter1();
     else if (id === "deploy") view = pageDeploy();
-    else if (STAGE_IDS.indexOf(id) >= 0) view = pageStage(id);
+    else if (/^c[2-5]$/.test(id)) view = pageChapterN(parseInt(id.slice(1), 10));
+    else if (D.STAGE_PAGES[id]) view = pageStage(id);
     else { id = "home"; view = pageHome(); }
     app.textContent = "";
     add(app, h("div", { class: "page", "data-page": id }, view));
     window.scrollTo(0, 0);
-    document.title = (id === "home" ? "" : (D.STAGE_PAGES[id] ? D.STAGE_PAGES[id].title : id.charAt(0).toUpperCase() + id.slice(1)) + " | ") + "Motor Claims workshop";
+    document.title = (id === "home" ? "" : (D.STAGE_PAGES[id] ? D.STAGE_PAGES[id].title : (D.CHAPTER_PAGES && D.CHAPTER_PAGES[id] ? D.CHAPTER_PAGES[id].title : id.charAt(0).toUpperCase() + id.slice(1))) + " | ") + "Motor Claims workshop";
     document.querySelectorAll("[data-nav]").forEach(function (a) {
-      a.classList.toggle("on", a.getAttribute("data-nav") === id || (a.getAttribute("data-nav") === "c1" && (STAGE_IDS.indexOf(id) >= 0 || id === "deploy")));
+      a.classList.toggle("on", a.getAttribute("data-nav") === id || (a.getAttribute("data-nav") === "c1" && id !== "home" && id !== "scenario" && id !== "setup"));
     });
     app.focus({ preventScroll: true });
   }
@@ -1540,5 +2305,6 @@ window.DATA = (function () {
 })();
 
 </script>
+
 </body>
 </html>
