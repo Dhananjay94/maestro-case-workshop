@@ -1,9 +1,0 @@
-[project]
-name = "CalculateSettlement"
-version = "0.0.1"
-description = "Settlement amount and senior-approval flag from PolicyMaster plus Orchestrator assets."
-authors = [{ name = "Motor Claims Workshop", email = "workshop@example.com" }]
-dependencies = [
-    "uipath>=2.14.0, <2.15.0",
-]
-requires-python = ">=3.11"

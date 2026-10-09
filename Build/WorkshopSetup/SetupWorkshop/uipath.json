@@ -1,9 +1,0 @@
-{
-  "id": "b8a1c3e2-5d47-4f1a-9c6e-3a7d0e2f4b19",
-  "functions": {
-    "setup_workshop": "main.py:setup_workshop"
-  },
-  "packOptions": {
-    "directoriesExcluded": [".venv", "__pycache__"]
-  }
-}

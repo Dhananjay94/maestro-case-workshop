@@ -1,6 +1,0 @@
-{
-  "ProjectType": "Function",
-  "Name": "UpdateClaim",
-  "Description": "Writes the results of one case stage back to the claim record in Data Fabric.",
-  "MainFile": null
-}

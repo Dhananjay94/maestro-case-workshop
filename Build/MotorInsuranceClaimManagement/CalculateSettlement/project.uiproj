@@ -1,6 +1,0 @@
-{
-  "ProjectType": "Function",
-  "Name": "CalculateSettlement",
-  "Description": "Settlement amount and senior-approval flag from PolicyMaster plus Orchestrator assets.",
-  "MainFile": null
-}

@@ -42,3 +42,17 @@ WorkshopKit/02_Documents.zip
 WorkshopKit/Deck/
 WorkshopKit/Facilitator/
 Build/tools/build_deck_v1.py
+
+# Author-only material: kept on disk, not published (participants only need the guide, the .uis files and the sample documents)
+Build/
+WorkshopKit/Site/
+WorkshopKit/Guide_Site/
+WorkshopKit/CASE_FLOW_PLAN.md
+WorkshopKit/README.md
+WorkshopKit/README.txt
+WorkshopKit/Reference/
+WorkshopKit/Setup_Guide.md
+WorkshopKit/Starter_Solution/README.md
+WorkshopKit/Starter_Solution/data/
+WorkshopKit/01_Data/*
+!WorkshopKit/01_Data/claims_intake_values.csv

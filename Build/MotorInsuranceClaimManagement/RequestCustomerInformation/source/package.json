@@ -1,8 +1,0 @@
-{
-  "name": "requestcustomerinformation",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@uipath/uipath-typescript": "^1.7.2"
-  }
-}

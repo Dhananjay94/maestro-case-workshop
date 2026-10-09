@@ -1,6 +1,0 @@
-{
-  "ProjectType": "Function",
-  "Name": "ProcessSettlement",
-  "Description": "Records the simulated payment in SettlementRegister in Data Fabric.",
-  "MainFile": null
-}

@@ -1,6 +1,0 @@
-{
-  "ProjectType": "Api",
-  "Name": "GenerateClaimPacket",
-  "Description": null,
-  "MainFile": "Workflow.json"
-}

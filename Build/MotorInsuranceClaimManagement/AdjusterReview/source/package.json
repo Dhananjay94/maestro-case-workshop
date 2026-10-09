@@ -1,8 +1,0 @@
-{
-  "name": "adjusterreview",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@uipath/uipath-typescript": "^1.7.2"
-  }
-}

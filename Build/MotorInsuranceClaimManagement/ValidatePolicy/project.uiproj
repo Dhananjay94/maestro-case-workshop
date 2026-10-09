@@ -1,6 +1,0 @@
-{
-  "ProjectType": "Function",
-  "Name": "ValidatePolicy",
-  "Description": "Deterministic policy validation against PolicyMaster in Data Fabric.",
-  "MainFile": null
-}

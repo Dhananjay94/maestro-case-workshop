@@ -1,8 +1,0 @@
-{
-  "clientId": "39d65bc4-48c5-4ea4-9c19-d96788c98486",
-  "scope": "OR.Buckets OR.Folders.Read DataFabric.Schema.Read DataFabric.Data.Read DataFabric.Data.Write",
-  "orgName": "dj_personal",
-  "tenantName": "DefaultTenant",
-  "baseUrl": "https://api.uipath.com",
-  "redirectUri": "http://localhost:5173"
-}

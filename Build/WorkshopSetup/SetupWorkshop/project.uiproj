@@ -1,6 +1,0 @@
-{
-  "ProjectType": "Function",
-  "Name": "SetupWorkshop",
-  "Description": "Loads the workshop sample data (policies, claim history, sample claims and their PDFs) into the solution's tables and bucket.",
-  "MainFile": null
-}

@@ -1,9 +1,0 @@
-{
-  "id": "6f1d3c2a-9b7e-4c55-8a41-2d6e0b9a7c11",
-  "functions": {
-    "get_claim_history": "main.py:get_claim_history"
-  },
-  "packOptions": {
-    "directoriesExcluded": [".venv", "__pycache__"]
-  }
-}

@@ -1,9 +1,0 @@
-{
-  "id": "be79954a-35f7-4b97-99df-3c8bd80096a3",
-  "functions": {
-    "fetch_claim_document_text": "main.py:fetch_claim_document_text"
-  },
-  "packOptions": {
-    "directoriesExcluded": [".venv", "__pycache__"]
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "ProjectType": "Function",
-  "Name": "GetClaimHistory",
-  "Description": "Returns the insurer's internal claim history for a policy from Data Fabric.",
-  "MainFile": null
-}

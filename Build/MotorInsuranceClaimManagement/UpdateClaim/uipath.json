@@ -1,9 +1,0 @@
-{
-  "id": "5d0e7a4c-2b6f-4c1e-9a53-7f3b1c8d9e21",
-  "functions": {
-    "update_claim": "main.py:update_claim"
-  },
-  "packOptions": {
-    "directoriesExcluded": [".venv", "__pycache__"]
-  }
-}

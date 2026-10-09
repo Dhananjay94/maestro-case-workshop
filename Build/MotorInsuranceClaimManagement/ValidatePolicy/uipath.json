@@ -1,9 +1,0 @@
-{
-  "id": "d0138d34-c6a9-4145-8475-9f898794f9ef",
-  "functions": {
-    "validate_policy": "main.py:validate_policy"
-  },
-  "packOptions": {
-    "directoriesExcluded": [".venv", "__pycache__"]
-  }
-}
