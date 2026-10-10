@@ -56,3 +56,6 @@ WorkshopKit/Starter_Solution/README.md
 WorkshopKit/Starter_Solution/data/
 WorkshopKit/01_Data/*
 !WorkshopKit/01_Data/claims_intake_values.csv
+
+# Superseded by the web guide
+WorkshopKit/Participant_Build_Guide.md

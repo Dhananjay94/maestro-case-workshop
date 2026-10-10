@@ -1114,7 +1114,7 @@ window.DATA = (function () {
         { t: "ol", items: [
           "Run Setup with **Action** = `RegisterClaim` and **Customer** = `Priya` (CLM-1002), if you have not already. Debug your case with it.",
           "The case reaches **Pending Customer** and sends the email. Check your inbox.",
-          "In the **Intake App**, choose **Add document** for her claim and upload `Priya_Nair/SUPPLEMENTAL_RepairEstimate.pdf` from the sample documents.",
+          "In the **Intake App**, choose **Add document** for her claim and upload `Priya_Nair/SUPPLEMENTAL_RepairEstimate.pdf` from the sample documents (see [Intake App inputs](Intake_App_Inputs.html)).",
           "The case goes back to Intake, then Assessment, then Review. Approve it in Action Center."
         ] },
         { t: "check", items: [
@@ -1551,7 +1551,7 @@ window.DATA = (function () {
         ] }
       ] },
       { title: "Tick them off", build: [
-        { t: "text", text: "Tick this step when every row has matched." },
+        { t: "text", text: "Tick this step when every row has matched. The values to type into the Intake App, and what to press at each human step, are in [Intake App inputs](Intake_App_Inputs.html)." },
         { t: "check", text: "You built a complete claims case: five stages, three exception paths, a live claim record, customer emails and time limits." },
         { t: "text", text: "Publish and upgrade one last time: [Run it, then deploy it](#/deploy)." }
       ] }
@@ -2004,7 +2004,7 @@ window.DATA = (function () {
           "Open **Orchestrator > Solutions > Deployments** at the **tenant** level (the Solutions tab is hidden when a folder is selected). Open your environment `ClaimsSolution`, choose the three-dot menu and **Upgrade** to the new version.",
           "In the wizard, bind your **Gmail** and **Data Fabric** connections. If one is expired, use **Login to connection**.",
           "When it finishes, choose **Activate**.",
-          "Open your **Intake App** address, sign in, register a claim with its documents, and open **Maestro > Case management**. Your case runs."
+          "Open your **Intake App** address, sign in, register a claim with its documents (the values are in [Intake App inputs](Intake_App_Inputs.html)), and open **Maestro > Case management**. Your case runs."
         ] },
         { t: "why", text: "Upgrade adds your case to the same folder as the Intake App, tables and workers. Nothing is duplicated. Activation is needed because the case starts from a claim row, and that start event runs through your Data Fabric connection." },
         { t: "note", text: "Whatever cases are still in the solution when you Publish get deployed, and each starts on every new claim. That is why step 1 removes the examples. If you want an example back later, import `MotorClaims_Workshop.uis` from the kit." },
