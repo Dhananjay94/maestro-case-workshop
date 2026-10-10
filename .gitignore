@@ -39,7 +39,8 @@ WorkshopKit/Starter_Solution.zip
 WorkshopKit/02_Documents.zip
 
 # facilitator-only material (speaker names, photo): not part of the participant repository
-WorkshopKit/Deck/
+WorkshopKit/Deck/*
+!WorkshopKit/Deck/Maestro_Case_Workshop_Deck.html
 WorkshopKit/Facilitator/
 Build/tools/build_deck_v1.py
 

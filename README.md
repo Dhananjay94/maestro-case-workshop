@@ -17,6 +17,7 @@ You need **only a UiPath Community account**. Nothing to install.
 | `WorkshopKit/Motor_Claims_Workshop_Guide.html` | The guide (one file) |
 | `WorkshopKit/Starter_Solution/MotorClaimsWorkshop_Setup.uis` | Import into Studio Web and run it once |
 | `WorkshopKit/Starter_Solution/MotorClaims_Workshop.uis` | The workshop solution with the finished example cases, for reference |
+| `WorkshopKit/Deck/Maestro_Case_Workshop_Deck.html` | The workshop slides (one file, open it in a browser; press N for speaker notes) |
 | `WorkshopKit/02_Documents/` | The PDFs for the sample customers |
 | `WorkshopKit/01_Data/claims_intake_values.csv` | Claim values to type into the Intake App |
 | `WorkshopKit/Intake_App_Inputs.html` | The values to type into the Intake App for each test customer, and what to choose at each human step |
