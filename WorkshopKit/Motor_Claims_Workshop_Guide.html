@@ -350,7 +350,7 @@ window.DATA = (function () {
       gives: ["notificationStatus", "claimOutcome", "notificationText"] },
     { name: "FraudInvestigation", type: "human", stages: ["fraud"], chapter: 4,
       line: "An investigator looks at a high-risk claim and presses Cleared or Confirmed.",
-      gives: ["fraudResult", "comments3"] },
+      gives: ["action3", "comments3"] },
     { name: "UpdateClaim", type: "function", stages: ["every stage"], chapter: 5,
       line: "Saves the stage and status on the claim row so anyone can see where a claim is.",
       gives: ["Updated"] },
@@ -941,7 +941,7 @@ window.DATA = (function () {
         { t: "cards", items: [
           { title: "A detour that comes back", text: "When the investigator clears the claim, the case **returns to Assessment**, not forward. This is **Return to origin**." },
           { title: "A stage that completes", text: "When fraud is **confirmed**, Fraud Investigation **completes** and Denied waits for it. This is the one place a target uses **Selected stage completed**." },
-          { title: "Variables that survive", text: "After the return, old values are still set. That is why the Assessment rule checks `!vars.fraudResult`." }
+          { title: "Variables that survive", text: "After the return, old values are still set. That is why the Assessment rule checks `!vars.action3`." }
         ] },
         { t: "h", text: "What you will do in this chapter" },
         { t: "ol", items: [
@@ -1298,24 +1298,24 @@ window.DATA = (function () {
             ["DocumentInconsistencies", "vars.documentInconsistencies"]
           ] },
           { t: "kv", rows: [["Task rule name", "Start fraud investigation"], ["Task rule type", "Runs sequentially"]] },
-          { t: "note", text: "Outputs: `fraudResult` (Cleared or Confirmed) and `comments3`." }
+          { t: "note", text: "Outputs: `action3` (Cleared or Confirmed) and `comments3`." }
         ] },
       { title: "When does a claim come here?", kind: "Way in",
         q: "Which stage sends a claim here, and when exactly?",
         hint: "The fraud agent lives in Assessment. Look at its flag, and think about a claim that comes back after being cleared.",
         answer: { lead: "From **Assessment**, when the fraud flag is set and no investigation result exists yet. The \"no result yet\" part matters: after the investigator clears a claim, the result is filled, and the claim must not be sent back here again.",
-          rules: [entrySE("Entry rule", "Assessment found high fraud risk", "Assessment", "vars.fraudFlag === true && !vars.fraudResult", "Enter when Assessment is exited because the risk is High and nobody has investigated yet.")] },
+          rules: [entrySE("Entry rule", "Assessment found high fraud risk", "Assessment", "vars.fraudFlag === true && !vars.action3", "Enter when Assessment is exited because the risk is High and nobody has investigated yet.")] },
         build: [
-          { t: "kv", rows: [["Name", "Assessment found high fraud risk"], ["Type", "Selected stage exited"], ["Stage", "Assessment"], ["Interrupting", "On"], ["Condition", "vars.fraudFlag === true && !vars.fraudResult"]] }
+          { t: "kv", rows: [["Name", "Assessment found high fraud risk"], ["Type", "Selected stage exited"], ["Stage", "Assessment"], ["Interrupting", "On"], ["Condition", "vars.fraudFlag === true && !vars.action3"]] }
         ] },
       back("Assessment", { title: "Assessment: let a claim leave", kind: "Leave early",
         q: "Assessment must send a high-risk claim away. After which tasks, and under what condition?",
         hint: "Both of its tasks, so that the fraud score and the damage estimate are saved before it leaves.",
         answer: { lead: "After **FraudRiskAssessment and AssessDamage**, when the flag is set and there is no result yet.",
-          rules: [exitRule("High fraud risk so investigation starts", "FraudRiskAssessment and AssessDamage", "vars.fraudFlag === true && !vars.fraudResult", "Fraud Investigation")] },
+          rules: [exitRule("High fraud risk so investigation starts", "FraudRiskAssessment and AssessDamage", "vars.fraudFlag === true && !vars.action3", "Fraud Investigation")] },
         build: [
           { t: "text", text: "Open **Assessment** and add an exit rule." },
-          { t: "kv", rows: [["Name", "High fraud risk so investigation starts"], ["Type", "Selected tasks completed"], ["Tasks", "FraudRiskAssessment and AssessDamage"], ["Marks stage complete", "Off"], ["Exit to stage", "Fraud Investigation"], ["Condition", "vars.fraudFlag === true && !vars.fraudResult"]] }
+          { t: "kv", rows: [["Name", "High fraud risk so investigation starts"], ["Type", "Selected tasks completed"], ["Tasks", "FraudRiskAssessment and AssessDamage"], ["Marks stage complete", "Off"], ["Exit to stage", "Fraud Investigation"], ["Condition", "vars.fraudFlag === true && !vars.action3"]] }
         ] }),
       back("Assessment", { title: "Assessment: tighten the normal exit", kind: "Done when",
         q: "Assessment's completion rule had no condition. What must it say now, so that exactly one road is open?",
@@ -1323,11 +1323,11 @@ window.DATA = (function () {
         answer: { lead: "Complete the stage unless the claim is flagged and not yet investigated.",
           rules: [{ label: "Completion rule", name: "Fraud score and damage estimate ready", type: "Required tasks completed",
             plain: "Assessment is done when both tasks have finished, unless the claim needs investigating.",
-            expr: "!(vars.fraudFlag === true && !vars.fraudResult)",
-            why: "After the investigator clears the claim, `fraudResult` is filled, so the claim is allowed through Assessment instead of being sent to the investigator again." }] },
+            expr: "!(vars.fraudFlag === true && !vars.action3)",
+            why: "After the investigator clears the claim, `action3` is filled, so the claim is allowed through Assessment instead of being sent to the investigator again." }] },
         build: [
           { t: "text", text: "Add this expression to Assessment's completion rule:" },
-          { t: "code", text: "!(vars.fraudFlag === true && !vars.fraudResult)" }
+          { t: "code", text: "!(vars.fraudFlag === true && !vars.action3)" }
         ] }),
       { title: "Two ways out of the investigation", kind: "Done when",
         q: "The investigator presses Cleared or Confirmed. What should happen after each?",
@@ -1335,33 +1335,33 @@ window.DATA = (function () {
         answer: { lead: "**Cleared:** the case returns to Assessment (it runs again, which costs two more agent calls but gives a clean result). **Confirmed:** the stage completes, and Denied picks it up.",
           rules: [
             { label: "Completion rule 1", name: "Investigation cleared and case resumes", type: "Return to origin stage", plain: "When cleared, go back to where the claim came from.",
-              expr: "vars.fraudResult === 'Cleared'", rows: [["Complete stage when", "Required tasks completed"]] },
+              expr: "vars.action3 === 'Cleared'", rows: [["Complete stage when", "Required tasks completed"]] },
             { label: "Completion rule 2", name: "Fraud confirmed and claim denied", type: "Normal completion", plain: "When confirmed, complete the stage.",
-              expr: "vars.fraudResult === 'Confirmed'", rows: [["Complete stage when", "Required tasks completed"]],
+              expr: "vars.action3 === 'Confirmed'", rows: [["Complete stage when", "Required tasks completed"]],
               why: "Confirmed completes the stage, which is why Denied waits for the stage to be completed, not exited." }
           ] },
         build: [
           { t: "text", text: "Add two completion rules to Fraud Investigation." },
-          { t: "kv", rows: [["Rule 1 name", "Investigation cleared and case resumes"], ["Completion rule type", "Return to origin stage"], ["Complete stage when", "Required tasks completed"], ["Condition", "vars.fraudResult === 'Cleared'"]] },
-          { t: "kv", rows: [["Rule 2 name", "Fraud confirmed and claim denied"], ["Completion rule type", "Normal completion"], ["Complete stage when", "Required tasks completed"], ["Condition", "vars.fraudResult === 'Confirmed'"]] }
+          { t: "kv", rows: [["Rule 1 name", "Investigation cleared and case resumes"], ["Completion rule type", "Return to origin stage"], ["Complete stage when", "Required tasks completed"], ["Condition", "vars.action3 === 'Cleared'"]] },
+          { t: "kv", rows: [["Rule 2 name", "Fraud confirmed and claim denied"], ["Completion rule type", "Normal completion"], ["Complete stage when", "Required tasks completed"], ["Condition", "vars.action3 === 'Confirmed'"]] }
         ] },
       back("Denied", { title: "Denied: a fourth way in", kind: "Way in",
         q: "Denied must now also start when fraud is confirmed. Which stage does it wait for, and is it \"exited\" or \"completed\"?",
         hint: "Remember what the Confirmed rule does to the Fraud Investigation stage.",
         answer: { lead: "It waits for Fraud Investigation to be **completed**. This is the one place a target uses *Selected stage completed* instead of *exited*.",
           rules: [{ label: "Entry rule 4", name: "Fraud confirmed by investigator", type: "Selected stage completed", stage: "Fraud Investigation",
-            plain: "Enter Denied when the Fraud Investigation stage completes with a confirmation.", expr: "vars.fraudResult === 'Confirmed'", rows: [["Interrupting", "On"]] }] },
+            plain: "Enter Denied when the Fraud Investigation stage completes with a confirmation.", expr: "vars.action3 === 'Confirmed'", rows: [["Interrupting", "On"]] }] },
         build: [
           { t: "text", text: "Open **Denied** and add a fourth entry rule." },
-          { t: "kv", rows: [["Name", "Fraud confirmed by investigator"], ["Type", "Selected stage completed"], ["Stage", "Fraud Investigation"], ["Interrupting", "On"], ["Condition", "vars.fraudResult === 'Confirmed'"]] }
+          { t: "kv", rows: [["Name", "Fraud confirmed by investigator"], ["Type", "Selected stage completed"], ["Stage", "Fraud Investigation"], ["Interrupting", "On"], ["Condition", "vars.action3 === 'Confirmed'"]] }
         ] }),
       back("Denied and Closure", { title: "Fill the fraud result in the notifications", kind: "Which activity?",
         q: "The notification tasks have an input you left empty. Where should each one read the fraud result from?",
         hint: "In Denied, the result was produced by the investigation.",
-        answer: { lead: "In **Denied**, from `vars.fraudResult`. In **Closure**, from the claim as it was registered. (The notification never names fraud to the customer. It only uses the result to choose the right wording.)",
+        answer: { lead: "In **Denied**, from `vars.action3`. In **Closure**, from the claim as it was registered. (The notification never names fraud to the customer. It only uses the result to choose the right wording.)",
           rules: [] },
         build: [
-          { t: "kv", rows: [["Denied: FraudInvestigationResult", "vars.fraudResult"], ["Closure: FraudInvestigationResult", "vars.response?.FraudInvestigationResult"]] }
+          { t: "kv", rows: [["Denied: FraudInvestigationResult", "vars.action3"], ["Closure: FraudInvestigationResult", "vars.response?.FraudInvestigationResult"]] }
         ] }),
       { title: "Run it", kind: "Try it", build: [
         { t: "text", text: "Debug **Arjun** (CLM-1003) twice." },
@@ -1416,7 +1416,7 @@ window.DATA = (function () {
         "vars.policyValid === false ? 'Policy invalid' : (vars.documentIngestionStatus === 'Incomplete' ? 'Documents incomplete' : 'Intake complete')",
         varRows(["DocumentIngestionStatus", "DocumentsComplete", "MissingDocuments", "DocumentInconsistencies", "PolicyValid", "PolicyValidationReason", "ExtractedCustomerName", "ExtractedPolicyNumber", "ExtractedVehicleRegistration", "ExtractedIncidentDate", "ExtractedDocumentTypes", "ExtractedRepairEstimate"])),
       saveTask("Save assessment results to the claim record", "Assessment, last", "Assessment",
-        "(vars.fraudFlag === true && !vars.fraudResult) ? 'High fraud risk' : 'Assessment complete'",
+        "(vars.fraudFlag === true && !vars.action3) ? 'High fraud risk' : 'Assessment complete'",
         varRows(["FraudScore", "RiskLevel", "FraudFlag", "FraudReasons", "DamageEstimate"])),
       saveTask("Save adjuster decision to the claim record", "Review, last", "Review",
         "vars.decision === 'Approve' ? 'Approved by adjuster' : (vars.decision === 'Reject' ? 'Rejected by adjuster' : 'Information requested')",
@@ -1432,8 +1432,8 @@ window.DATA = (function () {
       saveTask("Save customer request status to the claim record", "Pending Customer, after the email", "PendingCustomer", "Awaiting customer information",
         [["CustomerInformationStatus", "Requested"]], [{ t: "note", text: "Type `Requested` as plain text, not an expression." }]),
       saveTask("Save fraud investigation result to the claim record", "Fraud Investigation, last", "FraudInvestigation",
-        "vars.fraudResult === 'Confirmed' ? 'Fraud confirmed' : 'Fraud cleared'",
-        [["FraudInvestigationResult", "vars.fraudResult"], ["FraudInvestigationComments", "vars.comments3"]]),
+        "vars.action3 === 'Confirmed' ? 'Fraud confirmed' : 'Fraud cleared'",
+        [["FraudInvestigationResult", "vars.action3"], ["FraudInvestigationComments", "vars.comments3"]]),
       saveTask("Save denial to the claim record", "Denied, last", "Denied", "Denied",
         [["NotificationStatus", "vars.notificationStatus2"], ["ClaimOutcome", "vars.claimOutcome2"], ["SeniorApprovalDecision", "vars.decision2"], ["SeniorApprovalComments", "vars.comments2"]]),
       { title: "Make every detour wait for the save", kind: "Leave early",
